@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# generated example figures / run outputs
+*.png
+results/
+
+# large reference PDFs (kept locally under docs/literature, not tracked)
+docs/literature/*.pdf

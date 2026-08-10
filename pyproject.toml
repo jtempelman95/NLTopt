@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nltopt"
+version = "0.0.1"
+description = "Manufacturable design of nonlinear structural dynamics: SSM reduction + fiber-steering, coupling PyHB and wavetopo"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Joshua R. Tempelman" }]
+keywords = [
+    "spectral-submanifolds", "nonlinear-dynamics", "backbone-curve",
+    "topology-optimization", "fiber-steering", "composites",
+    "manufacturability", "adjoint", "reduced-order-models",
+]
+# pyhb is a sibling repo (../PyHB), installed editable:  pip install -e ../PyHB
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "pyhb>=0.1.0",
+]
+
+[project.optional-dependencies]
+examples = ["matplotlib>=3.4"]
+test = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["nltopt*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
