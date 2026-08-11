@@ -14,12 +14,17 @@ prediction (crosses) is overlaid on the *actually recomputed* perturbed backbone
 perturbations in ``m, k`` shift the frequency; ``k2, k3`` bend the backbone at
 higher amplitude.
 
+The backbone here **softens then hardens** (a "backward-C"): the quadratic
+nonlinearity softens at low amplitude, the cubic hardening turns it back near
+RMS x2 ~ 1.  Capturing that turn-back needs a **high-order** SSM -- a cubic
+(order-3) SSM gives only a monotone parabola.  We use **order 7**, which tracks
+EPMC through the turn-back (the turn-back sits near the SSM's convergence radius
+for this system, so order 7 is about as far as a finite expansion reaches).
+
 Notes.  The paper computes ``dOmega/dmu`` with the analytic **adjoint** (App. F)
-and a **5th-order** SSM.  Here we use (i) our **cubic** SSM -- verified to
-<0.05% against EPMC up to RMS x2 = 0.6 for this mildly-softening system -- and
-(ii) a **finite-difference** sensitivity through that SSM.  FD is fine for four
-parameters; the analytic adjoint (roadmap item c) computes the *same* quantity
-at a cost independent of the number of parameters (the paper's Fig. 1 / Fig. 5).
+and a 5th-order SSM.  Here we use a **finite-difference** sensitivity through our
+order-7 SSM -- fine for four parameters; the analytic adjoint (roadmap item c)
+computes the *same* quantity at a cost independent of the number of parameters.
 
     python examples/coupled_osc_sensitivity.py
 """
@@ -35,13 +40,15 @@ from nltopt.benchmarks import coupled_oscillators
 NOMINAL = dict(m=1.0, k=1.0, k2=0.5, k3=0.2)
 FRAC = dict(m=0.01, k=0.01, k2=0.03, k3=0.03)          # perturbation fractions
 DOF = 1                                                 # track x2
-LEVELS = np.linspace(0.08, 0.52, 9)                     # RMS x2 sample points
+ORDER = 7                                                # SSM order (turn-back)
+LEVELS = np.linspace(0.12, 1.05, 9)                     # RMS x2 sample points
+RMS_MAX = 1.25
 COLORS = dict(m="#1f77b4", k="#ff7f0e", k2="#2ca02c", k3="#d62728")
 
 
 def _ssm(params):
     sys = coupled_oscillators(**params)
-    return ssm_from_system(sys, mode=0, ref_dof=DOF)
+    return ssm_from_system(sys, mode=0, ref_dof=DOF, order=ORDER)
 
 
 def omega_at_levels(params, levels):
@@ -52,11 +59,11 @@ def omega_at_levels(params, levels):
 
 
 def backbone_curve(params, rms_max):
-    """Dense (Omega, RMS x2) backbone curve for plotting a line."""
+    """Dense (Omega, RMS x2) backbone curve for plotting a line (full SSM order)."""
     ssm = _ssm(params)
     rho = np.linspace(1e-5, 5.0, 400)
     rms = ssm.rms_amplitude(rho, dof=DOF)
-    om = ssm.lambda1.imag + ssm.gamma.imag * rho ** 2 / 4.0
+    om = ssm._reduced(rho).imag                     # full order (soften-to-harden)
     keep = rms <= rms_max
     return om[keep], rms[keep]
 
@@ -76,7 +83,7 @@ def main():
           f"gamma={ssm0.gamma:.3e} ({'soften' if ssm0.gamma.imag<0 else 'harden'})")
 
     om_nom = omega_at_levels(NOMINAL, LEVELS)
-    rms_max = LEVELS[-1] + 0.05
+    rms_max = RMS_MAX
     on_line, ar_line = backbone_curve(NOMINAL, rms_max)
 
     fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0), sharex=False, sharey=True)

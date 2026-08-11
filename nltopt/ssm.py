@@ -104,6 +104,22 @@ class SSM2D:
     n: int
     ref_dof: int = 0
     w: dict = field(default_factory=dict)
+    red: dict = field(default_factory=dict)   # {k: gamma_{2k+1}} reduced coeffs
+    order: int = 3
+
+    # -- reduced-dynamics complex frequency on the orbit ------------------- #
+    def _reduced(self, rho):
+        r"""``lambda1 + sum_k gamma_{2k+1} (rho/2)^{2k}`` = d(ln p1)/dt on the orbit.
+
+        Its imaginary part is the instantaneous backbone frequency, its real
+        part the decay rate.  ``k=1`` is the cubic term (``gamma``), ``k=2`` the
+        quintic term that lets the backbone turn from softening to hardening.
+        """
+        rho = np.asarray(rho, dtype=float)
+        s = np.full(rho.shape, self.lambda1, dtype=complex)
+        for k, c in self.red.items():
+            s = s + c * (0.5 * rho) ** (2 * k)
+        return s
 
     # -- hardening / softening sign ---------------------------------------- #
     @property
@@ -202,7 +218,7 @@ class SSM2D:
             if f(rho_hi) < 0:
                 raise ValueError("amplitude target not reachable below rho_hi")
         rho = brentq(f, 1e-9, rho_hi, xtol=1e-12, rtol=1e-10)
-        omega = self.lambda1.imag + self.gamma.imag * rho ** 2 / 4.0
+        omega = float(self._reduced(rho).imag)
         return omega, rho
 
     def backbone(self, rho, dof=None, n_theta=256):
@@ -213,8 +229,9 @@ class SSM2D:
         ratio) and ``amplitude`` (physical fundamental amplitude at ``dof``).
         """
         rho = np.atleast_1d(np.asarray(rho, dtype=float))
-        omega = self.lambda1.imag + self.gamma.imag * rho ** 2 / 4.0
-        decay = self.lambda1.real + self.gamma.real * rho ** 2 / 4.0
+        s = self._reduced(rho)
+        omega = s.imag
+        decay = s.real
         damping = -decay / np.hypot(omega, decay)
         amp = self.physical_amplitude(rho, dof=dof, n_theta=n_theta)
         amp = np.atleast_1d(amp)
@@ -232,21 +249,33 @@ def _lift(fx, n):
     return g
 
 
-def compute_ssm_2d(M, C, K, bilinear=None, trilinear=None, mode=0, ref_dof=0):
-    """Compute the cubic-order 2-D SSM of the ``mode``-th mode.
+def compute_ssm_2d(M, C, K, bilinear=None, trilinear=None, mode=0, ref_dof=0,
+                   order=3):
+    """Compute the 2-D SSM of the ``mode``-th mode, to arbitrary polynomial ``order``.
+
+    Solves the autonomous invariance equation order by order in the first-order
+    state space.  At each multi-index ``m`` the homological equation
+
+        (Lambda_m B - A) w_m + B [v1 R1_m + v2 R2_m] = G_m - known cross-terms
+
+    is solved: near-resonant indices ``(k+1, k)`` carry the reduced-dynamics
+    coefficients ``gamma_{2k+1} = R1_{(k+1,k)}`` (extracted by the left-
+    eigenvector / adjoint projection ``u1^* .``), all others give ``w_m``
+    directly.  The backbone reads ``d(ln p1)/dt = lambda1 + sum_k gamma_{2k+1}
+    |p1|^{2k}``; ``k=1`` softens/hardens, ``k=2`` (order >= 5) lets a softening
+    backbone turn back and harden.
 
     Parameters
     ----------
     M, C, K : ndarray, shape (n, n)
         Mass, (viscous) damping and stiffness matrices.
     bilinear, trilinear : callable or None
-        Symmetric multilinear forms of the nonlinearity such that
-        ``f_nl(x) = bilinear(x, x) + trilinear(x, x, x)``.  Either may be
-        ``None`` (absent degree).  See :func:`nltopt.nonlinearity.multilinear_forms`.
-    mode : int
-        Index (ascending frequency) of the master mode.
-    ref_dof : int
-        Default DOF for physical-amplitude read-out.
+        Symmetric multilinear forms with ``f_nl(x) = bilinear(x,x) +
+        trilinear(x,x,x)``; either may be ``None``.
+    mode, ref_dof : int
+    order : int
+        Highest polynomial order retained (>= 3, made odd internally so the top
+        reduced coefficient is complete).
 
     Returns
     -------
@@ -256,95 +285,141 @@ def compute_ssm_2d(M, C, K, bilinear=None, trilinear=None, mode=0, ref_dof=0):
     C = np.asarray(C, dtype=float)
     K = np.asarray(K, dtype=float)
     n = M.shape[0]
+    order = max(3, int(order))
 
-    # --- master mode of the underlying linear conservative system ---------- #
+    # --- master mode of the underlying linear system ----------------------- #
     w2, Phi = eigh(K, M)
     omega = np.sqrt(np.clip(w2, 0.0, None))
     omega0 = float(omega[mode])
     phi = Phi[:, mode].copy()
-    phi /= np.sqrt(phi @ M @ phi)  # mass-normalize defensively
+    phi /= np.sqrt(phi @ M @ phi)
     zeta0 = float(phi @ C @ phi) / (2.0 * omega0) if omega0 > 0 else 0.0
 
     # --- first-order state-space pencil (A, B) ----------------------------- #
     Z = np.zeros((n, n))
     A = np.block([[-K, Z], [Z, M]])
     B = np.block([[C, M], [M, Z]])
-
-    # target master eigenvalue (paper eq. 8)
     lam_target = -zeta0 * omega0 + 1j * omega0 * np.sqrt(max(1.0 - zeta0 ** 2, 0.0))
 
-    lr, Vr = eig(A, B)                       # right: A v = lam B v
-    ll, Vl = eig(A.T, B.T)                    # left : A^T u = lam B^T u
-
+    lr, Vr = eig(A, B)
+    ll, Vl = eig(A.T, B.T)
     i1 = int(np.argmin(np.abs(lr - lam_target)))
     lam1 = lr[i1]
     v1 = Vr[:, i1]
-    # rescale so the displacement part of v1 equals phi (fixes the p-scaling)
-    alpha = (phi @ v1[:n]) / (phi @ phi)
-    v1 = v1 / alpha
+    v1 = v1 / ((phi @ v1[:n]) / (phi @ phi))          # scale so v1[:n] == phi
     v2 = np.conjugate(v1)
     lam2 = np.conjugate(lam1)
-
-    # left eigenvector paired with v1: eigenvalue conj(lam1); normalize u1^* B v1 = 1
     j1 = int(np.argmin(np.abs(ll - np.conjugate(lam1))))
     u1 = Vl[:, j1]
-    u1 = u1 / np.conjugate(np.vdot(u1, B @ v1))
-    # (np.vdot(u1, x) = u1^* . x)
+    u1 = u1 / np.conjugate(np.vdot(u1, B @ v1))        # u1^* B v1 = 1
 
-    def solve_nonres(Lam_m, G):
-        return solve(Lam_m * B - A, G)
+    Bv1 = B @ v1
+    ez = [(1, 0), (0, 1)]
 
-    # order 1: the master eigenvector itself (its conjugate partner w_(0,1)=v2
-    # is generated on demand).  Needed for the physical-amplitude read-out.
-    w = {(1, 0): v1}
+    def bil(a, b):
+        return bilinear(a, b) if bilinear is not None else np.zeros(n)
 
-    # ----- order 2 (only if a quadratic part exists) ----------------------- #
-    if bilinear is not None:
-        B2pp = bilinear(phi, phi)
-        w20 = solve_nonres(2 * lam1, _lift(-B2pp, n))
-        w11 = solve_nonres(lam1 + lam2, _lift(-2.0 * B2pp, n))
-        w[(2, 0)] = w20
-        w[(1, 1)] = w11
-        w20x, w11x = w20[:n], w11[:n]
-    else:
-        w20x = w11x = np.zeros(n)
+    def tri(a, b, c):
+        return trilinear(a, b, c) if trilinear is not None else np.zeros(n)
 
-    # ----- order 3 --------------------------------------------------------- #
-    T3ppp = trilinear(phi, phi, phi) if trilinear is not None else np.zeros(n)
+    # working coefficient tables (both conjugate partners kept during assembly)
+    w = {(1, 0): v1, (0, 1): v2}
+    R1 = {(1, 0): lam1}          # reduced dynamics of p1
+    R2 = {(0, 1): lam2}          # reduced dynamics of p2 (= conjugate system)
 
-    # (3,0) non-resonant
-    q30 = 2.0 * bilinear(phi, w20x) if bilinear is not None else 0.0
-    G30 = _lift(-(q30 + T3ppp), n)
-    w[(3, 0)] = solve_nonres(3 * lam1, G30)
+    def wx(mi):
+        return w[mi][:n]
 
-    # (2,1) near-resonant -> carries gamma
-    q21 = (2.0 * bilinear(phi, w11x) + 2.0 * bilinear(phi, w20x)
-           if bilinear is not None else 0.0)
-    G21 = _lift(-(q21 + 3.0 * T3ppp), n)
+    def forcing(m):
+        """State-space nonlinear forcing ``G_m = [-(Q+C)(x)|_m ; 0]``."""
+        m1, m2 = m
+        fx = np.zeros(n, dtype=complex)
+        if bilinear is not None:                       # quadratic convolution
+            for a1 in range(m1 + 1):
+                for a2 in range(m2 + 1):
+                    if a1 + a2 == 0:
+                        continue
+                    b1, b2 = m1 - a1, m2 - a2
+                    if b1 + b2 == 0:
+                        continue
+                    fx += bil(wx((a1, a2)), wx((b1, b2)))
+        if trilinear is not None:                      # cubic convolution
+            for a1 in range(m1 + 1):
+                for a2 in range(m2 + 1):
+                    if a1 + a2 == 0:
+                        continue
+                    for b1 in range(m1 - a1 + 1):
+                        for b2 in range(m2 - a2 + 1):
+                            if b1 + b2 == 0:
+                                continue
+                            c1, c2 = m1 - a1 - b1, m2 - a2 - b2
+                            if c1 < 0 or c2 < 0 or c1 + c2 == 0:
+                                continue
+                            fx += tri(wx((a1, a2)), wx((b1, b2)), wx((c1, c2)))
+        return _lift(-fx, n)
 
-    gamma = np.vdot(u1, G21)                          # u1^* G21  (u1^* B v1 = 1)
-    Lm = lam1 * B - A                                 # singular (rank 2n-1)
-    rhs = G21 - (B @ v1) * gamma
-    w21, *_ = lstsq(Lm, rhs, rcond=None)
-    # remove the null-space component along v1 so u1^* B w21 = 0
-    w21 = w21 - np.vdot(u1, B @ w21) * v1
-    w[(2, 1)] = w21
+    def known_lhs(m):
+        """``B * sum a_j w_a R^j_b`` over already-known nonlinear reduced terms."""
+        m1, m2 = m
+        tot = np.zeros(2 * n, dtype=complex)
+        for table, j in ((R1, 1), (R2, 2)):
+            ej = ez[j - 1]
+            for b, Rval in table.items():
+                if b[0] + b[1] < 3 or Rval == 0:       # only nonlinear R terms
+                    continue
+                a = (m1 + ej[0] - b[0], m2 + ej[1] - b[1])
+                if a[0] < 0 or a[1] < 0 or a not in w:
+                    continue
+                aj = a[j - 1]
+                if aj:
+                    tot += aj * w[a] * Rval
+        return B @ tot
 
+    for q in range(2, order + 1):
+        for m1 in range(q, (q - 1) // 2, -1):          # only m1 >= m2 (>, and == when q even)
+            m2 = q - m1
+            if m1 < m2:
+                continue
+            m = (m1, m2)
+            RHS = forcing(m) - known_lhs(m)
+            Lam = m1 * lam1 + m2 * lam2
+            if m1 - m2 == 1:                            # near-resonant -> reduced dyn.
+                R1m = np.vdot(u1, RHS)                  # u1^* RHS
+                R1[m] = R1m
+                rhs = RHS - Bv1 * R1m
+                if abs(Lam - lam1) < 1e-9:              # exact resonance (undamped)
+                    wm, *_ = lstsq(Lam * B - A, rhs, rcond=None)
+                    wm = wm - np.vdot(u1, B @ wm) * v1
+                else:
+                    wm = solve(Lam * B - A, rhs)
+                w[m] = wm
+            else:
+                w[m] = solve(Lam * B - A, RHS)
+            if m1 != m2:                                # conjugate partner
+                w[(m2, m1)] = np.conjugate(w[m])
+                if m in R1:
+                    R2[(m2, m1)] = np.conjugate(R1[m])
+
+    red = {kk: R1[(kk + 1, kk)] for kk in range(1, (order + 1) // 2)
+           if (kk + 1, kk) in R1}
+    gamma = red.get(1, 0j)
+    w_canon = {mi: wm for mi, wm in w.items() if mi[0] >= mi[1]}
     return SSM2D(omega0=omega0, zeta0=zeta0, lambda1=lam1, gamma=gamma,
-                 phi=phi, n=n, ref_dof=ref_dof, w=w)
+                 phi=phi, n=n, ref_dof=ref_dof, w=w_canon, red=red, order=order)
 
 
 # --------------------------------------------------------------------------- #
 # Convenience: build straight from a PyHB MechanicalSystem
 # --------------------------------------------------------------------------- #
-def ssm_from_system(system, mode=0, ref_dof=0):
-    """Build the cubic-order 2-D SSM directly from a :class:`pyhb.MechanicalSystem`.
+def ssm_from_system(system, mode=0, ref_dof=0, order=3):
+    """Build the 2-D SSM (to polynomial ``order``) from a :class:`pyhb.MechanicalSystem`.
 
     The nonlinearity is read off the system's elements via
     :func:`nltopt.nonlinearity.multilinear_forms`, guaranteeing consistency with
-    PyHB's harmonic-balance / EPMC model.
+    PyHB's harmonic-balance / EPMC model.  ``order=5`` captures softening-to-
+    hardening backbones; ``order=3`` is the (monotone) cubic default.
     """
     bilinear, trilinear = multilinear_forms(system)
     return compute_ssm_2d(system.M, system.D, system.K,
                           bilinear=bilinear, trilinear=trilinear,
-                          mode=mode, ref_dof=ref_dof)
+                          mode=mode, ref_dof=ref_dof, order=order)

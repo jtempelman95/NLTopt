@@ -103,6 +103,34 @@ def test_duffing_analytic_backbone():
         assert kappa_num == pytest.approx(kappa_exact, rel=2e-2)
 
 
+def test_duffing_fifth_order_coefficient():
+    """Order-5 SSM reproduces the Duffing A^4 backbone coefficient (-21/256).
+
+    ``Omega = omega0 (1 + 3/8 eps A^2 - 21/256 eps^2 A^4 + ...)`` for
+    ``x'' + omega0^2 x + eps x^3 = 0``; here omega0=eps=1.
+    """
+    sys = MechanicalSystem([[1.0]], [[0.0]], [[1.0]], [CubicSpring([1.0], 1.0)])
+    ssm5 = ssm_from_system(sys, order=5)
+    rho = np.linspace(1e-4, 0.3, 200)
+    bb = ssm5.backbone(rho)
+    c = np.polyfit(bb["amplitude"] ** 2, bb["omega"] - 1.0, 2)  # c0*(A^2)^2 + c1*A^2 + c2
+    assert c[1] == pytest.approx(0.375, rel=2e-3)       # A^2: exact 3/8
+    assert c[0] == pytest.approx(-21.0 / 256.0, rel=0.05)  # A^4: exact -21/256
+
+    # order 5 is strictly more accurate than order 3 at moderate amplitude
+    from scipy.special import ellipk
+    A = 0.4
+    om_exact = (np.pi / 2) * np.sqrt(1 + A ** 2) / ellipk(A ** 2 / (2 * (1 + A ** 2)))
+
+    def om_at(order):
+        s = ssm_from_system(sys, order=order)
+        rho = np.linspace(1e-4, 0.7, 400)
+        bb = s.backbone(rho)
+        return np.interp(A, bb["amplitude"], bb["omega"])
+
+    assert abs(om_at(5) - om_exact) < abs(om_at(3) - om_exact) / 5.0
+
+
 def test_duffing_matches_epmc():
     """SSM and EPMC agree on the small-amplitude Duffing backbone slope."""
     sys = MechanicalSystem([[1.0]], [[0.0]], [[1.0]], [CubicSpring([1.0], 1.0)])

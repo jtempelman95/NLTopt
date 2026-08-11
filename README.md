@@ -72,11 +72,13 @@ bb = ssm.backbone(np.linspace(1e-5, 0.03, 200))   # {omega, amplitude, damping, 
 - `nltopt/nonlinearity.py` — extracts the **symmetric multilinear forms**
   (`B2`, `T3`) of a system's nonlinearity by polarization, so the SSM and PyHB's
   harmonic-balance/EPMC model consume *identical* nonlinearities.
-- `nltopt/ssm.py` — the cubic-order 2-D SSM: solves the homological equations in
-  the first-order state space, extracts the reduced cubic coefficient `γ` via the
-  left-eigenvector (adjoint) solvability condition, and reads the backbone back
-  in physical coordinates (fundamental & RMS amplitude read-outs, amplitude→`ρ`
-  inversion for backbone targets).
+- `nltopt/ssm.py` — the 2-D SSM to **arbitrary polynomial order** (`ssm_from_system(
+  …, order=k)`): solves the homological equations order-by-order in the first-order
+  state space, extracts the reduced coefficients `γ₃, γ₅, …` via the left-eigenvector
+  (adjoint) solvability condition, and reads the backbone back in physical coordinates
+  (fundamental & RMS read-outs, amplitude→`ρ` inversion). Order 3 gives a monotone
+  (soften **or** harden) parabola; **order ≥ 5 captures soften-to-harden backbones**
+  (`γ₅` supplies the hardening that turns a softening backbone around).
 - `nltopt/beam.py` — a **curved (shallow-arch) von Kármán beam**: an initial shape
   `w0` introduces the *quadratic* nonlinearity that lets the backbone soften
   (`w0=0` recovers the straight hardening beam exactly). The model behind the
@@ -95,6 +97,8 @@ bb = ssm.backbone(np.linspace(1e-5, 0.03, 200))   # {omega, amplitude, damping, 
 | **Backbone target optimization** | the whole design loop | hits target |
 | Coupled oscillators vs **paper eigenvalue** | damped 2-DOF benchmark | `λ=−0.0191±i0.6177` exact |
 | **Backbone-sensitivity prediction** | `∂Ω/∂μ` predicts perturbation | matches to `~1e-5` |
+| Duffing **order-5** `A⁴` coefficient | arbitrary-order machinery | `−21/256` (5% ) |
+| **Soften-to-harden** needs order ≥ 5 | quintic turn-back | order-7 turns back |
 
 Examples reproduce the backbone figures:
 
@@ -121,9 +125,11 @@ pytest                                    # the verification suite
 - [x] **(a3)** **backbone-sensitivity validation** replicating Pozzi et al. (2025) Fig. 2:
   two coupled oscillators (Eq. 33; our SSM reproduces the paper's eigenvalue
   `λ=−0.0191±i0.6177` exactly), with `∂Ω/∂μ` for `μ∈{m,k,k₂,k₃}` used to predict the
-  perturbed backbones — predictions match the recomputed backbones to `~1e-5`. See
-  `nltopt/benchmarks.py`, `examples/coupled_osc_sensitivity.py`. (FD sensitivity through
-  the SSM; the analytic adjoint **(c)** computes the same at cost independent of #params.)
+  perturbed backbones — predictions match the recomputed backbones to `~1e-5`, over the
+  **soften-to-harden** "backward-C" backbone (captured with an **order-7** SSM; the cubic
+  SSM can't turn back). See `nltopt/benchmarks.py`, `examples/coupled_osc_sensitivity.py`.
+  (FD sensitivity through the SSM; the analytic adjoint **(c)** computes the same at cost
+  independent of #params.)
 - [ ] **(b)** *laminated* von Kármán beam: `EI(θ)`, `EA(θ)` from a rotated
   laminate (the 1-D analogue of wavetopo's `D_f(θ)`) — makes the backbone a
   function of the fiber angle.
