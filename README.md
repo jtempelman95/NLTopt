@@ -93,6 +93,8 @@ bb = ssm.backbone(np.linspace(1e-5, 0.03, 200))   # {omega, amplitude, damping, 
 | Curved-beam straight limit vs `VonKarmanBeamForce` | quadratic model reduces correctly | exact |
 | Initial curvature → **softening** | the curvature-quadratic mechanism | `γ` flips sign |
 | **Backbone target optimization** | the whole design loop | hits target |
+| Coupled oscillators vs **paper eigenvalue** | damped 2-DOF benchmark | `λ=−0.0191±i0.6177` exact |
+| **Backbone-sensitivity prediction** | `∂Ω/∂μ` predicts perturbation | matches to `~1e-5` |
 
 Examples reproduce the backbone figures:
 
@@ -102,6 +104,7 @@ pip install -e .                 # NLTopt
 python examples/duffing_ssm.py           # SSM vs analytic vs EPMC
 python examples/vonkarman_beam_ssm.py    # clamped-clamped beam, SSM vs EPMC
 python examples/beam_backbone_opt.py     # Fig. 3 replication: optimize to a softening backbone
+python examples/coupled_osc_sensitivity.py  # Fig. 2 replication: backbone-sensitivity validation
 pytest                                    # the verification suite
 ```
 
@@ -115,6 +118,12 @@ pytest                                    # the verification suite
   the full optimization loop end-to-end; it uses FD-through-SSM gradients (fine for a
   handful of variables) — the analytic adjoint **(c)** is what makes it scale to a
   fiber *field*.
+- [x] **(a3)** **backbone-sensitivity validation** replicating Pozzi et al. (2025) Fig. 2:
+  two coupled oscillators (Eq. 33; our SSM reproduces the paper's eigenvalue
+  `λ=−0.0191±i0.6177` exactly), with `∂Ω/∂μ` for `μ∈{m,k,k₂,k₃}` used to predict the
+  perturbed backbones — predictions match the recomputed backbones to `~1e-5`. See
+  `nltopt/benchmarks.py`, `examples/coupled_osc_sensitivity.py`. (FD sensitivity through
+  the SSM; the analytic adjoint **(c)** computes the same at cost independent of #params.)
 - [ ] **(b)** *laminated* von Kármán beam: `EI(θ)`, `EA(θ)` from a rotated
   laminate (the 1-D analogue of wavetopo's `D_f(θ)`) — makes the backbone a
   function of the fiber angle.
@@ -131,8 +140,8 @@ pytest                                    # the verification suite
 ## Layout
 
 ```
-nltopt/          package: nonlinearity.py, ssm.py, beam.py
-tests/           verification suite (analytic + EPMC cross-checks, optimization)
-examples/        runnable backbone + optimization demos
+nltopt/          package: nonlinearity.py, ssm.py, beam.py, benchmarks.py
+tests/           verification suite (analytic + EPMC cross-checks, optimization, sensitivity)
+examples/        runnable backbone + optimization + sensitivity demos
 docs/literature/ the SSM-optimization papers this program builds on (untracked)
 ```
