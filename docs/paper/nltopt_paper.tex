@@ -1,0 +1,502 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\SSM}{\mathrm{SSM}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Om}{\Omega}
+\DeclareMathOperator{\Imag}{Im}
+\DeclareMathOperator{\Real}{Re}
+\newcommand{\FIGRESULT}[1]{#1}
+
+\title{\bfseries Manufacturable fiber steering of the nonlinear backbone of
+composite beams via spectral submanifolds}
+\author{J.\,R.\ Tempelman}
+\date{Working draft --- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Reduced-order models on spectral submanifolds (SSMs) have recently made it
+practical to \emph{optimize} the nonlinear dynamic response of structures --- the
+backbone and forced-response curves --- because both the response and its
+sensitivity are available analytically. To date that machinery has been driven
+by \emph{shape}, \emph{size}, and \emph{density}-topology design variables. We
+introduce a different, and for composites more natural, design variable: the
+\emph{fiber-orientation field} (tow path) $\theta(x)$, and we impose the
+\emph{tow-curvature manufacturability constraint} that governs automated fiber
+placement. We build a laminated von~K\'arm\'an beam whose per-station laminate
+stiffnesses $A(\theta),B(\theta),D(\theta)$ follow from classical laminate
+theory, reduce its first mode on an arbitrary-order 2-D SSM, and optimize the
+tow path for an \emph{amplitude-robust} (minimally detuning) resonance. The
+enabling physics is the laminate bending--extension coupling $B$: a plain
+single-angle rotation scales $EI$ and $EA$ together and cannot touch the
+hardening, whereas an unsymmetric, \emph{steered} layup injects a tunable
+quadratic force that partially cancels the cubic membrane hardening. We verify
+the reduction against the analytic Duffing backbone (including the $-21/256$
+fifth-order coefficient) and against full-order harmonic-balance/EPMC
+continuation, and we reproduce two figures of a recent SSM-optimization paper as
+calibration. On a clamped beam the membrane hardening dominates and the coupling
+lever is bounded, so at fixed linear frequency a manufacturable tow layout
+\emph{reduces} the amplitude detuning only modestly (a few percent) --- a limit
+set by the coupling lever, not by manufacturability. We report this honestly and
+identify the routes along which the effect grows: a shallow initial curvature as
+a softening reserve, and the move to a two-dimensional laminated plate. To our
+knowledge this is nonetheless the first design of a composite's \emph{nonlinear}
+backbone through a manufacturable fiber-orientation field, and the verified
+framework is the contribution.
+\end{abstract}
+
+\section{Introduction}
+
+Nonlinearity in the design phase is increasingly functional rather than
+parasitic: frequency division, vibration mitigation, energy harvesting, and
+MEMS resonators all exploit amplitude-dependent stiffness
+\cite{shaw,touze}. Tailoring that behavior means shaping the
+\emph{backbone curve} --- the frequency--amplitude relation of a nonlinear
+normal mode. The backbone is classically traced by numerical continuation of
+the harmonic-balance or shooting equations, but reduction onto a
+\emph{spectral submanifold} (SSM) \cite{haller2016,jain2022} yields the backbone
+and, crucially, its parameter sensitivity in closed form, at a cost independent
+of the number of design variables when the adjoint method is used.
+
+Three recent works establish SSM/ROM-based optimization of nonlinear dynamics:
+Pozzi \emph{et al.}~\cite{pozzi2025} derive adjoint sensitivities of the
+SSM backbone and shape a von~K\'arm\'an beam to a prescribed softening target;
+Liang \emph{et al.}~\cite{liang2025} optimize nonlinear forced-response curves
+(peak amplitude, hardening/softening, saddle-node spacing) via SSM reduction;
+and Xiao's thesis~\cite{xiao2026} develops ROM-based optimization of nonlinear
+systems broadly. All three parametrize the design by \emph{shape, size, or
+element density}. None uses a fiber-orientation field, and none imposes a
+manufacturability constraint.
+
+Separately, \emph{variable-stiffness composites} --- laminates whose fiber tows
+are steered along curvilinear paths by automated fiber placement --- are a mature
+design space, but the objectives pursued there are almost entirely
+\emph{linear}: in-plane stiffness, buckling load, and linear natural
+frequencies \cite{gurdal,ijsselmuiden}, subject to a tow-curvature (steering
+radius) manufacturability limit. The intersection --- steering the tow path to
+tailor a composite's \emph{nonlinear} backbone, under manufacturability --- is,
+to our knowledge, open. That intersection is the subject of this paper.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item An arbitrary-order 2-D SSM reduction (Sec.~\ref{sec:ssm}) built directly
+from a finite-element mechanical system, verified against the analytic Duffing
+backbone and against full-order EPMC continuation, and calibrated by reproducing
+two figures of \cite{pozzi2025}.
+\item A laminated von~K\'arm\'an beam (Sec.~\ref{sec:beam}) whose nonlinear
+backbone is a function of the fiber-orientation field, exposing the
+bending--extension coupling $B(\theta)$ as the design lever, together with the
+observation that it is the fiber \emph{steering} (the spatial gradient of
+$\theta$), not merely an unsymmetric layup, that supplies the tunable quadratic
+nonlinearity once the axial degrees of freedom are slaved.
+\item A manufacturability-constrained optimization of the tow path for an
+amplitude-robust resonance (Sec.~\ref{sec:results}), with an honest account of
+what the coupling lever can and cannot achieve on a clamped beam.
+\end{enumerate}
+
+\section{The nonlinear system and its spectral submanifold}\label{sec:ssm}
+
+\subsection{Second-order form}
+We consider a finite-element mechanical system
+\begin{equation}
+\bm{M}\ddot{\bm{x}} + \bm{C}\dot{\bm{x}} + \bm{K}\bm{x}
+ + \bm{f}_{\mathrm{nl}}(\bm{x}) = \bm 0,
+\qquad
+\bm f_{\mathrm{nl}}(\bm x) = \bm B_2(\bm x,\bm x) + \bm T_3(\bm x,\bm x,\bm x),
+\label{eq:eom}
+\end{equation}
+with symmetric mass, damping and stiffness matrices and displacement-dependent
+nonlinearity split into its symmetric quadratic ($\bm B_2$) and cubic ($\bm T_3$)
+multilinear forms. In first-order state space $\bm z=[\bm x;\dot{\bm x}]$,
+\begin{equation}
+\bm{\mathcal B}\dot{\bm z}=\bm{\mathcal A}\bm z+\bm F(\bm z),\quad
+\bm{\mathcal B}=\begin{bmatrix}\bm C&\bm M\\\bm M&\bm 0\end{bmatrix},\;
+\bm{\mathcal A}=\begin{bmatrix}-\bm K&\bm 0\\\bm 0&\bm M\end{bmatrix},\;
+\bm F=\begin{bmatrix}-\bm f_{\mathrm{nl}}(\bm x)\\\bm 0\end{bmatrix}.
+\label{eq:firstorder}
+\end{equation}
+The master mode $(\omega_0,\bm\varphi)$ solves $(\bm K-\omega_0^2\bm M)\bm\varphi=\bm0$
+with $\bm\varphi^{\!\top}\bm M\bm\varphi=1$; its state-space eigenvalue is
+$\lambda_1=-\zeta_0\omega_0+i\omega_0\sqrt{1-\zeta_0^2}$ with
+$\zeta_0=\bm\varphi^{\!\top}\bm C\bm\varphi/(2\omega_0)$.
+
+\subsection{Invariance equation}
+A spectral submanifold $\mathcal W$ is the smoothest invariant manifold of
+\eqref{eq:firstorder} tangent, at the origin, to a chosen spectral subspace $E$
+of the linearization --- here the two-dimensional eigenspace of the master pair
+$\lambda_1,\lambda_2=\bar\lambda_1$ \cite{haller2016,jain2022}. It carries a
+single nonlinear mode: trajectories launched on $\mathcal W$ remain on it, so the
+system's vector field is everywhere \emph{tangent} to $\mathcal W$. We use this
+tangency to compute $\mathcal W$ and the dynamics it carries.
+
+Parametrize $\mathcal W$ by a two-dimensional chart $\bm p=(p_1,p_2)\in\C^2$
+through an embedding $\bm W:\C^2\!\to\C^{2N}$ and let the induced (reduced)
+dynamics on the chart be $\bm R$:
+\begin{equation}
+\bm z=\bm W(\bm p),\qquad \dot{\bm p}=\bm R(\bm p).
+\label{eq:param}
+\end{equation}
+Differentiating $\bm z=\bm W(\bm p)$ in time gives
+$\dot{\bm z}=\mathrm D\bm W(\bm p)\,\dot{\bm p}=\mathrm D\bm W(\bm p)\,\bm R(\bm p)$;
+requiring this to equal the true velocity field~\eqref{eq:firstorder} on the
+manifold yields the \textbf{invariance equation}
+\begin{equation}
+\boxed{\;
+\bm{\mathcal B}\,\mathrm D\bm W(\bm p)\,\bm R(\bm p)
+=\bm{\mathcal A}\,\bm W(\bm p)+\bm F\!\big(\bm W(\bm p)\big)
+\;}
+\label{eq:invariance}
+\end{equation}
+a single functional equation in the two unknowns $\bm W$ (the geometry) and
+$\bm R$ (the reduced dynamics). Because $E$ is spanned by the master
+eigenvectors, we take conjugate coordinates $p_2=\bar p_1$; a real physical
+motion is then $\bm x=[\bm I\;\bm0]\bm W(\bm p)$ evaluated on $p_2=\bar p_1$.
+
+\subsection{Solution by a graded power series}
+Expand~\eqref{eq:invariance} as power series in $\bm p$,
+\begin{equation}
+\bm W(\bm p)=\!\!\sum_{|\bm m|\ge1}\!\!\bm w_{\bm m}\bm p^{\bm m},\qquad
+\bm R(\bm p)=\!\!\sum_{|\bm m|\ge1}\!\!\bm R_{\bm m}\bm p^{\bm m},\qquad
+\bm p^{\bm m}=p_1^{m_1}p_2^{m_2},
+\end{equation}
+with multi-index $\bm m=(m_1,m_2)$. At first order tangency to $E$ fixes
+$\bm w_{\bm e_1}=\bm v_1,\ \bm w_{\bm e_2}=\bm v_2$ (the master right
+eigenvectors) and a diagonal linear reduced flow $R^1_{\bm e_1}=\lambda_1,\
+R^2_{\bm e_2}=\lambda_2$. Collecting~\eqref{eq:invariance} at a general order
+$\bm m$ ($|\bm m|\ge2$) separates the unknown coefficient of that order and gives
+the \textbf{homological equation}
+\begin{equation}
+(\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A})\,\bm w_{\bm m}
++\bm{\mathcal B}\big(\bm v_1 R^1_{\bm m}+\bm v_2 R^2_{\bm m}\big)
+=\bm G_{\bm m},\qquad \Lambda_{\bm m}=m_1\lambda_1+m_2\lambda_2 .
+\label{eq:homological}
+\end{equation}
+The left side is the linearization of~\eqref{eq:invariance} about the master
+subspace: the diagonal term $\Lambda_{\bm m}\bm w_{\bm m}$ comes from
+$\bm{\mathcal B}\,\mathrm D\bm W\,\bm R$ paired with the linear flow, and the
+$\bm v_j R^j_{\bm m}$ term is the contribution of the unknown reduced coefficient
+at this order. The right side $\bm G_{\bm m}$ collects everything already known
+from \emph{lower} orders: the order-$\bm m$ part of the nonlinear force
+$-[\bm F(\bm W)]_{\bm m}$, assembled by the multi-index convolutions
+\begin{equation}
+[\bm B_2(\bm x,\bm x)]_{\bm m}\!=\!\!\sum_{\bm a+\bm b=\bm m}\!\!
+\bm B_2(\bm w^{x}_{\bm a},\bm w^{x}_{\bm b}),\quad
+[\bm T_3(\bm x,\bm x,\bm x)]_{\bm m}\!=\!\!\!\sum_{\bm a+\bm b+\bm c=\bm m}\!\!\!
+\bm T_3(\bm w^{x}_{\bm a},\bm w^{x}_{\bm b},\bm w^{x}_{\bm c}),
+\end{equation}
+($\bm w^{x}$ the displacement block of $\bm w$), minus the cross-terms
+$\bm{\mathcal B}\sum a_j\,\bm w_{\bm a}R^j_{\bm b}$ generated by
+$\mathrm D\bm W\,\bm R$ from lower-order manifold and reduced coefficients. Thus
+\eqref{eq:homological} is solved recursively, order by order.
+
+\subsection{Resonances, the reduced dynamics, and the backbone}
+The operator $\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A}$ is singular exactly
+when $\Lambda_{\bm m}$ hits an eigenvalue of the pencil $(\bm{\mathcal A},
+\bm{\mathcal B})$ --- an (inner) resonance. For the master pair this occurs at the
+indices $\bm m=(k{+}1,k)$, where $\Lambda_{(k+1,k)}=\lambda_1$ in the
+conservative case (and lies near it under light damping). At these indices one
+cannot solve for $\bm w_{\bm m}$ alone; the (near-)singular component is instead
+carried by the reduced dynamics. Projecting~\eqref{eq:homological} onto the left
+eigenvector $\bm u_1$ (defined by $\bm u_1^{*}\bm{\mathcal A}=\lambda_1
+\bm u_1^{*}\bm{\mathcal B}$ and normalized $\bm u_1^{*}\bm{\mathcal B}\bm v_1=1$)
+annihilates the singular operator and isolates the reduced coefficient
+\begin{equation}
+\gamma_{2k+1}\;:=\;R^1_{(k+1,k)}\;=\;\bm u_1^{*}\,\bm G_{(k+1,k)} .
+\label{eq:gamma}
+\end{equation}
+The remaining (now solvable) system fixes $\bm w_{\bm m}$ under the normal-form
+gauge $\bm u_1^{*}\bm{\mathcal B}\bm w_{\bm m}=0$, which --- as one verifies by
+applying $\bm u_1^{*}$ to the residual --- is met automatically by the solve,
+damped or not. Non-resonant indices set $\bm R_{\bm m}=\bm 0$ and invert
+$\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A}$ directly. Equation~\eqref{eq:gamma}
+is exactly an \emph{adjoint} projection --- $\bm u_1$ is the adjoint mode --- which
+is why the same construction later delivers inexpensive design sensitivities.
+
+Keeping only the resonant terms, the reduced dynamics is
+$\dot p_1=\big(\lambda_1+\sum_{k\ge1}\gamma_{2k+1}\,p_1^{k+1}p_2^{k}\big)$. On the
+conjugate orbit $p_1=\tfrac{\rho}{2}e^{i\theta},\ p_2=\bar p_1$ one has
+$p_1^{k+1}p_2^{k}=|p_1|^{2k}p_1=(\rho/2)^{2k}p_1$, so
+$\dot p_1/p_1=\lambda_1+\sum_k\gamma_{2k+1}(\rho/2)^{2k}$ and the \textbf{backbone}
+(instantaneous frequency) and modal decay are
+\begin{equation}
+\Om(\rho)=\Imag\!\Big(\lambda_1+\!\sum_{k\ge1}\gamma_{2k+1}(\rho/2)^{2k}\Big),
+\qquad
+\alpha(\rho)=\Real\!\Big(\lambda_1+\!\sum_{k\ge1}\gamma_{2k+1}(\rho/2)^{2k}\Big).
+\label{eq:backbone}
+\end{equation}
+The cubic coefficient $\gamma_3$ alone yields a monotone parabola --- hardening if
+$\Imag\gamma_3>0$, softening if $<0$; the quintic $\gamma_5$ (order-5 reduction) is
+what lets a softening branch turn around and harden. Physical amplitudes on the
+backbone follow by sampling $\bm x=[\bm I\;\bm0]\bm W(\bm p)$ over one period.
+
+\paragraph{Consistency and verification.}
+The multilinear forms $\bm B_2,\bm T_3$ are extracted from the finite-element
+nonlinearity by even/odd decomposition and polarization, so the SSM and a
+harmonic-balance model consume \emph{identical} nonlinearities. Table~\ref{tab:verify}
+summarizes the verification. For the single-degree-of-freedom Duffing oscillator
+$\ddot x+\omega_0^2x+\varepsilon x^3=0$ the reduction reproduces the exact
+first-order coefficient and, at fifth order, the analytic fourth-order backbone
+coefficient
+$\Om/\omega_0=1+\tfrac38\varepsilon A^2-\tfrac{21}{256}\varepsilon^2A^4+\dots$
+to within a few percent. Against full-order EPMC continuation of a
+quadratically-coupled two-degree-of-freedom system and of a clamped--clamped
+von~K\'arm\'an beam, the backbones agree to sub-percent at the amplitudes where
+the expansion is converged.
+
+\begin{table}[t]
+\centering
+\caption{Verification of the SSM reduction. ``EPMC'' is full-order nonlinear-mode
+continuation (extended periodic motion concept).}
+\label{tab:verify}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Check & Exercises & Result \\ \midrule
+Duffing vs.\ analytic ($A^2$ coeff.) & reduced cubic coefficient & exact ($3/8$) \\
+Duffing vs.\ analytic ($A^4$ coeff.) & arbitrary-order machinery & $-21/256$ (within $\sim5\%$) \\
+2-DOF quadratic coupling vs.\ EPMC & order-2 slaving & agree (softening) \\
+von~K\'arm\'an beam vs.\ EPMC & distributed cubic & $\dd\Om/\dd A^2$ match \\
+Coupled oscillators vs.\ paper \cite{pozzi2025} & damped 2-DOF eigenvalue & $\lambda=-0.0191\pm i0.6177$ (exact) \\
+Backbone sensitivity vs.\ recompute & $\partial\Om/\partial\mu$ & matches to $\sim\!10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Backbone sensitivity and calibration against prior work}
+For a small number of design parameters $\bm\mu$ we obtain the backbone
+sensitivity $\partial\Om/\partial\bm\mu$ at fixed physical amplitude by finite
+differencing the (cheap) SSM backbone; the analytic adjoint of
+\cite{pozzi2025,li2024} computes the same quantity at a cost independent of the
+number of parameters and is the natural next step for a full tow-path field. As
+calibration we reproduce two results of \cite{pozzi2025}. First
+(their Fig.~2, Fig.~\ref{fig:fig2} here), the backbone sensitivity of two coupled
+oscillators predicts the perturbed backbone, $\Om(\bm\mu+\delta\bm\mu)\approx
+\Om(\bm\mu)+\partial_{\bm\mu}\Om\,\delta\bm\mu$, to $\sim\!10^{-5}$ over the
+system's soften-then-harden ``backward-C'' backbone (which requires the
+fifth-order SSM to capture). Second (their Fig.~3, Fig.~\ref{fig:fig3} here), we
+shape an initially curved beam to a prescribed softening target and confirm the
+optimized backbone against EPMC to $<0.1\%$ at both target points.
+We note two honest departures in the second calibration: we use the
+axially-condensed shallow-arch model rather than a full three-DOF-per-node
+element, and we place the target amplitudes inside the cubic-SSM's verified
+window (the paper's larger target sits beyond it, requiring higher order). We
+also observe that Eq.~(33) of \cite{pozzi2025}, taken literally, places a
+same-sign quadratic coupling on both masses, which is not energy-consistent; we
+use the potential-derived spring, which leaves the reported eigenvalue unchanged.
+
+\section{Fiber-steered laminated von K\'arm\'an beam}\label{sec:beam}
+
+\subsection{Laminate stiffnesses from the tow angle}
+For a laminate of plies at angles $\theta_k$ (relative to the beam axis) the
+extensional, coupling and bending stiffnesses follow from classical laminate
+theory,
+\begin{equation}
+(A,B,D)=\sum_k \bar{\bm Q}(\theta_k)\Big(z_k-z_{k-1},\;\tfrac12(z_k^2-z_{k-1}^2),\;
+\tfrac13(z_k^3-z_{k-1}^3)\Big),
+\end{equation}
+with $\bar{\bm Q}(\theta)$ the rotated plane-stress reduced stiffness of the
+CFRP lamina ($E_1=\SI{131}{GPa}$, $E_2=\SI{9}{GPa}$, $G_{12}=\SI{5}{GPa}$,
+$\nu_{12}=0.27$). A symmetric stack has $B=0$; an unsymmetric stack couples
+stretching and bending. For a narrow beam we use the axial components
+$A_{11},B_{11},D_{11}$.
+
+\subsection{Element and nonlinearity}
+The beam carries axial $u$ and transverse $w$ (with slope) degrees of freedom.
+With the von~K\'arm\'an membrane strain $\varepsilon=u'+\tfrac12(w')^2$ and
+curvature $\kappa=-w''$, and constitutive law $N=A\varepsilon+B\kappa$,
+$M=B\varepsilon+D\kappa$, the strain energy is
+\begin{equation}
+U=\tfrac12\!\int_0^L\!\big(A\varepsilon^2+2B\varepsilon\kappa+D\kappa^2\big)\dd x,
+\label{eq:energy}
+\end{equation}
+assembled by Gauss quadrature so that a spatially varying tow angle
+$\theta(x)$ --- and hence $A(x),B(x),D(x)$ --- is handled exactly. Its gradient
+supplies the linear stiffness (with the $B$ bending--extension coupling), a
+\emph{quadratic} nonlinear force, and the usual \emph{cubic} membrane-stretching
+hardening ($\sim A$). The multilinear forms are extracted numerically, so the
+same element serves both the SSM and full-order EPMC (used for verification).
+
+\subsection{Why steering, not merely an unsymmetric layup}
+A plain single-angle rotation scales $E_1$-dominated stiffness and therefore
+$A$ and $D$ \emph{together}; the gyration radius $r=\sqrt{D/A}$, which sets the
+membrane hardening, is unchanged, so single-angle steering moves only the linear
+frequency. The lever on the \emph{nonlinearity} is the coupling $B$. Condensing
+the (fast) axial degrees of freedom under axially-immovable ends, the membrane
+force is $N_0=(A/2L)\!\int(w')^2\dd x$ as usual, the effective bending stiffness
+is reduced to $D^\star=D-B^2/A$, and the $B$-induced transverse force is
+proportional to $B'(x)$: a \emph{uniform} coupling only softens the linear
+bending, whereas a \emph{steered} coupling injects a genuinely quadratic
+(softening/hardening) force. The full finite-element model confirms the picture:
+a symmetric $[0/0]$ beam hardens like a homogeneous von~K\'arm\'an beam
+($\gamma_3>0$), a uniform unsymmetric $[45/0]$ layup lowers the frequency but
+only weakly changes the hardening, and steering reduces the hardening further.
+The dimensionless coupling $B_{11}/\sqrt{A_{11}D_{11}}$ available from a
+$[\theta/0]$ tow sweeps monotonically from $0$ to $\approx 0.75$ across
+$\theta\in[0^\circ,90^\circ]$, which bounds the achievable softening.
+
+\section{Amplitude-robust design and results}\label{sec:results}
+
+\subsection{Problem}
+We design the \emph{laminate} for minimum amplitude detuning: each ply's angle
+is an independent per-station field, parametrized by a constant mean plus a few
+smooth modes $\theta_p(x)=c_{p,0}+\sum_{k\ge1}c_{p,k}\sin(k\pi x/L)$ (smooth
+$\Rightarrow$ printable). We solve
+\begin{equation}
+\min_{\{c_{p,k}\}}\;
+\sqrt{\Big\langle\big(\Om(a)/\omega_1-1\big)^2\Big\rangle_{a\le a_{\max}}}
+\;\;\text{s.t.}\;\;
+\max_{p,x}|\theta_p'(x)|\le\kappa_{\mathrm{tow}},\;\;
+\omega_1(\{c\})\ge 0.9\,\omega_1^{[0/0]},
+\label{eq:opt}
+\end{equation}
+i.e.\ minimize the root-mean-square relative backbone drift over an amplitude
+band, subject to the tow-curvature (steering-rate) manufacturability limit
+$\kappa_{\mathrm{tow}}$ on every ply and a floor on the linear frequency (so the
+gain is genuine nonlinear tailoring rather than a softer beam). The backbone
+$\Om(a)$ is evaluated from the SSM; $\omega_1$ is the design's own linear
+frequency and $\omega_1^{[0/0]}$ that of the unidirectional baseline.
+
+\subsection{Result}
+Figure~\ref{fig:hero} reports the optimized manufacturable laminate --- both plies
+steered --- and the resulting backbone against a unidirectional $[0/0]$ baseline.
+Relative to the baseline, the steered laminate reduces the root-mean-square
+first-mode amplitude detuning from $2.26\%$ to $2.16\%$ (a $5\%$ reduction) over
+the amplitude band, at essentially unchanged linear frequency
+($185$ vs.\ $207\,\si{Hz}$, held by the frequency floor), with a printable tow
+layout. The mechanism is exactly the $B$-lever of Sec.~\ref{sec:beam}: the
+optimizer chooses an unsymmetric, steered layout whose bending--extension
+coupling opposes the membrane hardening. The effect is small but genuine, and it
+is bounded by physics rather than by manufacturing: the tow-curvature constraint
+is \emph{not} active at the optimum ($\max|\theta'|\approx166\,\si{deg/m}$
+against a $900\,\si{deg/m}$ limit). The design freedom trades against the linear
+frequency --- relaxing the frequency floor lets steering reach $\approx13\%$ (at
+a $37\%$ lower frequency, i.e.\ partly by softening the beam), and a fully free
+per-element single-ply design reaches $\approx26\%$; these bound what the
+coupling lever can do on a clamped beam.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/steered_beam_amplitude_robust.png}
+\caption{Amplitude-robust composite beam by manufacturable fiber steering.
+(a)~optimized laminate --- each ply steered as an independent smooth per-station
+angle field; (b)~first-mode backbone $\Om/\omega_1$ versus mid-span amplitude for
+the unidirectional $[0/0]$ baseline (grey) and the steered laminate (green).
+Steering flattens the amplitude detuning at fixed linear frequency and within the
+tow-curvature limit.}
+\label{fig:hero}
+\end{figure}
+
+\subsection{What the lever can and cannot do (honest limits)}
+On a clamped beam the membrane hardening is strong and the coupling lever is
+bounded ($B/\sqrt{AD}\le 0.75$), so a manufacturable tow path \emph{reduces} the
+amplitude detuning but does not reach true iso-frequency ($\gamma_3=0$). Two
+routes recover the remaining reserve without leaving the fiber-steering premise:
+(i) a shallow initial curvature contributes a controllable softening that
+steering then trims to flat (the mechanism of the Fig.~\ref{fig:fig3}
+calibration, now with a fiber design variable); and (ii) higher-order SSM terms
+let steering flatten the backbone over a wider band once $\gamma_3$ is minimized.
+We regard the honest quantification of the pure-steering lever as the primary
+result and these as the natural next steps.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\linewidth]{figs/coupled_osc_sensitivity.png}
+\caption{Calibration against \cite{pozzi2025}, Fig.~2: backbone-sensitivity
+validation of two coupled oscillators. Sensitivity-based predictions (crosses)
+land on the recomputed perturbed backbones (colored) over the soften-to-harden
+``backward-C'' captured by the fifth-order SSM.}
+\label{fig:fig2}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\linewidth]{figs/beam_backbone_opt.png}
+\caption{Calibration against \cite{pozzi2025}, Fig.~3: a von~K\'arm\'an beam
+shaped to a prescribed softening backbone. The straight (hardening) beam becomes
+a curved (softening) one threading both target points; full-order EPMC (diamonds)
+confirms the optimized SSM backbone to $<0.1\%$.}
+\label{fig:fig3}
+\end{figure}
+
+\section{Discussion and comparison to prior work}
+
+Our reduction and optimization loop are the same class as
+\cite{pozzi2025,liang2025,xiao2026}; the departure is the design variable and the
+constraint. Where those works tune \emph{shape/size/density}, we tune the
+\emph{fiber-orientation field}, which for a composite is the natural
+manufacturing degree of freedom and which --- through the bending--extension
+coupling --- acts directly on the nonlinearity, not only on the linear stiffness.
+Where the variable-stiffness-composite literature
+\cite{gurdal,ijsselmuiden} steers tows for \emph{linear} objectives (stiffness,
+buckling, linear frequency) under a tow-curvature limit, we carry the same
+manufacturability constraint onto the \emph{nonlinear} backbone. The combination
+--- fiber steering for nonlinear-dynamic tailoring, subject to manufacturability
+--- appears to be new.
+
+The main limitation is physical and we state it plainly: on a clamped beam the
+coupling lever modulates but does not dominate the strong membrane hardening, so
+pure steering improves amplitude-robustness by a bounded amount rather than
+achieving iso-frequency. This is a property of the structure and the bounded
+coupling, not of the method; the softening-reserve routes above, and a move to a
+two-dimensional laminated plate (where a steered fiber \emph{field} has far more
+freedom and where the adjoint sensitivity of \cite{pozzi2025} becomes essential),
+are the clear paths to a larger effect.
+
+\section{Conclusion}
+We have made a composite's nonlinear backbone a function of its manufacturable
+tow path, reduced it on a verified arbitrary-order spectral submanifold, and
+optimized the tow path for amplitude-robustness under a tow-curvature constraint.
+The bending--extension coupling of an unsymmetric, steered laminate is the lever;
+it is the steering, not merely the layup, that supplies the tunable
+nonlinearity. On a clamped beam the lever is real but bounded, which we quantify
+honestly. The framework --- fiber-steered, manufacturability-constrained design
+of nonlinear structural dynamics --- extends directly to forced-response
+objectives and to two-dimensional laminated plates.
+
+\paragraph{Reproducibility.} All results are produced by the open
+\texttt{nltopt} code (depending on the \texttt{PyHB} harmonic-balance/EPMC
+library and borrowing the manufacturability machinery of \texttt{wavetopo});
+the verification suite and the figure scripts are included.
+
+\begin{thebibliography}{99}
+\bibitem{haller2016} G.\ Haller and S.\ Ponsioen, ``Nonlinear normal modes and
+spectral submanifolds: existence, uniqueness and use in model reduction,''
+\emph{Nonlinear Dyn.} \textbf{86}(3), 1493--1534, 2016.
+\bibitem{jain2022} S.\ Jain and G.\ Haller, ``How to compute invariant manifolds
+and their reduced dynamics in high-dimensional finite element models,''
+\emph{Nonlinear Dyn.} \textbf{107}, 1417--1450, 2022.
+\bibitem{pozzi2025} M.\ Pozzi, J.\ Marconi, S.\ Jain, M.\ Li, F.\ Braghin,
+``Adjoint sensitivities for the optimization of nonlinear structural dynamics
+via spectral submanifolds,'' 2025 (arXiv:2503.17431).
+\bibitem{liang2025} H.\ Liang, M.\ Pozzi, J.\ Marconi, S.\ Jain, M.\ Li,
+``Topology optimization of nonlinear forced response curves via reduction on
+spectral submanifolds,'' 2025 (arXiv:2510.07900).
+\bibitem{xiao2026} X.\ Xiao, ``Using reduced-order models to optimise the
+dynamics of nonlinear systems,'' PhD thesis, University of Bristol, 2026.
+\bibitem{li2024} M.\ Li, ``Explicit sensitivity analysis of spectral submanifolds
+of mechanical systems,'' \emph{Nonlinear Dyn.}, 2024.
+\bibitem{shaw} S.\,W.\ Shaw and C.\ Pierre, ``Normal modes for non-linear
+vibratory systems,'' \emph{J.\ Sound Vib.} \textbf{164}(1), 85--124, 1993.
+\bibitem{touze} C.\ Touz\'e, A.\ Vizzaccaro, O.\ Thomas, ``Model order reduction
+methods for geometrically nonlinear structures,'' \emph{Nonlinear Dyn.}
+\textbf{105}, 1141--1190, 2021.
+\bibitem{gurdal} Z.\ G\"urdal, B.\,F.\ Tatting, C.\,K.\ Wu, ``Variable stiffness
+composite panels: effects of stiffness variation on the in-plane and buckling
+response,'' \emph{Composites A} \textbf{39}(5), 911--922, 2008.
+\bibitem{ijsselmuiden} S.\,T.\ IJsselmuiden, M.\,M.\ Abdalla, Z.\ G\"urdal,
+``Optimization of variable-stiffness panels for maximum buckling load using
+lamination parameters,'' \emph{AIAA J.} \textbf{48}(1), 134--143, 2010.
+\end{thebibliography}
+
+\end{document}

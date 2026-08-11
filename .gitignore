@@ -8,7 +8,15 @@ dist/
 
 # generated example figures / run outputs
 *.png
+*.npz
 results/
+
+# LaTeX build artifacts (keep the .tex source and figures)
+*.aux
+*.log
+*.out
+*.synctex.gz
+docs/paper/*.pdf
 
 # large reference PDFs (kept locally under docs/literature, not tracked)
 docs/literature/*.pdf
