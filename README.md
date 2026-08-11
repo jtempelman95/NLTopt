@@ -75,7 +75,12 @@ bb = ssm.backbone(np.linspace(1e-5, 0.03, 200))   # {omega, amplitude, damping, 
 - `nltopt/ssm.py` — the cubic-order 2-D SSM: solves the homological equations in
   the first-order state space, extracts the reduced cubic coefficient `γ` via the
   left-eigenvector (adjoint) solvability condition, and reads the backbone back
-  in physical coordinates.
+  in physical coordinates (fundamental & RMS amplitude read-outs, amplitude→`ρ`
+  inversion for backbone targets).
+- `nltopt/beam.py` — a **curved (shallow-arch) von Kármán beam**: an initial shape
+  `w0` introduces the *quadratic* nonlinearity that lets the backbone soften
+  (`w0=0` recovers the straight hardening beam exactly). The model behind the
+  Fig. 3 optimization; reuses PyHB's `Kg`.
 
 ### Verification (`tests/`, all passing)
 
@@ -85,6 +90,9 @@ bb = ssm.backbone(np.linspace(1e-5, 0.03, 200))   # {omega, amplitude, damping, 
 | Duffing vs **EPMC** | independent full-order method | agree |
 | Quadratically-coupled 2-DOF vs **EPMC** | order-2 **slaving** (manifold curvature) | agree (softening) |
 | Clamped–clamped **von Kármán beam** vs **EPMC** | distributed cubic, multi-DOF | `dΩ/dA² = 0.503` both |
+| Curved-beam straight limit vs `VonKarmanBeamForce` | quadratic model reduces correctly | exact |
+| Initial curvature → **softening** | the curvature-quadratic mechanism | `γ` flips sign |
+| **Backbone target optimization** | the whole design loop | hits target |
 
 Examples reproduce the backbone figures:
 
@@ -93,18 +101,26 @@ pip install -e ../PyHB           # sibling dependency
 pip install -e .                 # NLTopt
 python examples/duffing_ssm.py           # SSM vs analytic vs EPMC
 python examples/vonkarman_beam_ssm.py    # clamped-clamped beam, SSM vs EPMC
+python examples/beam_backbone_opt.py     # Fig. 3 replication: optimize to a softening backbone
 pytest                                    # the verification suite
 ```
 
 ## Roadmap
 
 - [x] **(a)** cubic-order 2-D SSM + physical backbone, verified vs analytic & EPMC.
+- [x] **(a2)** **backbone-shape optimization** replicating Pozzi et al. (2025) Fig. 3:
+  a curved von Kármán beam optimized (SLSQP over shape/geometry, SSM backbone) to a
+  prescribed *softening* target, verified against full-order EPMC (`<0.1%` at both
+  target points). See `nltopt/beam.py`, `examples/beam_backbone_opt.py`. This proves
+  the full optimization loop end-to-end; it uses FD-through-SSM gradients (fine for a
+  handful of variables) — the analytic adjoint **(c)** is what makes it scale to a
+  fiber *field*.
 - [ ] **(b)** *laminated* von Kármán beam: `EI(θ)`, `EA(θ)` from a rotated
   laminate (the 1-D analogue of wavetopo's `D_f(θ)`) — makes the backbone a
   function of the fiber angle.
 - [ ] **(c)** **adjoint sensitivity** `dγ/dθ`, `dΩ/dθ` of the backbone w.r.t. the
   fiber-orientation field; FD-verified against direct differentiation
-  (paper App. E) before any optimization.
+  (paper App. E) before large-scale optimization.
 - [ ] **(d)** MMA optimization of `θ(x)` under wavetopo's tow-curvature
   constraint to place a target backbone (iso-frequency / prescribed
   hardening/softening).
@@ -115,8 +131,8 @@ pytest                                    # the verification suite
 ## Layout
 
 ```
-nltopt/          package: nonlinearity.py, ssm.py
-tests/           verification suite (analytic + EPMC cross-checks)
-examples/        runnable backbone demos
+nltopt/          package: nonlinearity.py, ssm.py, beam.py
+tests/           verification suite (analytic + EPMC cross-checks, optimization)
+examples/        runnable backbone + optimization demos
 docs/literature/ the SSM-optimization papers this program builds on (untracked)
 ```

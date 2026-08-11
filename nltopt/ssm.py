@@ -164,6 +164,47 @@ class SSM2D:
             out[i] = np.hypot(a1, b1)
         return out if out.size > 1 else float(out[0])
 
+    def rms_amplitude(self, rho, dof=None, n_theta=256):
+        """RMS amplitude of ``x_dof(theta)`` over one period for reduced amp ``rho``.
+
+        This is the amplitude measure used by Pozzi et al. (2025) for the
+        backbone target points.  For a pure fundamental it equals
+        ``fundamental_amplitude / sqrt(2)``; it also captures the quadratic
+        nonlinearity's DC drift and higher harmonics.
+        """
+        dof = self.ref_dof if dof is None else dof
+        rho = np.atleast_1d(np.asarray(rho, dtype=float))
+        thetas = np.linspace(0.0, 2 * np.pi, n_theta, endpoint=False)
+        out = np.empty(rho.size)
+        for i, r in enumerate(rho):
+            xd = self._x_of_theta(r, thetas)[:, dof]
+            out[i] = np.sqrt(np.mean((xd - xd.mean()) ** 2))
+        return out if out.size > 1 else float(out[0])
+
+    def omega_at_amplitude(self, target, dof=None, kind="rms", rho_hi=None):
+        """Backbone frequency ``Omega`` at a prescribed physical amplitude.
+
+        Inverts the (monotone, at low amplitude) amplitude-vs-``rho`` relation
+        for the reduced amplitude, then evaluates ``Omega(rho)``.  ``kind`` is
+        ``"rms"`` (default) or ``"fundamental"``.
+
+        Returns ``(Omega, rho)``.  Raises ``ValueError`` if ``target`` is not
+        bracketed below ``rho_hi``.
+        """
+        from scipy.optimize import brentq
+        dof = self.ref_dof if dof is None else dof
+        amp = (self.rms_amplitude if kind == "rms" else self.physical_amplitude)
+        if rho_hi is None:
+            rho_hi = 4.0 * target / max(abs(self.phi[dof]), 1e-12)
+        f = lambda r: amp(r, dof=dof) - target
+        if f(rho_hi) < 0:                       # extend the bracket if needed
+            rho_hi *= 4.0
+            if f(rho_hi) < 0:
+                raise ValueError("amplitude target not reachable below rho_hi")
+        rho = brentq(f, 1e-9, rho_hi, xtol=1e-12, rtol=1e-10)
+        omega = self.lambda1.imag + self.gamma.imag * rho ** 2 / 4.0
+        return omega, rho
+
     def backbone(self, rho, dof=None, n_theta=256):
         """Backbone curve over an array of reduced amplitudes ``rho``.
 
