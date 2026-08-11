@@ -130,9 +130,17 @@ pytest                                    # the verification suite
   SSM can't turn back). See `nltopt/benchmarks.py`, `examples/coupled_osc_sensitivity.py`.
   (FD sensitivity through the SSM; the analytic adjoint **(c)** computes the same at cost
   independent of #params.)
-- [ ] **(b)** *laminated* von Kármán beam: `EI(θ)`, `EA(θ)` from a rotated
-  laminate (the 1-D analogue of wavetopo's `D_f(θ)`) — makes the backbone a
-  function of the fiber angle.
+- [~] **(b)** *laminated* von Kármán beam — the **novel** problem: steer the tow path
+  `θ(x)` to place the nonlinear backbone under a manufacturability constraint. The lever
+  is the laminate **bending–extension coupling `B(θ)`** (single-angle steering only scales
+  `EI,EA` together and can't tune the hardening; an *unsymmetric* layup's `B` feeds a
+  tunable quadratic → softening to balance the cubic hardening → **iso-frequency**).
+  - [x] **b.1** classical laminate theory `A,B,D(θ)` from wavetopo's CFRP lamina
+    (`nltopt/laminate.py`): symmetric⇒`B=0`, `[θ/0]` steering sweeps the dimensionless
+    coupling `0→0.75` — the verified design lever.
+  - [ ] **b.2** laminated beam FE (`u,w` DOF, von Kármán + `B`-coupling) → `M,K,Q,C`.
+  - [ ] **b.3** SSM backbone as a function of `θ(x)`.
+  - [ ] **b.4** optimize `θ(x)` to flatten `Ω(a)` under the tow-curvature constraint.
 - [ ] **(c)** **adjoint sensitivity** `dγ/dθ`, `dΩ/dθ` of the backbone w.r.t. the
   fiber-orientation field; FD-verified against direct differentiation
   (paper App. E) before large-scale optimization.
