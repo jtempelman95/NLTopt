@@ -168,35 +168,69 @@ def main():
     print("\nFRAMEWORK VERIFIED: wavetopo CS-RBF theta + curl + MMA/aug-Lagrangian")
     print("<-> NLTopt SSM backbone; curl-feasible designs; a manufacturability front.")
 
-    # ---- figure: front + optimized orientation field + curl map -----------
+    # ---- figure: the OPTIMIZED QUANTITY (backbone) first -------------------
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    theta = Phi @ th_show
-    zeta, _ = curl(th_show)
-    fig, ax = plt.subplots(1, 3, figsize=(13.5, 3.6))
-    ax[0].plot(front_R, front_red, "o-", color="#2e7d32", lw=2)
-    ax[0].set_xlabel("min tow radius R [mm]  (manufacturability)")
-    ax[0].set_ylabel("amplitude-detuning reduction [%]")
-    ax[0].set_title("(a) manufacturability front"); ax[0].grid(alpha=0.3)
-    ax[0].invert_xaxis()
-    XX = cx.reshape(mesh.nely, mesh.nelx); YY = cy.reshape(mesh.nely, mesh.nelx)
-    step = 2
-    ax[1].quiver(XX[::step, ::step], YY[::step, ::step],
-                 np.cos(theta).reshape(mesh.nely, mesh.nelx)[::step, ::step],
-                 np.sin(theta).reshape(mesh.nely, mesh.nelx)[::step, ::step],
-                 pivot="mid", scale=28, width=0.004, color="#333")
-    ax[1].set_aspect("equal"); ax[1].set_title("(b) optimized tow field (R=20mm)")
-    ax[1].set_xlim(0, A); ax[1].set_ylim(0, B)
-    pc = ax[2].pcolormesh(XX, YY, np.abs(zeta).reshape(mesh.nely, mesh.nelx),
-                          cmap="magma", shading="auto")
-    ax[2].set_aspect("equal"); ax[2].set_title(r"(c) $|\zeta|$ (curl, $\leq 1/R$)")
-    plt.colorbar(pc, ax=ax[2], fraction=0.046)
-    fig.suptitle("Prototype: manufacturable fiber-steered nonlinear-backbone design "
-                 "(wavetopo CS-RBF+curl+MMA  <->  NLTopt SSM)", fontweight="bold")
-    fig.tight_layout()
+
+    def backbone_curve(theta_hat):
+        """Omega/omega1 vs mid-plate amplitude a/h for a design."""
+        _, Kb, knl, _ = objective(theta_hat)
+        bc, w1 = backbone_coeff_ssm(Kb, knl)              # dOmega/da^2, omega1
+        aa = np.linspace(0.0, 0.6 * H, 120)
+        return 1.0 + bc * aa ** 2 / w1, aa / H            # Omega/omega1, a/h
+
+    th_base = np.zeros(M)                                 # unidirectional [0] baseline
+    o_b, a_b = backbone_curve(th_base)
+    o_o, a_o = backbone_curve(th_show)
+    # amplitude detuning at a/h = 0.5 (how far the resonance moves)
+    d_b = 100 * (np.interp(0.5, a_b, o_b) - 1.0)
+    d_o = 100 * (np.interp(0.5, a_o, o_o) - 1.0)
+
+    GREY, GREEN, INK = "#9aa0a6", "#2e7d32", "#3a3f45"
+    fig, ax = plt.subplots(1, 3, figsize=(13.6, 4.1))
+
+    # (a) THE POINT: the resonance drifts less with amplitude
+    ax[0].plot(o_b, a_b, color=GREY, lw=2.6, label=f"unidirectional  (drifts {d_b:.1f}%)")
+    ax[0].plot(o_o, a_o, color=GREEN, lw=2.8, label=f"optimized tow  (drifts {d_o:.1f}%)")
+    ax[0].axvline(1.0, color="0.85", lw=1, ls=":")
+    xb, xo = np.interp(0.5, a_b, o_b), np.interp(0.5, a_o, o_o)
+    ax[0].annotate("", xy=(xo, 0.5), xytext=(xb, 0.5),
+                   arrowprops=dict(arrowstyle="->", color=INK, lw=1.6))
+    ax[0].text(0.5*(xo+xb), 0.46, f"detuning $-{100*(1-d_o/d_b):.0f}\\%$",
+               ha="center", va="top", fontsize=9.5, color=INK)
+    ax[0].set_xlabel(r"resonance frequency  $\Omega/\omega_1$")
+    ax[0].set_ylabel(r"vibration amplitude  $a/h$")
+    ax[0].set_title("(a) the nonlinear resonance drifts\nless with amplitude", fontsize=11)
+    ax[0].legend(frameon=False, fontsize=9, loc="lower right"); ax[0].grid(alpha=0.25)
+
+    # (b) the printable tow layout that does it
+    x1 = cx.reshape(mesh.nely, mesh.nelx)[0, :]
+    y1 = cy.reshape(mesh.nely, mesh.nelx)[:, 0]
+    th_g = (Phi @ th_show).reshape(mesh.nely, mesh.nelx)
+    ax[1].streamplot(x1, y1, np.cos(th_g), np.sin(th_g), density=1.1,
+                     color=INK, linewidth=1.1, arrowsize=0)
+    ax[1].set_aspect("equal"); ax[1].set_xlim(0, A); ax[1].set_ylim(0, B)
+    ax[1].set_xlabel("plate x [m]"); ax[1].set_ylabel("plate y [m]")
+    zmax = np.max(np.abs(curl(th_show)[0]))
+    ax[1].set_title(f"(b) the printable tow layout\n(curl-feasible: R $\\geq$ {1000/zmax:.0f} mm)",
+                    fontsize=11)
+
+    # (c) the manufacturability trade-off
+    ax[2].plot(front_R, front_red, "o-", color=GREEN, lw=2.2, ms=7)
+    ax[2].set_xlabel("min tow radius R [mm]\n(tighter manufacturability ->)")
+    ax[2].set_ylabel("detuning reduction [%]")
+    ax[2].set_title("(c) performance vs manufacturability\n(the printable-tow trade-off)",
+                    fontsize=11)
+    ax[2].invert_xaxis(); ax[2].grid(alpha=0.25)
+
+    fig.suptitle("Manufacturable fiber steering flattens a composite plate's NONLINEAR "
+                 "resonance\n(wavetopo CS-RBF + curl + MMA  ↔  NLTopt SSM backbone; "
+                 "single-mode prototype)", fontweight="bold", fontsize=12)
+    fig.tight_layout(rect=[0, 0, 1, 0.99])
     fig.savefig("figs/plate_framework_prototype.png", dpi=130)
-    print("wrote plate_framework_prototype.png")
+    print(f"baseline drift {d_b:.2f}% -> optimized {d_o:.2f}%  (-{100*(1-d_o/d_b):.0f}%)")
+    print("wrote figs/plate_framework_prototype.png")
 
 
 if __name__ == "__main__":
