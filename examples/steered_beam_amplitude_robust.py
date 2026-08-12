@@ -137,7 +137,7 @@ def main():
     print(f"  ply means (deg): {np.round(pa.mean(axis=1),1)}   "
           f"max|dtheta/dx|={kap:.0f} deg/m (limit {np.rad2deg(KAPPA_TOW):.0f})")
 
-    np.savez("results_steered_beam.npz",
+    np.savez("results/results_steered_beam.npz",
              x=_xe, ply_angles=pa, L=L,
              base_curve=np.array(curve0), opt_curve=np.array(curve1),
              drift0=d0, drift1=d1, f1_base=w0 / 2 / np.pi, f1_opt=w1 / 2 / np.pi,
@@ -164,7 +164,7 @@ def main():
     fig.suptitle("Amplitude-robust composite beam by manufacturable fiber steering",
                  fontweight="bold")
     fig.tight_layout()
-    fig.savefig("steered_beam_amplitude_robust.png", dpi=130)
+    fig.savefig("figs/steered_beam_amplitude_robust.png", dpi=130)
     print("wrote steered_beam_amplitude_robust.png")
 
 

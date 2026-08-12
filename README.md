@@ -154,8 +154,18 @@ pytest                                    # the verification suite
 ## Layout
 
 ```
-nltopt/          package: nonlinearity.py, ssm.py, beam.py, benchmarks.py
+nltopt/          package: nonlinearity, ssm, beam, laminated_beam, laminate, benchmarks
 tests/           verification suite (analytic + EPMC cross-checks, optimization, sensitivity)
-examples/        runnable backbone + optimization + sensitivity demos
+examples/        runnable demos; make_figures.py regenerates every figure
+figs/            generated figures (scratch, git-ignored)
+results/         generated data .npz (scratch, git-ignored)
+docs/paper/      nltopt_paper.tex + figs/ (the curated paper figures, tracked)
 docs/literature/ the SSM-optimization papers this program builds on (untracked)
 ```
+
+**Figures.** Every figure is owned by an example that writes into `figs/`;
+`python examples/make_figures.py [tags…]` regenerates them and syncs the paper
+subset to `docs/paper/figs/`. Tags: `duffing`, `vkbeam` (fast verification);
+`fig2`, `fig3` (paper replications); `steered`, `plate` (design results, slow).
+The `plate` prototype couples wavetopo's CS-RBF + curl + MMA to the SSM backbone
+(needs `../wavetopo` on the path).

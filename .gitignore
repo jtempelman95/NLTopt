@@ -6,10 +6,17 @@ __pycache__/
 build/
 dist/
 
-# generated example figures / run outputs
+# generated example figures / run outputs (scratch)
 *.png
 *.npz
-results/
+figs/*
+!figs/.gitkeep
+results/*
+!results/.gitkeep
+
+# ...but DO track the curated paper figures, so the paper compiles from a clone
+!docs/paper/figs/
+!docs/paper/figs/*.png
 
 # LaTeX build artifacts (keep the .tex source and figures)
 *.aux

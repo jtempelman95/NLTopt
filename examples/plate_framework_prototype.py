@@ -195,7 +195,7 @@ def main():
     fig.suptitle("Prototype: manufacturable fiber-steered nonlinear-backbone design "
                  "(wavetopo CS-RBF+curl+MMA  <->  NLTopt SSM)", fontweight="bold")
     fig.tight_layout()
-    fig.savefig("plate_framework_prototype.png", dpi=130)
+    fig.savefig("figs/plate_framework_prototype.png", dpi=130)
     print("wrote plate_framework_prototype.png")
 
 
