@@ -22,9 +22,9 @@ def test_linear_frequency_matches_analytic():
 
 
 def test_nonlinear_tangent_matches_fd():
-    pl = VonKarmanPlate(A, B, H, n_modes=4, nq=10)
+    pl = VonKarmanPlate(A, B, H, n_modes=3, n_in=3, nq=10)
     el = pl.to_system().nonlinear_elements[0]
-    nm = pl.nm
+    nm = pl.ndof
     q = 1e-3 * np.random.default_rng(0).standard_normal(nm)
     _, Kt, _ = el.forces(q[None, :], np.zeros((1, nm)))
     Kt = Kt[0]
@@ -54,6 +54,18 @@ def test_plate_hardens_and_backbone_matches_epmc():
     sel = Ae <= amax
     kap_epmc = np.polyfit(Ae[sel] ** 2, Oe[sel], 1)[0]
     assert ssm.backbone_coeff() == pytest.approx(kap_epmc, rel=0.05)
+
+
+def test_membrane_relaxation_softens_and_converges():
+    """In-plane DOF slave to w^2 and reduce the cubic hardening; it converges."""
+    def bc(n_in):
+        pl = VonKarmanPlate(A, B, H, n_modes=3, n_in=n_in, nq=12)
+        return ssm_from_system(pl.to_system(), mode=0,
+                               ref_dof=pl.midspan_mode(), order=3).backbone_coeff()
+    restrained = bc(0)
+    relaxed = bc(4)
+    assert 0 < relaxed < restrained                 # relaxation softens hardening
+    assert relaxed == pytest.approx(bc(5), rel=2e-2)  # converged in n_in
 
 
 def test_fiber_angle_tunes_normalized_hardening():

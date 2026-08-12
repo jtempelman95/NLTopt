@@ -13,6 +13,7 @@
 \newcommand{\SSM}{\mathrm{SSM}}
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\Om}{\Omega}
+\newcommand{\zall}{\zeta_{\mathrm{all}}}
 \DeclareMathOperator{\Imag}{Im}
 \DeclareMathOperator{\Real}{Re}
 \newcommand{\FIGRESULT}[1]{#1}
@@ -427,6 +428,100 @@ shaped to a prescribed softening backbone. The straight (hardening) beam becomes
 a curved (softening) one threading both target points; full-order EPMC (diamonds)
 confirms the optimized SSM backbone to $<0.1\%$.}
 \label{fig:fig3}
+\end{figure}
+
+\section{The two-dimensional von K\'arm\'an plate}\label{sec:plate}
+
+The beam showed the mechanism but bounded the lever. A two-dimensional laminated
+plate has far more freedom --- a steered fiber \emph{field} and (later) a density
+field --- and its anisotropy lets the tow angle retune the nonlinearity, not only
+the frequency.
+
+\subsection{Kinematics and energy}
+For a symmetric laminate ($\bm B=\bm 0$) the plate carries transverse deflection
+$w$ and in-plane displacements $u,v$. The von K\'arm\'an membrane strain and the
+curvature are
+\begin{equation}
+\bm\varepsilon=\underbrace{\begin{bmatrix}u_{,x}\\ v_{,y}\\ u_{,y}+v_{,x}\end{bmatrix}}_{\bm\varepsilon_L(u,v)}
++\underbrace{\begin{bmatrix}\tfrac12 w_{,x}^2\\ \tfrac12 w_{,y}^2\\ w_{,x}w_{,y}\end{bmatrix}}_{\bm\varepsilon_{NL}(w)},
+\qquad
+\bm\kappa=\big[-w_{,xx},\,-w_{,yy},\,-2w_{,xy}\big]^{\!\top},
+\end{equation}
+and the strain energy, with the fiber-angle-dependent membrane and bending
+stiffnesses $\bm A(\theta),\bm D(\theta)$ from CLT, is
+\begin{equation}
+U=\tfrac12\!\int\!\bm\kappa^{\!\top}\bm D(\theta)\,\bm\kappa\,\dd\Omega
+ +\underbrace{\tfrac12\!\int\!\bm\varepsilon_L^{\!\top}\bm A\,\bm\varepsilon_L}_{\text{in-plane stiffness}}
+ +\underbrace{\int\!\bm\varepsilon_L^{\!\top}\bm A\,\bm\varepsilon_{NL}}_{\text{quadratic }u\!\leftrightarrow\! w^2}
+ +\underbrace{\tfrac12\!\int\!\bm\varepsilon_{NL}^{\!\top}\bm A\,\bm\varepsilon_{NL}}_{\text{cubic }w^4}.
+\label{eq:plate-energy}
+\end{equation}
+The last term is the membrane-stretching hardening; the middle term is the
+\emph{quadratic} coupling that drives the in-plane fields from the transverse
+motion.
+
+\subsection{Assumed-modes reduction and membrane relaxation}
+Expanding $w=\sum_i q^w_i\phi_i$ (simply-supported bending modes) and
+$u=\sum q^u_j\psi_j$, $v=\sum q^v_k\psi_k$ (in-plane modes) and integrating
+\eqref{eq:plate-energy} by Gauss quadrature yields the modal mass $\bm M$,
+linear stiffness $\bm K(\theta)$ (block-diagonal: bending and in-plane
+membrane), a symmetric quadratic form $\bm B_2$ (from the middle term of
+\eqref{eq:plate-energy}) and a cubic form $\bm T_3$ (from the last term); a
+spatially varying $\theta(\bm x)$ enters every quadrature point exactly. The
+master mode is the fundamental bending mode; the in-plane modes are two orders
+of magnitude stiffer and are \emph{slaved} to it. Precisely, the order-2 SSM
+manifold coefficients \eqref{eq:homological} carry the quadratic response of the
+in-plane fields to $w^2$, and this slaved membrane relaxation feeds back through
+the resonant coefficient \eqref{eq:gamma} to \emph{reduce} the cubic hardening
+$\gamma_3$. Dropping the in-plane DOF (immovable edges) recovers a purely cubic
+upper bound.
+
+Figure~\ref{fig:relax} shows the effect. As in-plane modes are added the
+hardening coefficient falls from the restrained value and converges (by three
+modes per direction) to the relaxed value, a $33\%$ reduction; the reduced
+backbone matches full-order EPMC to $<0.1\%$; and the slaved in-plane field is
+the expected outward membrane flow beneath the transverse bulge. The
+finite-element analogue --- displacement-based von K\'arm\'an plate elements ---
+would replace the assumed modes, at higher cost, with the same SSM reduction.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_membrane_relaxation.png}
+\caption{Membrane relaxation in the von K\'arm\'an plate. (a)~the backbone
+hardening coefficient vs.\ the number of in-plane modes, from the restrained
+(immovable-edge) upper bound down to the converged relaxed value; (b)~restrained
+vs.\ relaxed first-mode backbone; (c)~the in-plane displacement field slaved to
+the fundamental transverse mode (the SSM order-2 manifold).}
+\label{fig:relax}
+\end{figure}
+
+\subsection{Manufacturable design and the front}
+The plate plugs into wavetopo's composite-design framework unchanged: a CS-RBF
+orientation field $\theta(\bm x)=\bm\Phi\hat{\bm\theta}$, the curl constraint
+$\zeta=(\bm n\!\cdot\!\nabla)\theta=\cos\theta\,\bm\Phi_x\hat{\bm\theta}
++\sin\theta\,\bm\Phi_y\hat{\bm\theta}\le\zall$, and MMA with an augmented-
+Lagrangian penalty and best-feasible retention. The backbone objective is the
+frequency-normalized amplitude detuning $J=\mathrm{knl}/K_b$; its gradient is
+pulled back through the CS-RBF transpose ($\partial J/\partial\hat{\bm\theta}
+=\bm\Phi^{\!\top}\partial J/\partial\theta$) and verified against finite
+differences to $\sim\!10^{-7}$. Figure~\ref{fig:platefront} reports a first
+manufacturability front on the plate: the achievable detuning reduction falls
+from the unconstrained optimum as the tow-curvature limit tightens, and the
+optimized tow field is smooth and printable. Here the two-dimensional field is a
+far stronger lever than the one-dimensional beam ($56$--$73\%$ vs.\ a few
+percent). Adding the density/topology field $\bm z$ --- the second wavetopo design
+field --- is the natural next step, and the analytic SSM adjoint of
+\cite{pozzi2025} becomes essential once the design is a full field.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_framework_prototype.png}
+\caption{Manufacturable fiber-steered nonlinear-backbone design on a plate,
+coupling wavetopo's CS-RBF orientation field, curl constraint and MMA to the
+NLTopt SSM backbone. (a)~a manufacturability front (amplitude-detuning reduction
+vs.\ minimum tow radius); (b)~the optimized, printable tow field; (c)~the curl
+$|\zeta|$, everywhere below the limit.}
+\label{fig:platefront}
 \end{figure}
 
 \section{Discussion and comparison to prior work}

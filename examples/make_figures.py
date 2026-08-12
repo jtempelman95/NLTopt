@@ -30,6 +30,7 @@ REGISTRY = {
     "fig3":     ("beam_backbone_opt.py",         "beam_backbone_opt.png",             "paper",   False, True),
     "steered":  ("steered_beam_amplitude_robust.py", "steered_beam_amplitude_robust.png", "result", False, True),
     "plate":    ("plate_framework_prototype.py", "plate_framework_prototype.png",     "result", True,  True),
+    "relax":    ("plate_membrane_relaxation.py", "plate_membrane_relaxation.png",     "verify", False, True),
 }
 
 
