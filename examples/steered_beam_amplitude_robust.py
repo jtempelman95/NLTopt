@@ -24,9 +24,10 @@ shallow initial curvature -- a documented extension).
     python examples/steered_beam_amplitude_robust.py
 """
 
+import sys
+sys.path.insert(0, "/home/jrt/NLTopt/examples")
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import paperstyle as ps
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
@@ -144,28 +145,27 @@ def main():
              kappa=kap, kappa_lim=np.rad2deg(KAPPA_TOW))
 
     # ---- figure -----------------------------------------------------------
-    fig, (axT, axB) = plt.subplots(1, 2, figsize=(11.0, 4.4))
-    for p, col in zip(range(NPLY), ["#2e7d32", "#1f77b4"]):
-        axT.plot(_xe / L, pa[p], "o-", color=col, lw=2, label=f"ply {p+1}")
-    axT.axhline(0, color="0.6", ls="--", lw=1, label="baseline [0/0]")
-    axT.set_xlabel("x / L"); axT.set_ylabel(r"ply angle $\theta$ [deg]")
-    axT.set_title("(a) optimized manufacturable laminate (each ply steered)")
-    axT.legend(frameon=False, fontsize=9); axT.grid(alpha=0.25)
+    fig, (axT, axB) = plt.subplots(1, 2, figsize=(ps.FULL, 2.9))
+    for p, col in zip(range(NPLY), [ps.GREEN, ps.STEEL]):
+        axT.plot(_xe / L, pa[p], "o-", color=col, lw=1.5, ms=4, label=f"ply {p+1}")
+    axT.axhline(0, color=ps.GREY, ls="--", lw=1, label=r"baseline [0/0]")
+    axT.set_xlabel(r"$x / L$"); axT.set_ylabel(r"ply angle $\theta$ (deg)")
+    axT.set_title("(a) steered laminate")
+    ps.grid(axT); ps.despine(axT)
+    axT.legend(frameon=False, loc="best")
 
     om0, a0 = curve0
     om1, a1 = curve1
-    axB.plot(om0, a0, color="#b0b0b0", lw=2.2, label=f"baseline [0/0]  (drift {d0*100:.2f}%)")
-    axB.plot(om1, a1, color="#2e7d32", lw=2.4, label=f"steered  (drift {d1*100:.2f}%)")
-    axB.axvline(1.0, color="0.85", ls=":", lw=1)
+    axB.plot(om0, a0, color=ps.GREY, lw=1.6, label=rf"baseline (drift {d0*100:.2f}\%)")
+    axB.plot(om1, a1, color=ps.GREEN, lw=1.6, label=rf"steered (drift {d1*100:.2f}\%)")
+    axB.axvline(1.0, color=ps.GRID, ls=":", lw=1)
     axB.set_xlabel(r"$\Omega/\omega_1$"); axB.set_ylabel(r"mid-span amplitude $a/h$")
-    axB.set_title("(b) backbone: steering flattens the amplitude detuning")
-    axB.legend(frameon=False, fontsize=9); axB.grid(alpha=0.25)
+    axB.set_title("(b) steering flattens the detuning")
+    ps.grid(axB); ps.despine(axB)
+    axB.legend(frameon=False, loc="upper right")
 
-    fig.suptitle("Amplitude-robust composite beam by manufacturable fiber steering",
-                 fontweight="bold")
     fig.tight_layout()
-    fig.savefig("figs/steered_beam_amplitude_robust.png", dpi=130)
-    print("wrote steered_beam_amplitude_robust.png")
+    ps.save(fig, "/home/jrt/NLTopt/figs/steered_beam_amplitude_robust")
 
 
 if __name__ == "__main__":

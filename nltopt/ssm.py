@@ -106,6 +106,7 @@ class SSM2D:
     w: dict = field(default_factory=dict)
     red: dict = field(default_factory=dict)   # {k: gamma_{2k+1}} reduced coeffs
     order: int = 3
+    u1: np.ndarray = None                     # left (adjoint) eigenvector, u1* B v1 = 1
 
     # -- reduced-dynamics complex frequency on the orbit ------------------- #
     def _reduced(self, rho):
@@ -120,6 +121,39 @@ class SSM2D:
         for k, c in self.red.items():
             s = s + c * (0.5 * rho) ** (2 * k)
         return s
+
+    # -- damped forced response (leading-order SSM) ------------------------- #
+    def forced_response(self, force, dof=None, n=400):
+        r"""Leading-order SSM forced-response curve (FRC) for harmonic modal
+        forcing ``force * cos(Omega t)`` on the physical DOFs (a damped system).
+
+        Seeking a periodic response ``p1 = a e^{i Omega t}`` on the SSM reduces
+        the forced dynamics to ``[i Omega - s(rho)] a = f1/2`` with the modal
+        forcing ``f1 = u1^* [force; 0]``; hence the FRC
+        ``[(Omega - omega(rho))^2 + alpha(rho)^2] rho^2 = |f1|^2``,
+        whose two frequency branches close at the peak where ``Omega = omega(rho)``
+        -- i.e. the resonance peak rides the backbone.  Requires a damped SSM
+        (nonzero ``alpha``).
+
+        Returns a dict with ``amplitude`` (physical, at ``dof``) and the two
+        frequency branches ``omega_lo``/``omega_hi`` (NaN where the FRC does not
+        exist), plus the backbone ``omega``.
+        """
+        if self.u1 is None:
+            raise ValueError("forced_response needs u1 (rebuild the SSM)")
+        dof = self.ref_dof if dof is None else dof
+        force = np.atleast_1d(np.asarray(force, dtype=float))
+        f1 = np.vdot(self.u1[:self.n], force)              # u1^* [force;0]
+        alpha0 = abs(self.lambda1.real) + 1e-30
+        rho = np.linspace(1e-9, 1.6 * abs(f1) / alpha0, n)
+        s = self._reduced(rho)
+        om, al = s.imag, s.real
+        disc = np.abs(f1) ** 2 / rho ** 2 - al ** 2        # (Omega-omega)^2
+        root = np.sqrt(np.clip(disc, 0.0, None))
+        root[disc < 0] = np.nan
+        amp = self.physical_amplitude(rho, dof=dof)
+        return {"amplitude": np.atleast_1d(amp), "omega": om,
+                "omega_lo": om - root, "omega_hi": om + root, "rho": rho}
 
     # -- hardening / softening sign ---------------------------------------- #
     @property
@@ -405,7 +439,8 @@ def compute_ssm_2d(M, C, K, bilinear=None, trilinear=None, mode=0, ref_dof=0,
     gamma = red.get(1, 0j)
     w_canon = {mi: wm for mi, wm in w.items() if mi[0] >= mi[1]}
     return SSM2D(omega0=omega0, zeta0=zeta0, lambda1=lam1, gamma=gamma,
-                 phi=phi, n=n, ref_dof=ref_dof, w=w_canon, red=red, order=order)
+                 phi=phi, n=n, ref_dof=ref_dof, w=w_canon, red=red, order=order,
+                 u1=u1)
 
 
 # --------------------------------------------------------------------------- #

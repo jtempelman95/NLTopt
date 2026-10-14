@@ -21,6 +21,8 @@ The flagship swaps this for a multi-mode / full-FE von Karman plate + the SAME S
 """
 import sys
 sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, "/home/jrt/NLTopt/examples")
+import paperstyle as ps
 
 import numpy as np
 from wavetopo.cfrp import QuadMesh, grid_support_points, CSRBFMapping
@@ -52,33 +54,76 @@ MMB = np.vstack([(kx*c_x*s_y)**2, (ky*s_x*c_y)**2,
 Mmod = RHO * H * np.sum(area * phi**2)
 CB, CM = H**3/12.0, H          # D = CB*Qbar, A = CM*Qbar (single centred ply)
 
+# ---- in-plane assumed modes (for the membrane-relaxation slaving) -----------
+# u,v expanded in sin-sin modes; B_L is the linear membrane strain-displacement
+# of each in-plane DOF at the element centres.  Statically condensing these DOF
+# turns the raw cubic knl into the RELAXED effective cubic that the real SSM
+# carries (Eq. gamma), and their adjoint state u* gives its cheap sensitivity.
+N_IN = 3
+_inm = [(m, n) for m in range(1, N_IN + 1) for n in range(1, N_IN + 1)]
+_cols = []
+for _comp in ("u", "v"):
+    for (m, n) in _inm:
+        km, kn = m*np.pi/A, n*np.pi/B
+        psix = km*np.cos(km*cx)*np.sin(kn*cy)
+        psiy = kn*np.sin(km*cx)*np.cos(kn*cy)
+        z = np.zeros(N)
+        _cols.append(np.vstack([psix, z, psiy]) if _comp == "u"
+                     else np.vstack([z, psiy, psix]))          # eps_L (3,N)
+BL = np.stack(_cols, axis=1)                                   # (3, ndof_in, N)
 
-def _stiff(theta):
-    """Element bending/membrane quadratic forms; returns K_b, knl and per-elem
-    Qbar (for the analytic gradient)."""
-    Kb = knl = 0.0
-    for e in range(N):
-        Qb = Qbar(theta[e], Q0)
-        Kb += area[e] * (KAP[:, e] @ (CB*Qb) @ KAP[:, e])
-        knl += 0.5 * area[e] * (MMB[:, e] @ (CM*Qb) @ MMB[:, e])
-    return Kb, knl
+
+def _relaxed(theta):
+    """The RELAXED effective cubic (the real SSM's backbone coefficient, single
+    master mode), by static condensation of the in-plane DOF.
+
+    Membrane energy = 1/2 K_b q^2 + 1/2 s^T K_in s + q^2 g^T s + 1/4 knl q^4;
+    minimising over the (fast) in-plane s gives s* = -q^2 K_in^{-1} g and the
+    effective cubic  gamma_eff = knl - 2 g^T K_in^{-1} g  (< knl: relaxation
+    softens the hardening).  Returns everything the adjoint gradient needs.
+    """
+    Qb = np.stack([Qbar(theta[e], Q0) for e in range(N)])       # (N,3,3)
+    Ae = CM * Qb                                                # membrane A(theta)
+    Kb   = np.einsum("e,ae,eab,be->", area, KAP, CB*Qb, KAP)    # bending stiffness
+    knl  = 0.5 * np.einsum("e,ae,eab,be->", area, MMB, Ae, MMB) # raw (unrelaxed) cubic
+    Kin  = np.einsum("e,aie,eab,bje->ij", area, BL, Ae, BL)     # in-plane stiffness
+    g    = 0.5 * np.einsum("e,aie,eab,be->i", area, BL, Ae, MMB)  # w^2 <-> in-plane coupling
+    ustar = np.linalg.solve(Kin, g)                            # adjoint / condensation state
+    eps_u = np.einsum("aie,i->ae", BL, ustar)                  # its membrane strain field (3,N)
+    gamma = knl - 2.0 * (g @ ustar)                            # relaxed effective cubic
+    return dict(Kb=Kb, knl=knl, gamma=gamma, ustar=ustar, eps_u=eps_u)
 
 
 def objective(theta_hat):
+    """J = gamma_eff / K_b: the (relaxed) frequency-normalised amplitude detuning."""
     theta = Phi @ theta_hat
-    Kb, knl = _stiff(theta)
-    return knl / Kb, Kb, knl, theta
+    r = _relaxed(theta)
+    return r["gamma"] / r["Kb"], r["Kb"], r["gamma"], theta
 
 
-def objective_grad(theta_hat, Kb, knl, theta, d=1e-4):
-    """Analytic dJ/dtheta_hat = Phi^T (dJ/dtheta), J=knl/Kb (dQbar/dtheta by FD)."""
-    dJdt = np.empty(N)
+def objective_grad(theta_hat, Kb, gamma, theta, d=1e-4):
+    """Analytic adjoint dJ/dtheta_hat, J = gamma_eff/K_b.  With u* = K_in^{-1} g,
+    d gamma_eff = d knl - 4 (dg)^T u* + 2 u*^T (dK_in) u*, so each element needs
+    only its own dQbar/dtheta (the in-plane solve u* is reused across all DOF)."""
+    r = _relaxed(theta)
+    eu = r["eps_u"]
+    dgam = np.empty(N); dKb = np.empty(N)
     for e in range(N):
         dQ = (Qbar(theta[e]+d, Q0) - Qbar(theta[e]-d, Q0)) / (2*d)
-        dKb = area[e] * (KAP[:, e] @ (CB*dQ) @ KAP[:, e])
-        dknl = 0.5 * area[e] * (MMB[:, e] @ (CM*dQ) @ MMB[:, e])
-        dJdt[e] = dknl/Kb - knl/Kb**2 * dKb
+        dA = CM * dQ; m = MMB[:, e]; u = eu[:, e]
+        dgam[e] = area[e] * (0.5*(m @ dA @ m) - 2.0*(u @ dA @ m) + 2.0*(u @ dA @ u))
+        dKb[e]  = area[e] * (KAP[:, e] @ (CB*dQ) @ KAP[:, e])
+    dJdt = dgam/Kb - gamma/Kb**2 * dKb
     return Phi.T @ dJdt
+
+
+def kb_grad(theta_hat, theta, d=1e-4):
+    """dK_b/dtheta_hat = Phi^T dK_b/dtheta (bending stiffness / frequency^2)."""
+    g = np.empty(N)
+    for e in range(N):
+        dQ = (Qbar(theta[e]+d, Q0) - Qbar(theta[e]-d, Q0)) / (2*d)
+        g[e] = area[e] * (KAP[:, e] @ (CB*dQ) @ KAP[:, e])
+    return Phi.T @ g
 
 
 def curl(theta_hat):
@@ -102,10 +147,16 @@ def backbone_coeff_ssm(Kb, knl):
     return ssm.backbone_coeff(), ssm.omega0
 
 
-def run(zeta_all, verbose=True):
+def run(zeta_all, freq_cap=None, verbose=True):
+    """Minimize relative amplitude detuning J=knl/K_b over the tow field, s.t.
+    the curl (manufacturability) constraint, and -- if ``freq_cap`` is given --
+    a ceiling K_b <= freq_cap^2 * K_b0 that holds the frequency (so the gain is
+    pure nonlinear tailoring, not a stiffer plate)."""
     th = np.deg2rad(20.0) * np.ones(M)
     J0, Kb0, knl0, theta0 = objective(th)
-    lam = np.full(N, 15.0); mu = 5.0
+    Kb_ref = objective(np.zeros(M))[1]                      # unidirectional baseline
+    Kb_cap = (freq_cap ** 2) * Kb_ref if freq_cap else np.inf
+    lam = np.full(N, 15.0); lam_f = 0.0; mu = 5.0
     mma = MMA(np.full(M, -np.pi/2), np.full(M, np.pi/2))
     best = None
     for k in range(120):
@@ -113,23 +164,29 @@ def run(zeta_all, verbose=True):
             J, Kb, knl, theta = objective(th)
             zeta, theta = curl(th)
             g = zeta**2 - zeta_all**2
-            hclip = np.maximum(g, -lam/mu)
-            factor = (lam + mu*hclip) * (g > -lam/mu)
+            factor = (lam + mu*np.maximum(g, -lam/mu)) * (g > -lam/mu)
             gth = objective_grad(th, Kb, knl, theta) / J0 \
                 + (1.0/N) * (curl_jac(th, theta).T @ (2*zeta*factor))
+            if freq_cap:                                    # frequency-ceiling AL term
+                gf = Kb/Kb_cap - 1.0
+                facf = (lam_f + mu*max(gf, -lam_f/mu)) * (gf > -lam_f/mu)
+                gth += facf * (kb_grad(th, theta) / Kb_cap)
             th = np.clip(mma.update(th, gth), -np.pi/2, np.pi/2)
         J, Kb, knl, theta = objective(th)
         zeta, theta = curl(th); zmax = float(np.max(np.abs(zeta)))
-        feasible = zmax/zeta_all < 1.005
+        gf = Kb/Kb_cap - 1.0
+        feasible = (zmax/zeta_all < 1.005) and (gf < 5e-3)
         if feasible and (best is None or J < best[0]):
             best = (J, th.copy(), zmax)
         g = zeta**2 - zeta_all**2
         lam = np.maximum(lam + mu*np.maximum(g, -lam/mu), 0.0)
+        if freq_cap:
+            lam_f = max(lam_f + mu*max(gf, -lam_f/mu), 0.0)
         if not feasible:
             mu = min(1.25*mu, 1e7)
         if verbose and k % 15 == 0:
             print(f"  outer{k:3d}: J={100*(1-J/J0):+5.0f}%  max|zeta|={zmax:5.2f} "
-                  f"(lim {zeta_all:.2f})  mu={mu:.1e}"
+                  f"K_b/cap={Kb/Kb_cap:.2f}  mu={mu:.1e}"
                   + ("" if best is None else f"  best={100*(1-best[0]/J0):+.0f}%"))
     return J0, best
 
@@ -150,17 +207,19 @@ def main():
           f"(objective J=knl/K_b={J:.3e})")
 
     # the manufacturability front: sweep the tow-curvature limit -------------
-    print("\nManufacturability front (relative amplitude-detuning reduction vs curl limit):")
+    print("\nManufacturability front (relative amplitude-detuning reduction vs curl limit,"
+          " at HELD linear frequency):")
     print(f"{'R (mm)':>7} {'zeta_all':>9} {'feasible reduction':>19} {'max|zeta|':>10}")
     front_R, front_red, th_show = [], [], None
+    J_uni = objective(np.zeros(M))[0]                    # unidirectional baseline detuning
     for R_mm in [50, 30, 20, 12, 8]:
         zeta_all = 1.0 / (R_mm/1000.0)
-        J0, best = run(zeta_all, verbose=False)
+        _, best = run(zeta_all, freq_cap=1.05, verbose=False)   # hold f1: pure nonlinear tailoring
         if best is None:
             print(f"{R_mm:7.0f} {zeta_all:9.2f} {'(no feasible)':>19}")
             continue
         Jb, thb, zmax = best
-        red = 100*(1-Jb/J0)
+        red = 100*(1-Jb/J_uni)                           # vs unidirectional (consistent w/ panel a)
         front_R.append(R_mm); front_red.append(red)
         print(f"{R_mm:7.0f} {zeta_all:9.2f} {red:17.0f}% {zmax:10.2f}")
         if R_mm == 20:
@@ -187,50 +246,46 @@ def main():
     d_b = 100 * (np.interp(0.5, a_b, o_b) - 1.0)
     d_o = 100 * (np.interp(0.5, a_o, o_o) - 1.0)
 
-    GREY, GREEN, INK = "#9aa0a6", "#2e7d32", "#3a3f45"
-    fig, ax = plt.subplots(1, 3, figsize=(13.6, 4.1))
+    GREY, GREEN, INK = ps.GREY, ps.GREEN, ps.INK
+    fig, ax = plt.subplots(1, 3, figsize=(ps.FULL, 2.5))
 
-    # (a) THE POINT: the resonance drifts less with amplitude
-    ax[0].plot(o_b, a_b, color=GREY, lw=2.6, label=f"unidirectional  (drifts {d_b:.1f}%)")
-    ax[0].plot(o_o, a_o, color=GREEN, lw=2.8, label=f"optimized tow  (drifts {d_o:.1f}%)")
-    ax[0].axvline(1.0, color="0.85", lw=1, ls=":")
+    # (a) the resonance drifts less with amplitude
+    ax[0].plot(o_b, a_b, color=GREY, lw=1.7, label="unidirectional")
+    ax[0].plot(o_o, a_o, color=GREEN, lw=1.8, label="optimized tow")
+    ax[0].axvline(1.0, color=ps.GRID, lw=1, ls=":")
     xb, xo = np.interp(0.5, a_b, o_b), np.interp(0.5, a_o, o_o)
     ax[0].annotate("", xy=(xo, 0.5), xytext=(xb, 0.5),
-                   arrowprops=dict(arrowstyle="->", color=INK, lw=1.6))
-    ax[0].text(0.5*(xo+xb), 0.46, f"detuning $-{100*(1-d_o/d_b):.0f}\\%$",
-               ha="center", va="top", fontsize=9.5, color=INK)
+                   arrowprops=dict(arrowstyle="->", color=INK, lw=1.2))
+    ax[0].text(0.5*(xo+xb), 0.46, rf"$-{100*(1-d_o/d_b):.0f}\%$",
+               ha="center", va="top", fontsize=8, color=INK)
     ax[0].set_xlabel(r"resonance frequency  $\Omega/\omega_1$")
     ax[0].set_ylabel(r"vibration amplitude  $a/h$")
-    ax[0].set_title("(a) the nonlinear resonance drifts\nless with amplitude", fontsize=11)
-    ax[0].legend(frameon=False, fontsize=9, loc="lower right"); ax[0].grid(alpha=0.25)
+    ax[0].set_title("(a) resonance drifts less")
+    ps.grid(ax[0]); ps.despine(ax[0])
+    ax[0].legend(frameon=False, loc="lower right")
 
     # (b) the printable tow layout that does it
     x1 = cx.reshape(mesh.nely, mesh.nelx)[0, :]
     y1 = cy.reshape(mesh.nely, mesh.nelx)[:, 0]
     th_g = (Phi @ th_show).reshape(mesh.nely, mesh.nelx)
     ax[1].streamplot(x1, y1, np.cos(th_g), np.sin(th_g), density=1.1,
-                     color=INK, linewidth=1.1, arrowsize=0)
+                     color=INK, linewidth=0.9, arrowsize=0)
     ax[1].set_aspect("equal"); ax[1].set_xlim(0, A); ax[1].set_ylim(0, B)
-    ax[1].set_xlabel("plate x [m]"); ax[1].set_ylabel("plate y [m]")
+    ax[1].set_xlabel(r"$x$ (m)"); ax[1].set_ylabel(r"$y$ (m)")
     zmax = np.max(np.abs(curl(th_show)[0]))
-    ax[1].set_title(f"(b) the printable tow layout\n(curl-feasible: R $\\geq$ {1000/zmax:.0f} mm)",
-                    fontsize=11)
+    ax[1].set_title(rf"(b) printable tow layout ($R\geq{1000/zmax:.0f}$ mm)")
 
     # (c) the manufacturability trade-off
-    ax[2].plot(front_R, front_red, "o-", color=GREEN, lw=2.2, ms=7)
-    ax[2].set_xlabel("min tow radius R [mm]\n(tighter manufacturability ->)")
-    ax[2].set_ylabel("detuning reduction [%]")
-    ax[2].set_title("(c) performance vs manufacturability\n(the printable-tow trade-off)",
-                    fontsize=11)
-    ax[2].invert_xaxis(); ax[2].grid(alpha=0.25)
+    ax[2].plot(front_R, front_red, "o-", color=GREEN, lw=1.6, ms=4)
+    ax[2].set_xlabel(r"min tow radius $R$ (mm)")
+    ax[2].set_ylabel(r"detuning reduction (\%)")
+    ax[2].set_title("(c) feasibility trade-off")
+    ax[2].invert_xaxis()
+    ps.grid(ax[2]); ps.despine(ax[2])
 
-    fig.suptitle("Manufacturable fiber steering flattens a composite plate's NONLINEAR "
-                 "resonance\n(wavetopo CS-RBF + curl + MMA  ↔  NLTopt SSM backbone; "
-                 "single-mode prototype)", fontweight="bold", fontsize=12)
-    fig.tight_layout(rect=[0, 0, 1, 0.99])
-    fig.savefig("figs/plate_framework_prototype.png", dpi=130)
+    fig.tight_layout()
+    ps.save(fig, "/home/jrt/NLTopt/figs/plate_framework_prototype")
     print(f"baseline drift {d_b:.2f}% -> optimized {d_o:.2f}%  (-{100*(1-d_o/d_b):.0f}%)")
-    print("wrote figs/plate_framework_prototype.png")
 
 
 if __name__ == "__main__":

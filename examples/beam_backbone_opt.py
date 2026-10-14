@@ -34,9 +34,10 @@ than reproducing A1=10.7 mm etc. to the digit.
     python examples/beam_backbone_opt.py
 """
 
+import sys
+sys.path.insert(0, "/home/jrt/NLTopt/examples")
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import paperstyle as ps
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
@@ -148,36 +149,33 @@ def main():
           f"{epmc_pts[0][0]:.4f} @0.1h0, {epmc_pts[1][0]:.4f} @0.2h0  "
           f"(SSM targets 1.000, {K2:.3f})")
 
-    fig, (axS, axB) = plt.subplots(1, 2, figsize=(11.0, 4.6))
+    fig, (axS, axB) = plt.subplots(1, 2, figsize=(ps.FULL, 2.9))
 
     # (a) optimized shape
     xs = np.linspace(0, L, 200)
     y = A1 * np.sin(np.pi * xs / L) + A2 * np.sin(2 * np.pi * xs / L)
-    axS.plot(xs / L, y * 1e3, color="#2e7d32", lw=2.2)
-    axS.axhline(0, color="0.6", lw=1.0, ls="--", label="initial (straight)")
-    axS.set_xlabel("x / L"); axS.set_ylabel("initial shape y  [mm]")
+    axS.plot(xs / L, y * 1e3, color=ps.GREEN, lw=1.6)
+    axS.axhline(0, color=ps.GREY, lw=1.0, ls="--", label="initial (straight)")
+    axS.set_xlabel(r"$x / L$"); axS.set_ylabel(r"initial shape $y$ (mm)")
     axS.set_title("(a) optimized beam shape")
-    axS.legend(frameon=False, fontsize=9); axS.grid(alpha=0.25)
+    ps.grid(axS); ps.despine(axS)
+    axS.legend(frameon=False, loc="best")
 
     # (b) backbones
-    axB.plot(oi, ai, color="#b0b0b0", lw=2.0, label="initial straight (hardening)")
-    axB.plot(oo, ao, color="#2e7d32", lw=2.4, label="optimized (softening, SSM)")
-    axB.plot([p[0] for p in epmc_pts], [p[1] for p in epmc_pts], "kD", ms=8,
-             mfc="none", mew=1.6, label="EPMC (full order) check")
-    axB.plot([1.0], [C1], "o", color="#d1495b", ms=9, label="targets")
-    axB.plot([K2], [C2], "o", color="#d1495b", ms=9)
-    axB.axvline(1.0, color="0.85", lw=0.8, ls=":")
+    axB.plot(oi, ai, color=ps.GREY, lw=1.6, label="initial straight (hardening)")
+    axB.plot(oo, ao, color=ps.GREEN, lw=1.6, label="optimized (softening, SSM)")
+    axB.plot([p[0] for p in epmc_pts], [p[1] for p in epmc_pts], "D", color=ps.INK, ms=5,
+             mfc="none", mew=1.2, label="EPMC (full order)")
+    axB.plot([1.0], [C1], "o", color=ps.RED, ms=5.5, label="targets")
+    axB.plot([K2], [C2], "o", color=ps.RED, ms=5.5)
+    axB.axvline(1.0, color=ps.GRID, lw=0.8, ls=":")
     axB.set_xlabel(r"$\Omega/\omega_0$"); axB.set_ylabel(r"RMS mid-span $v / h_0$")
-    axB.set_title("(b) backbone: straight -> optimized softening")
-    axB.legend(frameon=False, fontsize=8.5, loc="upper left")
-    axB.grid(alpha=0.25)
+    axB.set_title("(b) straight to optimized softening")
+    ps.grid(axB); ps.despine(axB)
+    axB.legend(frameon=False, loc="upper left")
 
-    fig.suptitle("Von Karman beam backbone optimization (cf. Pozzi et al. 2025, Fig. 3)",
-                 fontweight="bold")
     fig.tight_layout()
-    out = "beam_backbone_opt.png"
-    fig.savefig(out, dpi=130)
-    print("\nwrote", out)
+    ps.save(fig, "/home/jrt/NLTopt/figs/beam_backbone_opt")
 
 
 if __name__ == "__main__":

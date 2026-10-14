@@ -31,6 +31,16 @@ REGISTRY = {
     "steered":  ("steered_beam_amplitude_robust.py", "steered_beam_amplitude_robust.png", "result", False, True),
     "plate":    ("plate_framework_prototype.py", "plate_framework_prototype.png",     "result", True,  True),
     "relax":    ("plate_membrane_relaxation.py", "plate_membrane_relaxation.png",     "verify", False, True),
+    "confirm":  ("plate_confirm.py",             "plate_confirm.png",                 "result", True,  True),
+    "topopt":   ("plate_topopt.py",              "plate_topopt.png",                  "result", True,  True),
+    "design":   ("plate_design.py",              "plate_design_hero.png",             "result", True,  False),
+    "tune":     ("plate_tune.py",                "plate_tune.png",                    "result", True,  True),
+    "points":   ("plate_ritz.py",                "plate_designpoints.png",            "result", True,  True),
+    "epmc":     ("epmc_vs_ssm.py",              "epmc_vs_ssm.png",                   "result", True,  True),
+    "svse":     ("ssm_vs_epmc_opt.py",          "ssm_vs_epmc_opt.png",               "result", False, True),
+    "manifold": ("ssm_manifold.py",             "ssm_manifold.png",                  "verify", True,  True),
+    "jump":     ("plate_jump.py",                "plate_jump.png",                    "result", True,  True),
+    "jumpnum":  ("plate_jump_numerics.py",       "plate_jump_numerics.png",           "result", True,  True),
 }
 
 

@@ -19,7 +19,7 @@
 \newcommand{\FIGRESULT}[1]{#1}
 
 \title{\bfseries Manufacturable fiber steering of the nonlinear backbone of
-composite beams via spectral submanifolds}
+composite beams and plates via spectral submanifolds}
 \author{J.\,R.\ Tempelman}
 \date{Working draft --- \today}
 
@@ -50,11 +50,28 @@ calibration. On a clamped beam the membrane hardening dominates and the coupling
 lever is bounded, so at fixed linear frequency a manufacturable tow layout
 \emph{reduces} the amplitude detuning only modestly (a few percent) --- a limit
 set by the coupling lever, not by manufacturability. We report this honestly and
-identify the routes along which the effect grows: a shallow initial curvature as
-a softening reserve, and the move to a two-dimensional laminated plate. To our
-knowledge this is nonetheless the first design of a composite's \emph{nonlinear}
-backbone through a manufacturable fiber-orientation field, and the verified
-framework is the contribution.
+identify the routes along which the effect grows. On a two-dimensional laminated
+plate the lever is far stronger: there the layup is symmetric, so the coupling
+$B$ is gone and the anisotropic membrane stiffness itself becomes the knob ---
+the linear frequency (set by the bending functional) and the hardening (set by
+the relaxed membrane functional) sample the same tow field through different
+operators, so a steered field can hold one while cutting the other. Driving the
+design by the plate's own SSM backbone coefficient --- reproduced in closed form
+by static in-plane condensation and differentiated by an analytic adjoint --- a
+curl-feasible steered tow field reduces the relative amplitude detuning by $50\%$
+at held linear frequency, a figure the SSM backbone, full-order EPMC, and
+brute-force up/down frequency sweeps all confirm. The tangible consequence is a
+resonator that stays linear to larger amplitude: the steering \emph{removes the
+jump}, widening the panel's jump- and hysteresis-free operating range by
+$1.42\times$ (and further with an added topology field), the property a resonant
+sensor or harvester actually needs. The same adjoint, applied to the nonsymmetric
+aeroelastic (piston-theory) operator on a \emph{conforming} finite element (needed once
+bend--twist coupling twists the mode shapes --- a point at which a global-mode Ritz model
+fails), recovers a \emph{supersonic panel-flutter} boundary by $9\times$ at held
+frequency: off-axis fibers crater a uniform panel's flutter, and a steered field places
+the same coupling to recover it. To our knowledge this is the first design of a
+composite's \emph{nonlinear} backbone through a manufacturable fiber-orientation
+field, and the verified framework is the contribution.
 \end{abstract}
 
 \section{Introduction}
@@ -104,6 +121,37 @@ nonlinearity once the axial degrees of freedom are slaved.
 \item A manufacturability-constrained optimization of the tow path for an
 amplitude-robust resonance (Sec.~\ref{sec:results}), with an honest account of
 what the coupling lever can and cannot achieve on a clamped beam.
+\item A two-dimensional laminated von~K\'arm\'an plate (Sec.~\ref{sec:plate})
+whose symmetric layup removes the coupling lever and exposes the anisotropic
+membrane stiffness itself as the knob: the linear frequency and the hardening
+sample the same tow field through different operators, so a steered field holds
+one while cutting the other. We drive the design by the plate's own SSM backbone
+coefficient --- reproduced in closed form by static in-plane condensation and
+differentiated by an analytic adjoint (verified to $10^{-8}$) --- for a $50\%$
+detuning reduction at held frequency, confirmed by EPMC and by brute-force
+up/down frequency sweeps that trace the SSM-predicted damped forced response.
+\item The second manufacturable field --- structural \emph{topology}
+(Sec.~\ref{sec:topopt}) --- coupled to the same SSM backbone objective: a
+three-field density with SIMP, filter and Heaviside projection, whose density
+sensitivity is analytic and FD-verified and reuses the same adjoint solve as the
+orientation gradient, optimized jointly with the tow angle under curl, volume and
+frequency-band constraints to a connected, symmetric topology that voids the
+membrane-stretch antinodes.
+\item A concrete account of the \emph{engineering utility}
+(Sec.~\ref{sec:utility}): the halved hardening widens the panel's jump- and
+hysteresis-free operating range by $1.42\times$ ($\sim\!2.4\times$ with the added
+topology field), a property that maps directly onto the requirements of resonant
+sensors, vibration energy harvesters, and hysteresis-free actuators/MEMS --- and
+that is reached by reshaping the \emph{nonlinear} response at fixed linear frequency
+and fixed mass, a lever no classical composite knob provides.
+\item Designing an \emph{instability boundary}, not only a backbone
+(Sec.~\ref{sec:flutter}): the same left-eigenvector adjoint, applied to the nonsymmetric
+aeroelastic (piston-theory) pencil on a \emph{conforming} FE, recovers a supersonic
+panel-flutter boundary by $9\times$ at held frequency and mass (FD-verified $2.1\times10^{-7}$,
+calibrated to $\lambda_{\mathrm{cr}}=343$) --- off-axis fibers' bend--twist coupling craters a
+uniform panel's flutter and steering places it to recover. En route, an FE cross-check
+overturned a plausible global-mode result (a spurious $2\times$), a cautionary point in its own
+right; a supercritical Stuart--Landau coefficient shows the post-flutter limit cycle is benign.
 \end{enumerate}
 
 \section{The nonlinear system and its spectral submanifold}\label{sec:ssm}
@@ -163,6 +211,37 @@ a single functional equation in the two unknowns $\bm W$ (the geometry) and
 $\bm R$ (the reduced dynamics). Because $E$ is spanned by the master
 eigenvectors, we take conjugate coordinates $p_2=\bar p_1$; a real physical
 motion is then $\bm x=[\bm I\;\bm0]\bm W(\bm p)$ evaluated on $p_2=\bar p_1$.
+
+\subsection{Existence, uniqueness, and what makes the reduction exact}
+The invariance equation~\eqref{eq:invariance} has many formal invariant-manifold
+solutions; what singles out \emph{the} SSM is a spectral gap. Write the eigenvalues
+of the linearized pencil $(\bm{\mathcal A},\bm{\mathcal B})$ as
+$\{\lambda_j,\bar\lambda_j\}_{j=1}^{N}$. The master pair $\lambda_1,\bar\lambda_1$ spans
+$E$; call the rest the \emph{outer} spectrum. Haller and Ponsioen \cite{haller2016}
+show that, provided the outer eigenvalues are strictly further from the imaginary axis
+than the master pair (the \emph{spectral quotient} condition) and provided no outer
+eigenvalue is an integer combination $\lambda_o=m_1\lambda_1+m_2\bar\lambda_1$ of the
+master pair (a \emph{non-resonance} condition, up to the truncation order), there is a
+\emph{unique smoothest} invariant manifold tangent to $E$ at the origin --- the
+spectral submanifold. Uniqueness is what makes the reduction principled: the backbone
+we compute is not one of many possible reduced models but the exact restriction of the
+full dynamics to its slowest two-dimensional invariant surface.
+
+The two conditions also explain the method's failure modes, which we meet in practice.
+The non-resonance condition can fail at a specific order when
+$m_1\lambda_1+m_2\bar\lambda_1$ approaches an outer eigenvalue --- an \emph{internal
+resonance} (e.g.\ a $3{:}1$ ratio $3\omega_1\!\approx\!\omega_2$); then the
+corresponding homological operator is (near-)singular, the coefficient at that order
+blows up, and the two-dimensional SSM must be enlarged to include the resonant mode.
+The spectral-gap condition is what bounds the amplitude range: the manifold is
+guaranteed near the origin, and the polynomial parametrization below is its Taylor
+expansion there, so it is accurate within a radius that shrinks as the nonlinearity
+strengthens (Sec.~\ref{sec:handoff}). We use the \emph{normal-form} style of the
+parametrization method \cite{jain2022}: rather than force the reduced dynamics to be
+linear (which would push all nonlinearity into the geometry $\bm W$ and demand the
+strong non-resonance conditions), we keep the near-resonant terms in $\bm R$ --- these
+are precisely the backbone coefficients $\gamma_{2k+1}$ --- and annihilate only the
+non-resonant part, which is always invertible under light damping.
 
 \subsection{Solution by a graded power series}
 Expand~\eqref{eq:invariance} as power series in $\bm p$,
@@ -241,6 +320,33 @@ $\Imag\gamma_3>0$, softening if $<0$; the quintic $\gamma_5$ (order-5 reduction)
 what lets a softening branch turn around and harden. Physical amplitudes on the
 backbone follow by sampling $\bm x=[\bm I\;\bm0]\bm W(\bm p)$ over one period.
 
+Figure~\ref{fig:manifold} makes the object concrete for the plate: evaluating
+$\bm z=\bm W(\bm p)$ on the reduced disk draws the two-dimensional submanifold as a
+graph over the master mode's phase plane. It is tangent, at the origin, to the flat
+linear eigenplane, and it \emph{curves} away from it exactly through the slaved
+coordinates --- here the in-plane (membrane) motion, which is driven at twice the
+transverse frequency and grows like the square of the transverse amplitude. That
+curvature \emph{is} the membrane relaxation of Sec.~\ref{sec:plate}; the backbone is
+the family of periodic orbits riding on the surface. The whole nonlinear response is
+thus a smooth function of \emph{two} coordinates, which is why the reduced backbone
+and its design gradient cost the same whether the model has ten degrees of freedom or
+ten thousand --- and why the objective landscape it presents to the optimizer is
+analytic (\S\ref{sec:prosncons}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/ssm_manifold.pdf}
+\caption{The spectral submanifold of the von~K\'arm\'an plate, reconstructed from the
+manifold coefficients $\bm w_{\bm m}$, for the unidirectional baseline (left) and the
+optimized tow (right). The translucent plane is the linear (master) eigenplane; the
+surface is the SSM, whose height is the slaved in-plane (membrane) coordinate --- the
+manifold's curvature is the membrane relaxation that softens the hardening. Coloured
+curves are periodic backbone orbits at increasing amplitude, which lie on the
+manifold. The optimized design's manifold curves slightly more strongly, the
+geometric signature of its reduced hardening.}
+\label{fig:manifold}
+\end{figure}
+
 \paragraph{Consistency and verification.}
 The multilinear forms $\bm B_2,\bm T_3$ are extracted from the finite-element
 nonlinearity by even/odd decomposition and polarization, so the SSM and a
@@ -275,12 +381,24 @@ Backbone sensitivity vs.\ recompute & $\partial\Om/\partial\mu$ & matches to $\s
 \end{table}
 
 \subsection{Backbone sensitivity and calibration against prior work}
-For a small number of design parameters $\bm\mu$ we obtain the backbone
-sensitivity $\partial\Om/\partial\bm\mu$ at fixed physical amplitude by finite
-differencing the (cheap) SSM backbone; the analytic adjoint of
-\cite{pozzi2025,li2024} computes the same quantity at a cost independent of the
-number of parameters and is the natural next step for a full tow-path field. As
-calibration we reproduce two results of \cite{pozzi2025}. First
+For an objective $J$ built on the SSM the only design-dependence is through the reduced
+coefficients --- the master frequency $\omega_1(\theta)$ and the backbone coefficients
+$\gamma_{2k+1}(\theta)$ of Eq.~\eqref{eq:gamma} --- and two sensitivities suffice. The
+frequency is a symmetric Rayleigh quotient, so $\partial\omega_1^2/\partial\theta
+=\bm\varphi^{\!\top}(\partial\bm K/\partial\theta)\bm\varphi$ by Fox--Kapoor, with no
+eigenvector derivative. Each $\gamma_{2k+1}=\bm u_1^{*}\bm G_m$ is a multilinear
+contraction of the master eigenvectors and the $\theta$-dependent operators
+$\bm M,\bm K,\bm B_2,\bm T_3$, whose derivatives all reduce to a single laminate rotation
+$\partial\bar{\bm Q}/\partial\theta$; the eigenvector-derivative terms it also carries
+collapse, by the left-eigenvector (adjoint) structure of the projection, to \emph{one}
+linear solve reused across \emph{every} design degree of freedom. The design sensitivity
+therefore costs one reduced solve regardless of the number of tow-path variables --- the
+property that makes a \emph{field} of orientations tractable. We derive this adjoint in
+closed form for the relaxed cubic (Eq.~\eqref{eq:gammaeffadj}), for the coupled
+density--orientation problem (Sec.~\ref{sec:topopt}), and for the flutter boundary
+(Eq.~\eqref{eq:flutter-adj}), each verified against finite differences to
+$\lesssim\!10^{-7}$. As a first small-parameter calibration we instead finite-difference
+the cheap backbone and reproduce two results of \cite{pozzi2025,li2024}. First
 (their Fig.~2, Fig.~\ref{fig:fig2} here), the backbone sensitivity of two coupled
 oscillators predicts the perturbed backbone, $\Om(\bm\mu+\delta\bm\mu)\approx
 \Om(\bm\mu)+\partial_{\bm\mu}\Om\,\delta\bm\mu$, to $\sim\!10^{-5}$ over the
@@ -308,9 +426,29 @@ theory,
 \end{equation}
 with $\bar{\bm Q}(\theta)$ the rotated plane-stress reduced stiffness of the
 CFRP lamina ($E_1=\SI{131}{GPa}$, $E_2=\SI{9}{GPa}$, $G_{12}=\SI{5}{GPa}$,
-$\nu_{12}=0.27$). A symmetric stack has $B=0$; an unsymmetric stack couples
-stretching and bending. For a narrow beam we use the axial components
-$A_{11},B_{11},D_{11}$.
+$\nu_{12}=0.27$). The on-axis stiffnesses $Q_{11}=E_1/(1-\nu_{12}\nu_{21})$,
+$Q_{22}=E_2/(1-\nu_{12}\nu_{21})$, $Q_{12}=\nu_{12}Q_{22}$, $Q_{66}=G_{12}$
+($\nu_{21}=\nu_{12}E_2/E_1$) rotate to the fiber angle in the invariant (Tsai--Pagano)
+form
+\begin{equation}
+\begin{aligned}
+\bar Q_{11}&=U_1+U_2\cos2\theta+U_3\cos4\theta, &\quad
+\bar Q_{12}&=U_4-U_3\cos4\theta,\\
+\bar Q_{22}&=U_1-U_2\cos2\theta+U_3\cos4\theta, &\quad
+\bar Q_{66}&=U_5-U_3\cos4\theta,\\
+\bar Q_{16}&=\tfrac12U_2\sin2\theta+U_3\sin4\theta, &\quad
+\bar Q_{26}&=\tfrac12U_2\sin2\theta-U_3\sin4\theta,
+\end{aligned}
+\label{eq:qbar}
+\end{equation}
+the $U_i$ fixed material invariants (combinations of $Q_{11},Q_{12},Q_{22},Q_{66}$). The
+off-diagonal $\bar Q_{16},\bar Q_{26}$ --- the extension--shear / bend--twist couplings,
+nonzero except at $\theta\in\{0,\tfrac{\pi}{2}\}$ --- are the anisotropy the steering
+exploits, and the derivative that seeds every design gradient (Sec.~\ref{sec:ssm}) is the
+elementary trigonometric $\partial\bar{\bm Q}/\partial\theta$ of~\eqref{eq:qbar}
+(e.g.\ $\partial_\theta\bar Q_{16}=U_2\cos2\theta+4U_3\cos4\theta$). A symmetric stack has
+$B=0$; an unsymmetric stack couples stretching and bending. For a narrow beam we use the
+axial components $A_{11},B_{11},D_{11}$.
 
 \subsection{Element and nonlinearity}
 The beam carries axial $u$ and transverse $w$ (with slope) degrees of freedom.
@@ -388,7 +526,7 @@ coupling lever can do on a clamped beam.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figs/steered_beam_amplitude_robust.png}
+\includegraphics[width=\linewidth]{figs/steered_beam_amplitude_robust.pdf}
 \caption{Amplitude-robust composite beam by manufacturable fiber steering.
 (a)~optimized laminate --- each ply steered as an independent smooth per-station
 angle field; (b)~first-mode backbone $\Om/\omega_1$ versus mid-span amplitude for
@@ -412,7 +550,7 @@ result and these as the natural next steps.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\linewidth]{figs/coupled_osc_sensitivity.png}
+\includegraphics[width=0.9\linewidth]{figs/coupled_osc_sensitivity.pdf}
 \caption{Calibration against \cite{pozzi2025}, Fig.~2: backbone-sensitivity
 validation of two coupled oscillators. Sensitivity-based predictions (crosses)
 land on the recomputed perturbed backbones (colored) over the soften-to-harden
@@ -422,7 +560,7 @@ land on the recomputed perturbed backbones (colored) over the soften-to-harden
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\linewidth]{figs/beam_backbone_opt.png}
+\includegraphics[width=0.9\linewidth]{figs/beam_backbone_opt.pdf}
 \caption{Calibration against \cite{pozzi2025}, Fig.~3: a von~K\'arm\'an beam
 shaped to a prescribed softening backbone. The straight (hardening) beam becomes
 a curved (softening) one threading both target points; full-order EPMC (diamonds)
@@ -460,14 +598,58 @@ The last term is the membrane-stretching hardening; the middle term is the
 \emph{quadratic} coupling that drives the in-plane fields from the transverse
 motion.
 
+\paragraph{Governing equations.} Stationarity of the Lagrangian --- kinetic energy
+$T=\tfrac12\!\int\!\rho h\,\dot w^2\,\dd\Omega$ (plus in-plane inertia) minus $U$ ---
+gives, in strong form, the laminated \emph{F\"oppl--von K\'arm\'an} plate equations.
+With the membrane and bending stress resultants
+$\bm N=\bm A(\theta)\,(\bm\varepsilon_L+\bm\varepsilon_{NL})$ and
+$\bm M=\bm D(\theta)\,\bm\kappa$,
+\begin{align}
+N_{\alpha\beta,\beta}&=0,
+\label{eq:fvk-in}\\[2pt]
+M_{\alpha\beta,\alpha\beta}+\big(N_{\alpha\beta}\,w_{,\beta}\big)_{,\alpha}+p(\bm x,t)
+&=\rho h\,\ddot w,
+\label{eq:fvk-w}
+\end{align}
+the in-plane equilibrium~\eqref{eq:fvk-in} and the transverse
+equation~\eqref{eq:fvk-w} coupled through the membrane force $\bm N$ acting on the
+\emph{deflected} geometry --- the geometric (von K\'arm\'an) nonlinearity, cubic in
+$w$ after the in-plane fields are eliminated. Steering makes
+$\bm A(\theta),\bm D(\theta)$ --- and, off the principal axes, their bend--twist /
+extension--shear ($16,26$) couplings --- vary with position. We do not solve
+\eqref{eq:fvk-in}--\eqref{eq:fvk-w} in strong form but discretize the energy.
+
 \subsection{Assumed-modes reduction and membrane relaxation}
-Expanding $w=\sum_i q^w_i\phi_i$ (simply-supported bending modes) and
-$u=\sum q^u_j\psi_j$, $v=\sum q^v_k\psi_k$ (in-plane modes) and integrating
-\eqref{eq:plate-energy} by Gauss quadrature yields the modal mass $\bm M$,
-linear stiffness $\bm K(\theta)$ (block-diagonal: bending and in-plane
-membrane), a symmetric quadratic form $\bm B_2$ (from the middle term of
-\eqref{eq:plate-energy}) and a cubic form $\bm T_3$ (from the last term); a
-spatially varying $\theta(\bm x)$ enters every quadrature point exactly. The
+Expand $w=\sum_i q^w_i\phi_i$ (simply-supported bending modes),
+$u=\sum q^u_j\psi_j$ and $v=\sum q^v_k\psi_k$ (in-plane modes), collect the modal
+coordinates into $\bm x=[\bm q^w;\bm q^u;\bm q^v]$, and apply Galerkin's method to
+\eqref{eq:fvk-in}--\eqref{eq:fvk-w} (equivalently Lagrange's equations on the
+quadrature-integrated energy). The field equations collapse to \emph{exactly} the
+semidiscrete system~\eqref{eq:eom},
+\begin{equation}
+\bm M\ddot{\bm x}+\bm C\dot{\bm x}+\bm K(\theta)\,\bm x
++\bm B_2(\theta)[\bm x,\bm x]+\bm T_3(\theta)[\bm x,\bm x,\bm x]=\bm f(t),
+\label{eq:plate-eom}
+\end{equation}
+whose operators are moments of the fiber-angle field over the domain:
+$M_{ij}=\int\!\rho h\,\phi_i\phi_j$; the stiffness $\bm K(\theta)$ is block-diagonal
+in bending $\int\!\bm\kappa_i^{\!\top}\bm D(\theta)\bm\kappa_j$ and in-plane membrane
+$\int\!\bm\varepsilon_{L,i}^{\!\top}\bm A(\theta)\bm\varepsilon_{L,j}$; and the
+nonlinear internal forces are the gradients of the nonlinear energy in
+\eqref{eq:plate-energy},
+\begin{equation}
+\bm B_2(\theta)[\bm x,\bm x]=\partial_{\bm x}\!\!\int\!\bm\varepsilon_L^{\!\top}\bm A(\theta)\,\bm\varepsilon_{NL},
+\qquad
+\bm T_3(\theta)[\bm x,\bm x,\bm x]=\partial_{\bm x}\,\tfrac12\!\!\int\!\bm\varepsilon_{NL}^{\!\top}\bm A(\theta)\,\bm\varepsilon_{NL},
+\label{eq:plate-multilinear}
+\end{equation}
+the quadratic $u\!\leftrightarrow\!w^2$ coupling and the cubic membrane-stretching
+hardening respectively. Each multilinear form is extracted numerically at the Gauss
+points (the symmetric $\bm B_2,\bm T_3$ identical to PyHB's model), so a spatially
+varying $\theta(\bm x)$ enters every quadrature point exactly. Equation
+\eqref{eq:plate-eom} is the discrete dynamical system that the SSM of
+Sec.~\ref{sec:ssm} reduces --- $\bm C=2\zeta\omega_1\bm M$ supplies light modal
+damping. The
 master mode is the fundamental bending mode; the in-plane modes are two orders
 of magnitude stiffer and are \emph{slaved} to it. Precisely, the order-2 SSM
 manifold coefficients \eqref{eq:homological} carry the quadratic response of the
@@ -480,13 +662,19 @@ Figure~\ref{fig:relax} shows the effect. As in-plane modes are added the
 hardening coefficient falls from the restrained value and converges (by three
 modes per direction) to the relaxed value, a $33\%$ reduction; the reduced
 backbone matches full-order EPMC to $<0.1\%$; and the slaved in-plane field is
-the expected outward membrane flow beneath the transverse bulge. The
-finite-element analogue --- displacement-based von K\'arm\'an plate elements ---
-would replace the assumed modes, at higher cost, with the same SSM reduction.
+the expected outward membrane flow beneath the transverse bulge. Because EPMC and
+the time-domain checks share the assumed-modes basis, they validate the SSM
+\emph{reduction} but not the \emph{discretization}; we therefore validate the
+assumed-modes backbone independently against a finite-element model in
+Appendix~\ref{app:fe}. The normalized detuning matches FE to $\sim\!2\%$ for a
+strongly steered plate with an enriched expansion (the absolute frequency is a
+slowly-converging Ritz upper bound), so the relative results reported here are
+FE-accurate; a displacement-based von~K\'arm\'an FE would replace the assumed modes
+throughout at higher cost, reduced by the same SSM.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figs/plate_membrane_relaxation.png}
+\includegraphics[width=\linewidth]{figs/plate_membrane_relaxation.pdf}
 \caption{Membrane relaxation in the von K\'arm\'an plate. (a)~the backbone
 hardening coefficient vs.\ the number of in-plane modes, from the restrained
 (immovable-edge) upper bound down to the converged relaxed value; (b)~restrained
@@ -495,47 +683,928 @@ the fundamental transverse mode (the SSM order-2 manifold).}
 \label{fig:relax}
 \end{figure}
 
-\subsection{Manufacturable design and the front}
-The plate plugs into wavetopo's composite-design framework unchanged: a CS-RBF
-orientation field $\theta(\bm x)=\bm\Phi\hat{\bm\theta}$, the curl constraint
-$\zeta=(\bm n\!\cdot\!\nabla)\theta=\cos\theta\,\bm\Phi_x\hat{\bm\theta}
-+\sin\theta\,\bm\Phi_y\hat{\bm\theta}\le\zall$, and MMA with an augmented-
-Lagrangian penalty and best-feasible retention. The backbone objective is the
-frequency-normalized amplitude detuning $J=\mathrm{knl}/K_b$; its gradient is
-pulled back through the CS-RBF transpose ($\partial J/\partial\hat{\bm\theta}
-=\bm\Phi^{\!\top}\partial J/\partial\theta$) and verified against finite
-differences to $\sim\!10^{-7}$. Figure~\ref{fig:platefront} reports a first
-manufacturability front on the plate: the achievable detuning reduction falls
-from the unconstrained optimum as the tow-curvature limit tightens, and the
-optimized tow field is smooth and printable. Here the two-dimensional field is a
-far stronger lever than the one-dimensional beam ($56$--$73\%$ vs.\ a few
-percent).
+\subsection{Why anisotropy retunes the hardening}\label{sec:why}
+Unlike the beam, the plate laminate is \emph{symmetric} ($\bm B=\bm 0$): the
+bending--extension coupling that levered the beam is gone. The lever here is the
+anisotropy itself, and the mechanism is worth stating precisely because it is
+what makes the two-dimensional problem qualitatively stronger.
 
-\paragraph{Confirmation on the real plate.} The front is optimized on a
-single-mode surrogate; we confirm it on the physically complete model.
+The linear frequency is fixed by the bending functional
+$\int\bm\kappa^{\!\top}\bm D(\theta)\bm\kappa$; the hardening $\gamma_3$ by the
+(relaxed) membrane functional
+$\int\bm\varepsilon_{NL}^{\!\top}\bm A(\theta)\bm\varepsilon_{NL}$ minus the
+in-plane relaxation of Eq.~\eqref{eq:gamma}. Both read the \emph{same} tow-angle
+field --- and for a single-ply-like laminate $\bm D\!\propto\!\bm A\!\propto\!
+\bar{\bm Q}(\theta)$ pointwise --- yet they sample it through \emph{different
+operators}: bending through the curvature
+$\bm\kappa=(w_{,xx},w_{,yy},2w_{,xy})$ (second derivatives, largest at the panel
+center where the mode bulges), stretching through
+$\bm\varepsilon_{NL}=\tfrac12(w_{,x}^2,w_{,y}^2,2w_{,x}w_{,y})$ (first-derivatives
+squared, largest toward the edges where the slope peaks), and along different
+tensor directions in the $(11,22,12)$ stiffness space.
+
+Two consequences follow. First, an \emph{isotropic} material cannot separate the
+two: a single modulus scales bending and membrane stiffness together --- the
+two-dimensional form of the beam's $r=\sqrt{D/A}$ obstruction. Anisotropy
+replaces that scalar with the direction-dependent tensor $\bar{\bm Q}(\theta)$,
+so the fiber angle becomes a knob that trades bending against membrane stiffness
+and redirects both. Second, a single \emph{global} angle moves the whole tensor
+rigidly and cannot hold one functional while changing the other; a \emph{steered
+field} has the spatial freedom to keep the bending integral (the frequency) on
+its iso-surface while sliding along that surface to cut the membrane integral
+(the hardening) --- fibers stiff where curvature sets the frequency (the center),
+compliant to the stretch where slope-squared sets the hardening (the edges). The
+membrane \emph{relaxation} of the previous subsection amplifies the lever: the
+same anisotropic $\bm A(\theta)$ that stores the stretching energy also sets how
+readily it relieves into in-plane flow, and steering opens compliant in-plane
+paths that soften $\gamma_3$ further. This spatial mismatch --- between where the
+bending energy lives and where the stretching lives --- is exactly the freedom the
+one-dimensional beam lacked, and it is why the plate lever reaches tens of
+percent where the beam's reached only a few.
+
+\subsection{The tow-curvature manufacturability constraint}\label{sec:manuf}
+Automated fiber placement (AFP) lays each ply as a set of continuous tow courses; the
+head cannot steer a course tighter than a minimum in-plane radius $R_{\min}$ --- set by
+tow width, gap/overlap tolerance, and out-of-plane wrinkling --- without defects. This
+is the constraint that distinguishes a \emph{manufacturable} steered laminate from an
+arbitrary orientation field, and it is enforced throughout. For an orientation field
+$\theta(\bm x)$ the fiber direction is $\bm n=(\cos\theta,\sin\theta)$, and the curvature
+of a tow \emph{path} --- how fast the fiber turns as one advances \emph{along} it --- is
+the directional derivative of the angle along the fiber,
+\begin{equation}
+\kappa_{\mathrm{tow}}(\bm x)=(\bm n\!\cdot\!\nabla)\theta
+=\cos\theta\,\theta_{,x}+\sin\theta\,\theta_{,y},
+\label{eq:towcurv}
+\end{equation}
+so the local steering radius is $R=1/|\kappa_{\mathrm{tow}}|$ and the AFP limit
+$R\ge R_{\min}$ is the \emph{pointwise} inequality
+\begin{equation}
+|\kappa_{\mathrm{tow}}(\bm x)|\le\zall\equiv 1/R_{\min}\qquad\forall\,\bm x .
+\label{eq:curl}
+\end{equation}
+Equation~\eqref{eq:towcurv} is a curl-like first-order operator that is \emph{nonlinear}
+in $\theta$ (through $\bm n=\bm n(\theta)$); it is the manufacturability constraint the
+beam of Sec.~\ref{sec:results} and the plate below both carry.
+
+\paragraph{Orientation field.} We represent $\theta$ by compactly-supported radial basis
+functions (CS-RBF) seeded on a coarse set of support points,
+$\theta(\bm x)=\bm\Phi(\bm x)\,\hat{\bm\theta}$, with the interpolation matrix
+$\bm\Phi$ and its analytic gradients $\bm\Phi_x,\bm\Phi_y$ at least $C^2$, so that
+$\kappa_{\mathrm{tow}}$ in~\eqref{eq:towcurv} is well defined; the compact support keeps
+$\bm\Phi$ sparse and the field intrinsically smooth (hence printable). The design
+variables are the coefficients $\hat{\bm\theta}$. The constraint~\eqref{eq:curl}, at each
+evaluation point $e$, is the smooth function
+\begin{equation}
+\zeta_e(\hat{\bm\theta})=\cos(\bm\Phi_e\hat{\bm\theta})\,(\bm\Phi_{x,e}\hat{\bm\theta})
++\sin(\bm\Phi_e\hat{\bm\theta})\,(\bm\Phi_{y,e}\hat{\bm\theta}),\qquad \zeta_e^2\le\zall^2,
+\label{eq:curlfield}
+\end{equation}
+whose Jacobian $\partial\zeta_e/\partial\hat{\bm\theta}=
+[-\sin\theta_e(\bm\Phi_{x,e}\hat{\bm\theta})+\cos\theta_e(\bm\Phi_{y,e}\hat{\bm\theta})]\,\bm\Phi_e
++\cos\theta_e\,\bm\Phi_{x,e}+\sin\theta_e\,\bm\Phi_{y,e}$ is analytic. The same transpose
+$\bm\Phi^{\!\top}$ that assembles this constraint gradient pulls back the objective
+sensitivity, $\partial J/\partial\hat{\bm\theta}=\bm\Phi^{\!\top}\,\partial J/\partial\theta$
+--- the orientation analogue of a filtered density field.
+
+\paragraph{Constrained problem.} The manufacturable design problem is
+\begin{equation}
+\min_{\hat{\bm\theta}}\;J(\hat{\bm\theta})\quad\text{s.t.}\quad
+\zeta_e^2-\zall^2\le 0\;\;\forall e,\qquad
+\underline{\omega}\le\omega_1(\hat{\bm\theta})\le\overline{\omega},
+\label{eq:designprob}
+\end{equation}
+with $J$ the SSM backbone objective and the frequency band holding the linear frequency
+so the gain is genuine nonlinear tailoring, not a softer plate (the two-field problem of
+Sec.~\ref{sec:topopt} adds a volume equality on the density). We solve it by the method of
+moving asymptotes (MMA), whose convex separable subproblems suit many \emph{local}
+inequality constraints and a moderate number of variables, wrapping the pointwise
+curl constraints in an augmented Lagrangian
+\begin{equation}
+\mathcal L=J+\sum_e\frac{1}{2\mu}\Big(\max(0,\;\lambda_e+\mu h_e)^2-\lambda_e^2\Big),
+\qquad h_e=\zeta_e^2-\zall^2,
+\label{eq:auglag}
+\end{equation}
+the standard augmented Lagrangian for inequality constraints, with multiplier update
+$\lambda_e\!\leftarrow\!\max(0,\,\lambda_e+\mu h_e)$, a
+geometrically-increasing penalty $\mu$ while infeasible, and retention of the best
+feasible iterate. Its gradient combines the SSM adjoint (the objective) with the analytic
+curl Jacobian (the constraint), so each step costs one reduced solve plus sparse
+contractions --- independent of the number of design variables.
+
+\subsection{Manufacturable design and the front}
+The plate plugs into this framework unchanged: the CS-RBF orientation field
+$\theta(\bm x)=\bm\Phi\hat{\bm\theta}$, the curl constraint~\eqref{eq:curl}, and MMA with
+the augmented Lagrangian~\eqref{eq:auglag} and best-feasible retention. The backbone objective is the
+frequency-normalized amplitude detuning $J=\gamma_{\mathrm{eff}}/K_b$, where
+$\gamma_{\mathrm{eff}}$ is the fundamental's \emph{relaxed} effective cubic --- the
+real SSM backbone coefficient, formed in closed form by statically condensing the
+(fast) in-plane degrees of freedom. Writing the modal membrane energy as
+$\tfrac12 K_b q^2+\tfrac12\bm s^{\!\top}\bm K_{\mathrm{in}}\bm s
++q^2\bm g^{\!\top}\bm s+\tfrac14\,\mathrm{knl}\,q^4$ in the transverse amplitude
+$q$ and in-plane amplitudes $\bm s$, minimizing over $\bm s$ gives
+$\bm s^\star=-q^2\bm K_{\mathrm{in}}^{-1}\bm g$ and
+\begin{equation}
+\gamma_{\mathrm{eff}}=\mathrm{knl}-2\,\bm g^{\!\top}\bm K_{\mathrm{in}}^{-1}\bm g
+\;<\;\mathrm{knl},
+\label{eq:gammaeff}
+\end{equation}
+the raw membrane cubic minus the relaxation. This closed form reproduces the
+full multi-mode SSM backbone coefficient of Eq.~\eqref{eq:gamma} to four digits on
+uniform layups (and within $\sim\!2\%$ under steering), so the design is driven by
+the \emph{true} response-curve coefficient rather than a stiffness-ratio proxy.
+Its sensitivity is the analytic adjoint
+\begin{equation}
+\frac{\dd\gamma_{\mathrm{eff}}}{\dd\theta}
+=\dd\,\mathrm{knl}-4(\dd\bm g)^{\!\top}\bm u^\star
++2\,\bm u^{\star\top}(\dd\bm K_{\mathrm{in}})\bm u^\star,
+\qquad \bm u^\star=\bm K_{\mathrm{in}}^{-1}\bm g,
+\label{eq:gammaeffadj}
+\end{equation}
+in which the single in-plane solve $\bm u^\star$ is reused across every design
+degree of freedom; pulled back through the CS-RBF transpose
+($\partial J/\partial\hat{\bm\theta}=\bm\Phi^{\!\top}\partial J/\partial\theta$)
+it is verified against finite differences to $\sim\!10^{-8}$. This is the
+response-curve sensitivity of \cite{pozzi2025,li2024} in the fiber-field setting.
+Figure~\ref{fig:platefront} reports a first manufacturability front on the plate:
+the achievable detuning reduction falls from the unconstrained optimum as the
+tow-curvature limit tightens, and the optimized tow field is smooth and printable.
+Here the two-dimensional field is a far stronger lever than the one-dimensional
+beam (tens of percent vs.\ a few).
+
+\paragraph{Confirmation on the real plate, three ways.} We confirm the optimized
+design on the physically complete model, against two independent ground truths.
 Transferring the curl-feasible optimized tow layout onto the multi-mode von
-K\'arm\'an plate \emph{with in-plane relaxation}, the SSM backbone matches
-full-order EPMC continuation to $0.0\%$ for \emph{both} the unidirectional
-baseline and the optimized design, and the relative amplitude-detuning reduction
-is $73\%$ under EPMC --- which the single-mode surrogate predicted as $69\%$. The
-result is therefore not an artifact of the reduction: it holds against
-independent ground truth on the real physics. (The optimized design is also
-stiffer, $f_1=398$ vs.\ $256\,\si{Hz}$; the reported reduction is of the
-\emph{relative} detuning, each backbone normalized by its own $\omega_1$.) Adding
-the density/topology field $\bm z$ --- the second wavetopo design field --- is the
-natural next step, and the analytic SSM adjoint of \cite{pozzi2025} becomes
-essential once the design is a full field.
+K\'arm\'an plate \emph{with in-plane relaxation}, and holding the linear frequency
+through the $\bm K_b$ ceiling (within $+5\%$; $f_1=270$ vs.\ $256\,\si{Hz}$), the
+SSM backbone matches full-order EPMC continuation to $\sim\!1\%$ for \emph{both}
+designs, and the relative amplitude-detuning reduction is $50\%$ (SSM and EPMC
+agree). Beyond the
+backbone, the SSM predicts the full \emph{damped forced response}: seeking a
+periodic response $p_1=a\,e^{i\Om t}$ on the manifold reduces the forced dynamics
+to $[i\Om-s(\rho)]\,a=f_1/2$ with modal forcing $f_1=\bm u_1^{*}[\bm f;\bm 0]$,
+giving the leading-order frequency-response curve
+$[(\Om-\Om(\rho))^2+\alpha(\rho)^2]\,\rho^2=|f_1|^2$ whose peak rides the backbone
+$\Om=\Om(\rho)$. Direct time-domain frequency sweeps of the full nonlinear plate
+(RK45, in-plane statically condensed, $2\%$ Rayleigh damping) --- run up and down
+to expose the hardening jump and hysteresis --- trace steady-state peaks that land
+on the SSM forced-response curve (Fig.~\ref{fig:plateconfirm}), and steering
+visibly flattens the resonance at held frequency. The result is therefore not an
+artifact of the reduction: it holds against harmonic-balance \emph{and}
+brute-force time integration.
+
+Because the design is driven by $\gamma_{\mathrm{eff}}$
+(Eq.~\eqref{eq:gammaeff}), which \emph{equals} the full SSM's backbone coefficient
+to four digits, the optimizer's own metric and this verified reduction coincide:
+there is no surrogate gap. An earlier stiffness-ratio objective
+$J=k_{nl}/K_b$, by contrast, is blind to the $\theta$-dependent membrane
+relaxation and to the modal adjoint weighting --- it moved only $\sim\!6\%$ on the
+designs whose real detuning dropped by half --- which is precisely why the design
+must be driven by the SSM's own coefficient and its adjoint
+(Eq.~\eqref{eq:gammaeffadj}), not a proxy. The remaining lever, and the immediate
+next step, is the density/topology field $\bm z$ --- the second wavetopo design
+variable --- reduced by the same SSM.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{figs/plate_framework_prototype.png}
+\includegraphics[width=\linewidth]{figs/plate_framework_prototype.pdf}
 \caption{Manufacturable fiber-steered nonlinear-backbone design on a plate,
 coupling wavetopo's CS-RBF orientation field, curl constraint and MMA to the
-NLTopt SSM backbone. (a)~a manufacturability front (amplitude-detuning reduction
-vs.\ minimum tow radius); (b)~the optimized, printable tow field; (c)~the curl
-$|\zeta|$, everywhere below the limit.}
+NLTopt SSM backbone coefficient $\gamma_{\mathrm{eff}}$ (Eq.~\eqref{eq:gammaeff})
+and its analytic adjoint (Eq.~\eqref{eq:gammaeffadj}). (a)~the first-mode backbone
+of the unidirectional baseline (grey) vs.\ the steered design (green), at held
+linear frequency --- the resonance drifts $51\%$ less with amplitude; (b)~the
+optimized, printable (curl-feasible) tow field; (c)~the held-frequency
+manufacturability front --- detuning reduction vs.\ minimum tow radius, which
+saturates once the curl limit stops binding.}
 \label{fig:platefront}
 \end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_confirm.pdf}
+\caption{The SSM predicts the \emph{damped forced response}, confirmed by direct
+time integration, for the unidirectional baseline (left) and the steered design
+(right). Solid: the SSM backbone (Eq.~\eqref{eq:backbone}) and the leading-order
+SSM forced-response curve. Markers: steady-state amplitude of the full nonlinear
+plate under a harmonic modal force, from frequency sweeps run up ($\bullet$) and
+down ($\square$) with $2\%$ damping; the hardening jump and hysteresis appear,
+and the converged peaks ride the SSM curve. (Points inside the saddle-node fold,
+where the transient is critically slow, are not yet converged and are dropped
+rather than faked onto a branch.) At held linear frequency the steered design
+leans and jumps at a lower amplitude-normalized frequency: the $50\%$ detuning
+reduction, shown dynamically.}
+\label{fig:plateconfirm}
+\end{figure}
+
+\subsection{Forced response, the fold, and the jump-free amplitude}\label{sec:frc}
+The backbone is the free (self-sustained) response; the jump lives on the \emph{forced}
+response, which the same reduction delivers at leading order. Adding harmonic modal
+forcing $\bm f\cos\Omega t$ to the equation of motion~\eqref{eq:eom} and projecting onto
+the SSM, the steady amplitude $\rho$ of the directly-driven mode satisfies the algebraic
+forced-response relation
+\begin{equation}
+\big[(\Omega-\omega(\rho))^2+\alpha(\rho)^2\big]\,\rho^2=|f_1|^2,\qquad
+f_1=\bm u_1^{*}\,[\bm f;\,\bm0],
+\label{eq:frc}
+\end{equation}
+in which $\omega(\rho)$ and $\alpha(\rho)$ are the \emph{same} backbone frequency and
+amplitude-dependent damping as the free response~\eqref{eq:backbone}
+---$\omega(\rho)=\Imag\!\big(\lambda_1+\sum_k\gamma_{2k+1}(\rho/2)^{2k}\big)$,
+$\alpha(\rho)=\Real(\cdots)$--- and the drive enters only through its projection $f_1$
+onto the master left eigenvector. The physical forced-response curve (FRC) follows by
+sampling $\bm x=[\bm I\;\bm0]\bm W(\bm p)$; Eq.~\eqref{eq:frc} is a resonance peak that
+\emph{leans} in the direction the backbone bends and folds once it leans past vertical.
+
+\paragraph{The fold and the jump-free amplitude.} Solving~\eqref{eq:frc} for the drive
+frequency,
+\begin{equation}
+\Omega_\pm(\rho)=\omega(\rho)\pm\sqrt{|f_1|^2/\rho^2-\alpha(\rho)^2},
+\label{eq:frcbranch}
+\end{equation}
+the response is multivalued in $\Omega$ --- and a swept excitation \emph{jumps} between
+branches with hysteresis --- exactly where $\dd\Omega/\dd\rho=0$ acquires a pair of roots
+(a saddle-node fold). The smallest drive at which a fold first appears sets the
+\emph{jump-free amplitude} $a_{\mathrm c}$: below it the resonance is single-valued and
+hysteresis-free. For a hardening backbone $\omega(\rho)\simeq\omega_1+\kappa\,a^2$ with
+$\kappa=\dd\Omega/\dd A^2$ and light damping $\alpha\simeq\zeta\omega_1$, the fold first
+forms where the backbone's frequency shift overtakes the damping bandwidth,
+$\kappa\,a_{\mathrm c}^2\sim\zeta\omega_1$, i.e.
+\begin{equation}
+a_{\mathrm c}\;\sim\;\sqrt{\zeta\,\omega_1/\kappa}\;\propto\;\kappa^{-1/2}.
+\label{eq:ac}
+\end{equation}
+Halving the hardening coefficient $\kappa$ at held $\omega_1$ therefore widens the
+jump-free range by $\sqrt2$ --- precisely the lever the plate design pulls. We do not
+depend on the estimate~\eqref{eq:ac}: in Sec.~\ref{sec:jump} $a_{\mathrm c}$ is computed
+exactly as the drive at which~\eqref{eq:frc} first turns multivalued. The point is that
+the forced response, its fold, and the jump-free amplitude are all algebraic in the
+\emph{same} coefficients $\gamma_{2k+1}$ the design already optimizes --- so shaping the
+backbone shapes the jump.
+
+\subsection{The engineering payoff: a wider jump-free operating range}
+\label{sec:jump}
+A halved detuning coefficient is a means, not the end; its consequence is what a
+resonant device actually cares about. Above a critical drive the hardening
+forced-response curve \emph{folds}, and the response jumps --- a sudden amplitude
+change with hysteresis that corrupts a resonant sensor or harvester and can be
+unsafe. The jump is the saddle-node fold of Sec.~\ref{sec:frc}, and by
+Eq.~\eqref{eq:ac} its onset amplitude scales as $a_{\mathrm{c}}\!\sim\!\sqrt{\zeta\omega_1/\kappa}
+\propto\kappa^{-1/2}$, so halving the hardening $\kappa$ raises $a_{\mathrm{c}}$ by
+$\sqrt2$ at held frequency. We compute $a_{\mathrm{c}}$ directly, as the
+drive at which the forced-response curve~\eqref{eq:frc} first becomes multivalued: on our panel
+($\zeta=2\%$) the steered tow lifts the jump-free amplitude from $a/h=0.208$ to
+$0.296$ --- a $1.42\times$ wider amplitude range, equivalently $\sim\!1.7\times$ more
+drive before the resonance becomes multivalued (Fig.~\ref{fig:jump}). At any drive
+between the two thresholds
+the unidirectional panel's resonance folds and jumps while the steered panel stays
+single-valued: the steering has \emph{removed the jump}. The two-field topology
+design pushes this further, to $\sim\!2.4\times$ the jump-free amplitude. This is the
+tangible result --- a composite resonator that stays linear, jump- and
+hysteresis-free, to substantially larger amplitude, purely by how the tows are laid.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_jump.pdf}
+\caption{The engineering payoff. \emph{Left:} at one drive level the unidirectional
+panel's forced-response curve folds and jumps (red, multivalued, hysteretic), while
+the steered panel responds single-valued (green) --- the steering removes the jump.
+\emph{Right:} the jump-free amplitude range ($a_{\mathrm{c}}$, the numerically
+computed saddle-node onset) widens from $0.208$ to $0.296\,h$, a factor $1.42$
+(equivalently $\sim\!1.7\times$ more drive), at held linear frequency and
+curl-feasibly.}
+\label{fig:jump}
+\end{figure}
+
+We confirm the jump itself by brute force. Sweeping a harmonic drive up and then
+down through the resonance --- direct RK45 time integration of the full nonlinear
+plate with $2\%$ Rayleigh damping, the in-plane motion statically condensed --- the
+unidirectional panel is hysteretic: the up-sweep rides the upper branch and jumps
+down, the down-sweep rides the lower branch and jumps up, so the two disagree by
+$0.054\,h$ across the fold. The steered panel's up- and down-sweeps coincide to
+$0.009\,h$: no jump (Fig.~\ref{fig:jumpnum}). The time-domain sweeps also track the
+SSM forced-response curve point for point, closing the loop between the reduced
+model that designs the panel and the full simulation that a test would measure.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_jump_numerics.pdf}
+\caption{Direct time-domain confirmation of the jump. Harmonic forced sweeps of the
+full nonlinear plate, up ($\bullet$) and down ($\square$), at one drive. \emph{Left:}
+the unidirectional panel is hysteretic --- up- and down-sweeps disagree across the
+fold (they trace the upper and lower branches of the multivalued response).
+\emph{Right:} the steered panel's sweeps coincide on a single-valued curve --- no
+jump. Grey: the SSM forced-response curve the design was built on, which the sweeps
+follow point for point.}
+\label{fig:jumpnum}
+\end{figure}
+
+\subsection{Engineering utility: which devices this buys}\label{sec:utility}
+A backbone coefficient is an abstraction; the reason to halve it is that three
+concrete device requirements follow directly from it, each of which a plain
+composite panel fails to meet at working amplitude.
+
+\emph{A resonant sensor that stays calibrated.} Resonant mass, gas, and strain
+sensors read a frequency shift as their signal, so any dependence of the operating
+frequency on drive amplitude injects a systematic error --- amplitude noise
+masquerades as signal and the calibration drifts as the excitation level changes.
+The detuning we minimize \emph{is} that amplitude--frequency coupling; holding the
+linear frequency while cutting the hardening (Eq.~\eqref{eq:gammaeff}) decouples the
+read-out from the drive level, extending the linear operating range without a new
+material, a larger proof mass, or a re-calibration.
+
+\emph{A vibration energy harvester with usable bandwidth.} A harvester wants the
+largest response over the widest band of excitation frequency. A hardening
+resonance leans over and folds, so its effective bandwidth is capped by the
+saddle-node: past the fold the amplitude collapses to the lower branch and the
+harvested power drops abruptly. Widening the jump-free amplitude by $1.42\times$
+(and by $\sim\!2.4\times$ with the added topology field, Sec.~\ref{sec:topopt}) is
+directly a wider high-amplitude operating band, obtained from the layup rather than
+from a tuned proof mass or a softer, heavier structure.
+
+\emph{A hysteresis-free actuator, filter, or MEMS resonator.} Where the forced
+response is multivalued the device is hysteretic: a sweep up and a sweep down give
+different steady amplitudes at the same frequency (Fig.~\ref{fig:jumpnum}), which is
+fatal for an element run in closed loop or used as a frequency reference. Removing
+the jump makes the amplitude single-valued and the response repeatable --- the
+baseline requirement for a resonant actuator or mechanical filter, here met by tow
+placement alone.
+
+The thread common to all three is what makes fiber steering distinctive as a design
+lever. Every classical composite knob --- ply count, stacking sequence, added mass,
+stiffeners --- moves the linear frequency and the part mass together with any change
+to the nonlinearity. Steering is the one knob that reshapes the \emph{nonlinear}
+response at \emph{fixed} linear frequency and fixed mass, and it does so with
+automated-fiber-placement hardware and a prepreg already in the shop: the design
+cost is a curvature-feasible tow path, not a change to the bill of materials.
+Moreover, the same adjoint that \emph{minimizes} the detuning can \emph{prescribe}
+it (Sec.~\ref{sec:points}, Fig.~\ref{fig:points}), so the utility is not merely
+``flatter'' but a resonator whose amplitude--frequency law is specified at design
+time and printed into the fiber path. What steering cannot do is exceed the physical
+lever: on a clamped beam the gain is a few percent (Sec.~\ref{sec:results}), and even
+on the plate it is a factor, not an order of magnitude --- the honest bound recorded
+throughout Secs.~\ref{sec:results} and \ref{sec:plate}. Within that bound, the
+deliverable is a manufacturable composite resonator whose nonlinear operating
+envelope is a design output rather than an accident of the layup.
+
+\subsection{Dial-a-backbone: designing the toolpath to a target}
+Minimizing the detuning is one use of the adjoint; \emph{prescribing} it is
+another, and it is the manufacturable analogue of the forced-response-curve design
+of \cite{liang2025,pozzi2025}. Replacing the objective with a least-squares match
+to a target relative detuning $\tau=J/J_{[0]}$ (the design's frequency-normalized
+hardening as a fraction of the unidirectional baseline's), the \emph{same} tow-field
+adjoint steers a single panel to a \emph{specified} nonlinearity. Figure~\ref{fig:tune}
+drives one panel to $\tau=0.80,\,0.65,\,0.50$; the achieved values land on the
+targets to $\sim\!0.01$, at held linear frequency and curl-feasibly, and the toolpath
+visibly steers harder for a deeper target (minimum tow radius $73\!\to\!30$ mm --- the
+manufacturing cost of a stronger nonlinear correction). The panel becomes a
+\emph{tunable} nonlinear element: a set of such panels, each dialed to spec, is a
+graded array of nonlinear resonators or matched absorbers.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_tune.pdf}
+\caption{Designing the nonlinear response to a target. \emph{Top:} one panel's
+first-mode backbone dialed to three prescribed relative detunings $\tau$ (a $20$--$50\%$
+reduction), each landing on target at held frequency. \emph{Bottom:} the corresponding
+fiber toolpaths, coloured by local steering radius --- a deeper target requires more
+aggressive (but still feasible) steering.}
+\label{fig:tune}
+\end{figure}
+
+\section{Two fields: topology \emph{and} fiber steering}\label{sec:topopt}
+
+The orientation field decides which way the tows run; the second wavetopo design
+field --- the structural \emph{density} $\bm z$ --- decides where material goes at
+all. Adding it turns the problem into genuine topology optimization coupled to
+fiber steering, and it plugs into the same SSM backbone objective.
+
+\subsection{Three-field density and the density-weighted backbone}
+We use the standard density parametrization: a raw variable $z_e\in[0,1]$ per
+element, a linear \emph{filter} $\bm y_f=\bm P\bm z$ (radius $R_\rho$, imposing a
+minimum feature size), a smooth \emph{Heaviside projection}
+$y=\tfrac{\tanh(\beta\eta)+\tanh(\beta(y_f-\eta))}{\tanh(\beta\eta)+\tanh(\beta(1-\eta))}$
+that crisps the topology toward $0/1$ as $\beta$ is continued upward, and a SIMP
+interpolation $E(y)=\varepsilon+(1-\varepsilon)y^{p}$ ($p=3$) of the element
+stiffness. Every element quadratic form of Sec.~\ref{sec:plate} is scaled by
+$E_e$: the bending $K_b=\sum_e E_e\,k^b_e$, the raw cubic
+$\mathrm{knl}=\sum_e E_e\,k^{nl}_e$, the in-plane stiffness
+$\bm K_{\mathrm{in}}=\sum_e E_e\,\bm K^{\mathrm{in}}_e$ and the coupling
+$\bm g=\sum_e E_e\,\bm g_e$, so the relaxed backbone coefficient
+$\gamma_{\mathrm{eff}}=\mathrm{knl}-2\bm g^{\!\top}\bm K_{\mathrm{in}}^{-1}\bm g$
+(Eq.~\eqref{eq:gammaeff}) becomes a function of \emph{both} fields. The modal mass
+$M=\rho h\sum_e y_e A_e\phi_e^2$ scales linearly with the physical density, so the
+linear frequency $\omega_1=\sqrt{K_b/M}$ is available for the constraint below.
+
+\subsection{Coupled sensitivities}
+The design vector is $(\bm z,\hat{\bm\theta})$ and the objective is again
+$J=\gamma_{\mathrm{eff}}/K_b$. The orientation sensitivity is Eq.~\eqref{eq:gammaeffadj}
+with each element term now carrying its weight $E_e$. The density sensitivity
+threads the three-field chain: with $\bm u^\star=\bm K_{\mathrm{in}}^{-1}\bm g$,
+\begin{equation}
+\frac{\partial\gamma_{\mathrm{eff}}}{\partial E_e}
+=k^{nl}_e-4\,\bm g_e^{\!\top}\bm u^\star+2\,\bm u^{\star\top}\bm K^{\mathrm{in}}_e\bm u^\star,
+\qquad
+\frac{\dd J}{\dd\bm z}=\bm P^{\!\top}\!\Big[\frac{\partial J}{\partial E}\,
+\frac{\dd E}{\dd y}\,\frac{\dd y}{\dd y_f}\Big],
+\label{eq:dzchain}
+\end{equation}
+where $\partial J/\partial E=\partial_E\gamma_{\mathrm{eff}}/K_b-\gamma_{\mathrm{eff}}K_b^{-2}k^b_e$,
+$\dd E/\dd y=(1-\varepsilon)p\,y^{p-1}$ and $\dd y/\dd y_f$ is the Heaviside
+derivative --- and the single adjoint solve $\bm u^\star$ is reused across every
+$z_e$ and every $\hat\theta_j$. Both sensitivities are verified against central
+finite differences to $\lesssim\!10^{-7}$; the orientation sensitivity also passes
+the \emph{isotropy-annihilation} test --- setting the lamina stiffness isotropic
+makes the tow angle inert and drives $\partial J/\partial\hat{\bm\theta}$ to
+$\sim\!10^{-9}$, confirming the whole angular chain.
+
+\subsection{Constrained optimization}
+We drive $(\bm z,\hat{\bm\theta})$ with MMA under an augmented-Lagrangian for three
+constraints: the per-element tow-curvature limit $\zeta_e^2\le\zall^2$ (orientation
+only), a material-volume budget $\overline{y}=v_{\mathrm{all}}$ as an
+\emph{equality} (a fixed budget --- without it the scale-near-invariant $J$ would
+drive material trivially to zero), and a linear-frequency \emph{band}
+$f_{\mathrm{lo}}\,\omega_1^{\mathrm{ref}}\le\omega_1\le f_{\mathrm{hi}}\,\omega_1^{\mathrm{ref}}$.
+The band's \emph{ceiling} is essential: with a floor alone the optimizer discovers
+the spurious low-density localized mode where the SIMP $\varepsilon$-stiffness with
+vanishing mass sends $\omega_1\!\to\!\infty$ and $\gamma_{\mathrm{eff}}\!\to\!0$
+trivially, giving a disconnected sliver design; the ceiling forbids it. Because the
+$(1,1)$ mode is symmetric about both centre-lines we project $\bm z$ onto the
+quarter-symmetric subspace, which selects the physical optimum over lopsided local
+minima.
+
+\subsection{Result}
+Figure~\ref{fig:topopt} shows the converged two-field design at a held frequency
+and a fixed $50\%$ material budget. The topology is connected and symmetric, and it
+voids material exactly at the top- and bottom-edge midpoints --- the antinodes of the
+membrane stretch $(\nabla w)^2$, where the hardening integrand
+$\bm\varepsilon_{NL}^{\!\top}\bm A\bm\varepsilon_{NL}$ concentrates --- while keeping
+the high-curvature centre that carries the frequency; the tows then steer
+\emph{around} the voids, curl-feasibly. The first-mode backbone drift falls from
+$17.1\%$ to $3.0\%$ ($-83\%$), extending the orientation-only lever.
+
+\paragraph{Confirmation on the adapted mode.} A single fixed master mode cannot
+reshape around the new voids, so one might expect it to over-credit topology. It
+does not: transferring the optimized topology onto the \emph{real multi-mode}
+plate --- SIMP-weighting its stiffness and mass at every quadrature point so the
+eigenmode itself adapts to the perforations --- the SSM detuning reduction is
+$82\%$, against the reduced model's $83\%$. The relative-detuning lever therefore
+\emph{survives} mode adaptation; it is not a fixed-mode artifact. One caveat we
+state plainly: the single-mode frequency is a loose proxy for the real multi-mode
+frequency of a strongly-steered design (the tow field alone reads far stiffer on
+the multi-mode plate, and the voids bring the frequency back to $0.94\times$
+baseline), so the topology design's held-frequency rests on a cancellation rather
+than a tight constraint --- constraining the real multi-mode frequency directly is
+the refinement. The contribution here is that the framework carries \emph{both}
+manufacturable fields --- orientation and topology --- on the same verified SSM
+backbone objective and its adjoint, and that the topology lever holds up against
+the adapted-mode ground truth.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_topopt.pdf}
+\caption{Two-field (topology + fiber-steering) design of the nonlinear backbone,
+rendered with wavetopo's tow/curl renderers. (a)~the converged composite topology
+(density field $\bm z$); (b)~the manufacturable fiber toolpaths, masked to the solid
+region and steering around the voids; (c)~the tow curl $|\zeta|$ (curl-feasible,
+$R\ge22$\,mm); (d)~the first-mode backbone of the solid unidirectional plate (grey)
+vs.\ the two-field design (green) at held frequency and fixed material budget ---
+drift $17.1\%\!\to\!3.0\%$. The voids sit at the membrane-stretch antinodes (the
+plate edges' midpoints), where the hardening integrand concentrates.}
+\label{fig:topopt}
+\end{figure}
+
+\section{Designing the backbone to spec on the adapted mode}\label{sec:points}
+
+The one caveat left standing (Sec.~\ref{sec:topopt}) was that a \emph{fixed} master
+mode mistracks the linear frequency of a strongly-steered design. We close it with
+a \emph{mode-adaptive} reduction and use it to design the backbone to a target.
+
+\subsection{The adapted-mode reduction and its analytic gradient}
+Rather than freeze the master mode, take it to be the fundamental of the multi-mode
+Ritz eigenproblem $\bm K_b(\theta)\bm v=\omega_1^2\bm M\bm v$ over a small transverse
+basis $\{\phi_k\}$; the mode $w=\sum_k v_k\phi_k$ then reshapes with the design and
+$\omega_1$ is the \emph{real} multi-mode frequency. The relaxed cubic
+$\gamma_{\mathrm{eff}}$ (Eq.~\eqref{eq:gammaeff}) is evaluated on this adapted mode,
+and the objective is $J=\gamma_{\mathrm{eff}}/(\omega_1^2\,m_c^2)$ with $m_c$ the
+mode's midspan value (which fixes the physical amplitude normalization). The
+gradient is fully analytic and FD-verified to $\sim\!10^{-7}$: the eigenvalue
+(frequency) sensitivity is Fox--Kapoor and needs no eigenvector derivative, while the
+two eigenvector-sensitivity terms --- of $\gamma_{\mathrm{eff}}$ and of $m_c$ ---
+each collapse to a \emph{single adjoint curvature field}
+$\kappa_\beta=\sum_{j\ne0}\beta_j\,\kappa_{v_j}$, so the whole sensitivity costs the
+one eigensolve plus cheap contractions.
+
+\subsection{Threading the backbone through design points}
+With both knobs in hand --- the real $\omega_1$ and the hardening curvature, each with
+a verified gradient --- we can \emph{place} the backbone: minimizing the squared
+mismatch to prescribed $(\,f_k,\,a_k)$ points in the frequency--amplitude plane steers
+the tow field so the real backbone threads them. A caution the plate enforces: its
+cubic backbone is a two-parameter family (a linear frequency and one hardening
+curvature), so admissible design points must lie on \emph{one} achievable, positively
+sloped hardening curve --- a vertical (iso-frequency-across-amplitude) target is not a
+backbone a hardening plate can produce. Figure~\ref{fig:points} designs an
+amplitude-stable resonator mandated near $335$ Hz: the toolpath threads three points
+on a gentle-hardening target to an rms error of $3.3$ Hz ($\sim\!1\%$), curl-feasibly,
+far flatter and higher than the unidirectional baseline. Crucially, the adapted-mode
+frequency ($332$ Hz) agrees with the full multi-mode plate ($337$ Hz) to $1.5\%$ ---
+where the old fixed-mode proxy erred by $70\%$ --- so the shipped device actually sits
+at its mandated frequency. This is the manufacturable, frequency-honest version of
+the response-curve design of \cite{pozzi2025,liang2025}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_designpoints.pdf}
+\caption{Designing a nonlinear backbone to spec. \emph{Left:} the tow field is steered
+so the real (mode-adaptive) first-mode backbone threads three prescribed design points
+(circles) on a gentle-hardening target at a mandated $\sim\!335$ Hz --- distinct from
+the unidirectional baseline (grey, $256$ Hz, steep). \emph{Right:} the manufacturable
+toolpath that does it, coloured by local steering radius. The reported frequency is the
+real multi-mode value (within $1.5\%$ of the full plate), not a fixed-mode proxy.}
+\label{fig:points}
+\end{figure}
+
+\section{Designing an instability boundary: supersonic panel flutter}\label{sec:flutter}
+
+The backbone is one target the framework exposes; the \emph{same} machinery designs a
+\emph{stability boundary}. A thin panel in supersonic flow loses stability by flutter --- a
+Hopf bifurcation of the flat state into self-excited oscillation --- and keeping that boundary
+above the flight envelope is a hard constraint on every high-speed skin panel. Fiber steering
+is the natural manufacturable lever (this extends the variable-stiffness tailoring of
+\cite{gurdal,ijsselmuiden} from linear objectives to a nonlinear instability), and the
+geometric nonlinearity sets what happens \emph{past} the boundary.
+
+\subsection{Aeroelastic model and calibration}
+First-order piston theory gives the aerodynamic pressure on a panel in a stream of Mach
+number $M_\infty$ and dynamic pressure $q$; projected on the transverse modes it adds a
+\emph{nonsymmetric} aerodynamic stiffness (the streamwise slope term) to the bending block,
+\begin{equation}
+G_{ij}=\!\int_\Omega\!\phi_i\,\partial_x\phi_j\,\dd\Omega,\qquad
+\bm M\ddot{\bm q}+\bm C\dot{\bm q}+\big(\bm K_b(\theta)+\lambda_q\bm G\big)\bm q=\bm 0,
+\quad \lambda_q=\tfrac{2q}{\sqrt{M_\infty^2-1}},
+\label{eq:flutter-eom}
+\end{equation}
+plus light damping $\bm C$. Equation~\eqref{eq:flutter-eom} is a nonsymmetric generalized
+eigenproblem; as $q$ rises two modes coalesce in frequency and a complex-conjugate pair of the
+first-order pencil crosses the imaginary axis at the critical $q_{\mathrm{cr}}$ ---
+\emph{coalescence flutter}. The implementation reproduces the classical result: a
+one-dimensional simply-supported panel gives the nondimensional critical dynamic pressure
+$\lambda_{\mathrm{cr}}=343.35$ against the textbook $343.36$ \cite{shaw}.
+
+\subsection{Conforming discretization: why the assumed modes fail here}\label{sec:flutter-fe}
+Unlike the backbone, the flutter boundary is \emph{not} adequately resolved by the global sine
+modes. A steered --- or merely rotated --- laminate develops bend--twist couplings $D_{16},D_{26}$
+that \emph{twist} the mode shapes; flutter is a coalescence of two modes and is exquisitely sensitive
+to their shape, and the sine basis, which cannot represent the twist, gives the wrong coalescence. We
+established this against an independent \emph{conforming} Bogner--Fox--Schmit (BFS) bicubic-Hermite
+Kirchhoff element (nodal DOF $w,w_{,x},w_{,y},w_{,xy}$; frequencies exact against the closed form as in
+App.~\ref{app:fe}): the two discretizations \emph{agree} while $D_{16}\!\approx\!0$
+($0^\circ$--$5^\circ$) and \emph{diverge monotonically} as the coupling grows --- by a factor of
+\emph{ten} at $30^\circ$, where the sine model over-predicts $q_{\mathrm{cr}}$ tenfold. The flutter
+results below therefore use the conforming BFS element, and the sine-mode flutter is discarded. (The
+backbone results of Secs.~\ref{sec:plate}--\ref{sec:points} are unaffected: those are frequencies and
+detuning \emph{ratios}, FE-accurate to $\sim\!2\%$, App.~\ref{app:fe}.)
+
+\subsection{Steering the boundary out}
+On the conforming model the flutter boundary is a strong, \emph{non-monotone} function of the ply
+angle: bend--twist coupling is maximally destabilizing near $30^\circ$--$40^\circ$, where a uniform
+CFRP panel's $q_{\mathrm{cr}}$ collapses into a ``flutter hole'' an order of magnitude below the
+flow-aligned $[0]$ value (Fig.~\ref{fig:flutter}a). A required operating frequency that places a
+uniform layup in that hole is exactly where steering helps: the linear frequency and the flutter
+boundary read the tow field through different operators, so a steered \emph{field} can hold the
+frequency while placing the twist where it stabilizes rather than destabilizes. We maximize
+$q_{\mathrm{cr}}$ at held $f_1$ and mass, curl-feasibly, driving the search by the boundary's analytic
+adjoint --- the implicit eigenvalue derivative
+\begin{equation}
+\frac{\dd q_{\mathrm{cr}}}{\dd\theta}=-\frac{\mathrm{Re}(\dd s/\dd\theta)}{\mathrm{Re}(\dd s/\dd q)},
+\qquad
+\frac{\dd s}{\dd p}=\frac{\bm u^{*}(\partial_p\bm{\mathcal A})\,\bm v}{\bm u^{*}\bm{\mathcal B}\,\bm v},
+\label{eq:flutter-adj}
+\end{equation}
+with $\bm u,\bm v$ the left/right eigenvectors of the critical mode of the (reduced) nonsymmetric
+aeroelastic pencil --- the same left-eigenvector projection as the SSM adjoint (Eq.~\eqref{eq:gamma}),
+the reduction being built on a general pencil that never assumed self-adjointness. Formed on the
+conforming FE (reduced on its own modes, the modal-basis sensitivity absorbed by refreshing the basis
+each design step), it is FD-verified to $2.1\times10^{-7}$. On a $200\times150\times2\,\si{mm}$ CFRP
+panel at $M_\infty=2$ and a held $f_1=300\,\si{Hz}$ --- where the best uniform layup flutters at only
+$\sim\!0.37\,\si{MPa}$ --- a curl-feasible steered field \textbf{recovers the flutter boundary to
+$3.4\,\si{MPa}$, a $9\times$ margin} at held frequency and mass
+(Figs.~\ref{fig:fluttermech}b, \ref{fig:flutter}b). Steering pushes the bending--torsion coalescence
+from $q_{\mathrm{cr}}=0.37$ to $3.4\,\si{MPa}$ (Fig.~\ref{fig:fluttermech}a), sliding the growth-rate
+zero-crossing --- the Hopf onset --- the same $9\times$ to the right (Fig.~\ref{fig:fluttermech}b). The
+lever is the manufacturable placement of the same bend--twist coupling that, uncontrolled, craters the
+uniform panel.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_flutter_mechanism.pdf}
+\caption{How steering reshapes the aeroelastic response of the panel (conforming BFS pencil; the best
+uniform layup at $300\,\si{Hz}$ vs.\ the steered field). \emph{(a)}~modal frequency vs.\ dynamic
+pressure: the steered layup's bending and torsion branches coalesce far out in $q$ (classic coalescence
+flutter, $745\,\si{Hz}$), whereas the uniform ``flutter-hole'' layup loses a single mode early.
+\emph{(b)}~growth rate $\mathrm{Re}\,s$ of the critical mode crosses zero --- the Hopf onset --- at
+$q_{\mathrm{cr}}$; steering slides that crossing $\sim\!9\times$ to higher $q$ at held frequency and
+mass. \emph{(c)}~past the boundary $\mathrm{Re}\,\gamma<0$ makes the Hopf supercritical, so the panel
+settles into a bounded limit cycle ($a\!\sim\!\sqrt{q-q_{\mathrm{cr}}}$, normal form); the shaded band is
+the recovered margin over which the steered panel stays quiet.}
+\label{fig:fluttermech}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_flutter.pdf}
+\caption{Flutter boundary on the conforming BFS FE. \emph{(a)}~the boundary vs.\ uniform ply angle
+collapses into a bend--twist ``flutter hole'' near $30^\circ$--$40^\circ$ (where $D_{16}$ peaks), an
+order of magnitude below the flow-aligned value, so the best uniform layup that reaches the required
+$300\,\si{Hz}$ flutters at only $\sim\!0.37\,\si{MPa}$. \emph{(b)}~the manufacturable steered tow field
+that recovers the boundary to $3.4\,\si{MPa}$ at held frequency and mass.}
+\label{fig:flutter}
+\end{figure}
+
+\subsection{The nonlinear aftermath}
+Past the boundary the geometric nonlinearity sets the consequence. Restoring the von~K\'arm\'an
+relaxed cubic and reducing the flutter mode onto its Stuart--Landau normal form
+$\dot p=\lambda(q)\,p+\gamma\,p|p|^2$, the cubic coefficient --- formed from the same left/right
+flutter eigenvectors and the von~K\'arm\'an cubic tensor by the $\bm u_1^{*}$ projection --- has
+$\mathrm{Re}\,\gamma<0$: the Hopf is \emph{supercritical}, so crossing it yields a benign, bounded
+limit-cycle oscillation rather than a catastrophic subcritical jump (Fig.~\ref{fig:fluttermech}c). This criticality --- the sign of
+$\mathrm{Re}\,\gamma$ --- is the cheap, model-robust output of the reduction. The finite limit-cycle
+amplitude on the conforming model, and its reduction by steering, are a direct follow-on (our earlier
+assumed-modes limit-cycle amplitudes are superseded along with the boundary they rested on).
+
+\subsection{Relation to the framework}
+Flutter uses no new reduction machinery --- the nonsymmetric aerodynamic operator drops into the same
+first-order pencil, and the boundary sensitivity~\eqref{eq:flutter-adj} is the same left-eigenvector
+projection as the backbone adjoint --- but it did force a \emph{conforming} discretization, and that
+rigor is the point: an independent FE cross-check overturned a plausible-looking sine-mode result and
+replaced a spurious $2\times$ with a correct, larger $9\times$ recovery. Linear flutter tailoring is
+itself classical aeroelasticity; the contribution here is its manufacturable, adjoint-driven form on a
+discretization honest enough to trust.
+
+\section{Full-order optimization by EPMC, and its relation to the SSM adjoint}
+\label{sec:epmc}
+
+Everything above optimizes a \emph{reduced} backbone. The natural full-order
+alternative is to optimize the backbone that harmonic balance computes directly,
+with no reduction --- the extended periodic motion concept (EPMC)
+\cite{krack2015}. We give its design sensitivity here, both because it is the
+independent ground truth against which we validate the SSM (Sec.~\ref{sec:points}
+and below) and because it is the engine one would use where the SSM truncation is
+inadequate.
+
+\subsection{EPMC and its harmonic-balance residual}
+EPMC augments the autonomous equation of motion with a self-exciting,
+mass-proportional term that offsets dissipation so that a genuine periodic orbit
+--- the nonlinear mode --- persists:
+\begin{equation}
+\bm M\ddot{\bm q}+\big(\bm C-2\delta\Omega\,\bm M\big)\dot{\bm q}
++\bm K\bm q+\bm f_{\mathrm{nl}}(\bm q)=\bm 0 ,
+\label{eq:epmc-eom}
+\end{equation}
+in which the artificial factor $\delta$ equals, at convergence, the mode's
+amplitude-dependent damping ratio. Expanding the periodic motion in $H$ harmonics,
+$\bm q(t)=a\sum_{k}\big(\bm\psi^{c}_{k}\cos k\Omega t+\bm\psi^{s}_{k}\sin k\Omega t\big)$
+with $a$ the modal amplitude and $\bm\psi$ the unit-normalised shape, harmonic
+balance gives the augmented residual in the unknowns $\bm z=(\bm\psi,\Omega,\delta)$,
+\begin{equation}
+\bm R(\bm z;a,\theta)=
+\begin{bmatrix}
+\bm S(\Omega,\delta;\theta)\,\bm\psi+a^{-1}\bm F_{\mathrm{nl}}(a\bm\psi;\theta)\\[2pt]
+\bm\psi_1^{\!\top}\bm M\bm\psi_1-1\\[2pt]
+(\psi^{s}_{1})_{\mathrm{ref}}
+\end{bmatrix}=\bm 0,
+\label{eq:epmc-res}
+\end{equation}
+where $\bm S$ is the block dynamic stiffness (per harmonic $k$: $\bm K-k^2\Omega^2\bm M$
+on the diagonal, $k\Omega(\bm C-2\delta\Omega\bm M)$ coupling the cosine and sine
+blocks), $\bm F_{\mathrm{nl}}$ is the alternating-frequency--time Fourier force, and
+the last two rows fix the amplitude normalisation and the phase. Pseudo-arclength
+continuation in $a$ traces the backbone $\Omega(a)$ and the modal damping $\delta(a)$
+of the \emph{full} model.
+
+\subsection{Design sensitivity of the EPMC backbone}
+At a converged point $\bm R(\bm z;a,\theta)=0$; differentiating at fixed amplitude
+and invoking the implicit function theorem,
+\begin{equation}
+\bm J_z\,\frac{\partial\bm z}{\partial\theta}=-\frac{\partial\bm R}{\partial\theta},
+\qquad \bm J_z=\frac{\partial\bm R}{\partial\bm z},
+\label{eq:epmc-ift}
+\end{equation}
+where $\bm J_z$ is exactly the EPMC Jacobian already assembled for the Newton
+corrector. For a full tow-angle field one takes the backbone-frequency component
+by an adjoint,
+\begin{equation}
+\frac{\dd\Omega}{\dd\theta}=-\bm w^{\!\top}\frac{\partial\bm R}{\partial\theta},
+\qquad \bm J_z^{\!\top}\bm w=\bm e_\Omega ,
+\label{eq:epmc-adj}
+\end{equation}
+one adjoint solve per amplitude. The design enters only through the last block,
+\begin{equation}
+\frac{\partial\bm R}{\partial\theta}=
+\Big[\,(\partial_\theta\bm S)\bm\psi+a^{-1}\partial_\theta\bm F_{\mathrm{nl}}\,;\;
+\bm\psi_1^{\!\top}(\partial_\theta\bm M)\bm\psi_1\,;\;0\,\Big],
+\label{eq:epmc-dtheta}
+\end{equation}
+with $\partial_\theta\bm S$ built from $\partial_\theta\bm K$ (and, if the topology
+field is active, $\partial_\theta\bm M$), and $\partial_\theta\bm F_{\mathrm{nl}}$ the
+alternating-frequency--time transform of the fiber-angle derivative of the membrane
+force. Crucially, these are the \emph{same} per-station $\dd\bar{\bm Q}/\dd\theta$
+sensitivities that drive the CLT and SSM gradients; pulled back through the CS-RBF
+transpose, Eqs.~\eqref{eq:epmc-adj}--\eqref{eq:epmc-dtheta} give a full-order
+optimizer for the nonlinear backbone (and, with the forced residual in place of
+Eq.~\eqref{eq:epmc-res}, for forced-response objectives).
+
+\subsection{Relation to the SSM adjoint, and when to use which}
+The SSM yields $\Omega(a)$ and $\dd\Omega/\dd\theta$ from the reduced coefficients
+$\gamma_{2k+1}$ (Eq.~\eqref{eq:gamma}) in closed form --- no periodic solve, no
+continuation, and at a cost independent of both amplitude and harmonic count. Because
+the SSM backbone \emph{coincides} with the EPMC backbone within the SSM's convergence
+radius (Fig.~\ref{fig:epmcssm}): the two curves overlie one another for both the
+baseline and the optimized plate up to $a/h\!\approx\!0.35$, and the full-order EPMC
+confirms that the steered toolpath \emph{halves} the amplitude detuning at every
+amplitude ($10.5\%\!\to\!5.3\%$ at $a/h\!=\!0.4$). Their design sensitivities agree
+there, and the SSM is orders of magnitude cheaper --- a $0.28$ s reduced backbone
+versus a $\sim\!325$ s full-order continuation, a factor of $\sim\!10^{3}$ --- one
+reduced linear-algebra pass versus a full-order Newton solve at every continuation
+step plus a per-amplitude adjoint. The cubic SSM does drift above EPMC past
+$a/h\!\approx\!0.4$ (it slightly over-hardens), which is exactly where a higher-order
+SSM or EPMC itself takes over. EPMC
+remains the method of record beyond that radius --- large amplitude, strong
+higher-harmonic content, internal resonances --- where an SSM would demand high
+polynomial order. The two are therefore complementary: the SSM adjoint for cheap
+gradient-based design in the polynomial regime, EPMC for independent validation and
+for the strongly nonlinear or internally-resonant regime; and because
+Eqs.~\eqref{eq:epmc-adj}--\eqref{eq:epmc-dtheta} reuse the identical
+$\dd\bar{\bm Q}/\dd\theta$ chain, moving between them costs no new sensitivity code.
+
+\subsection{Head-to-head on the Pozzi benchmark}
+To compare the two engines as \emph{optimizers}, we solve the same design problem
+with each on the published von~K\'arm\'an-beam backbone-shaping benchmark of
+\cite{pozzi2025} (their Sec.~5.2 / Fig.~3): a clamped--clamped beam whose backbone
+is shaped from hardening to a prescribed \emph{softening} by an initial curvature
+$y=A_1\sin(\pi x/L)$. The straight beam hardens ($+2.2\%$ relative detuning at
+$\mathrm{RMS}=0.2h_0$); the curvature injects a quadratic nonlinearity whose slaved
+response drives the SSM cubic coefficient negative, softening the backbone (it also
+stiffens the beam linearly, so the curvature-invariant measure is the detuning
+relative to each design's \emph{own} $\omega_1$). We design $A_1$ to hit a $-1.5\%$
+softening target, driving the optimizer once with the SSM backbone and once with the
+full-order EPMC backbone. The two agree closely --- $A_1=8.36$ mm (SSM) versus
+$8.26$ mm (EPMC), a $1.2\%$ difference, both reaching the target to $\pm0.01\%$ ---
+while the SSM backbone costs $\sim\!90\times$ less per evaluation
+(Fig.~\ref{fig:svse}). This is the intended division of labour: the SSM adjoint does
+the search cheaply, and full-order EPMC confirms the optimum.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/ssm_vs_epmc_opt.pdf}
+\caption{Optimizing the same design with both frameworks (Pozzi et al.\ 2025
+benchmark). \emph{Left:} the straight beam's backbone hardens (leans right); the
+optimized initial curvature softens it (leans left), threading the softening target,
+with the SSM-designed and full-order-EPMC-confirmed backbones coincident.
+\emph{Right:} both frameworks find the same optimum ($A_1\!\approx\!8.3$ mm) --- the
+SSM at $\sim\!90\times$ lower cost per backbone.}
+\label{fig:svse}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/epmc_vs_ssm.pdf}
+\caption{Full-order EPMC validates the SSM-designed backbone. \emph{Left:} the cubic
+SSM backbone (dashed) overlies the full-order EPMC backbone (solid) for both the
+unidirectional baseline and the optimized plate up to $a/h\!\approx\!0.35$; the cubic
+drifts slightly above EPMC only at the largest amplitudes. \emph{Right:} relative
+detuning from full-order EPMC --- the steered toolpath roughly halves it at every
+amplitude ($10.5\%\!\to\!5.3\%$ at $a/h\!=\!0.4$). The SSM computes this backbone, and
+its design gradient, at $\sim\!10^{3}\times$ lower cost than the EPMC continuation.}
+\label{fig:epmcssm}
+\end{figure}
+
+\subsection{EPMC- vs SSM-based optimization: differentiation, cost, and robustness}
+\label{sec:prosncons}
+The head-to-head hides a structural difference that decides which engine is usable
+\emph{at scale}. It turns on how the gradient is obtained, how cost scales with the
+number of design variables $m$, and how smooth the objective is --- not on which
+backbone is more accurate (EPMC is, by construction).
+
+\paragraph{Why derivative-free is possible, and why it does not scale.}
+Optimizing the EPMC backbone requires only the ability to \emph{evaluate} it: for
+any design one runs the continuation and reads a backbone point, so any zeroth-order
+method (golden-section/Brent, Nelder--Mead, pattern or mesh-adaptive search) applies
+without ever forming a gradient --- exactly the $1$-D bracketing search used in
+Sec.~\ref{sec:epmc}, which recomputes the full backbone at $\sim\!10$ trial
+curvatures. The limitation is dimensional: a derivative-free search over $m$
+variables needs at least $m{+}1$ evaluations to span the space and, in practice,
+$\mathcal O(m)$--$\mathcal O(m^{2})$ per improving step, \emph{each a full
+continuation}. For one variable that is $\sim\!10$ continuations; for a tow-angle
+field ($m\sim10^{2}$--$10^{3}$) it is millions. Derivative-free EPMC optimization is
+thus a tool for a handful of variables only, whereas the SSM (and the EPMC
+\emph{adjoint}, Eqs.~\eqref{eq:epmc-adj}--\eqref{eq:epmc-dtheta}) obtain the entire
+gradient at a cost independent of $m$.
+
+\begin{table}[t]
+\centering\footnotesize
+\caption{Cost of one backbone and of the full design gradient ($m$ variables, $n$
+DOFs, $H$ harmonics, $S$ continuation steps, SSM order $p$). ``$\perp m$'' = cost
+independent of the number of design variables.}
+\label{tab:cost}
+\begin{tabular}{@{}lll@{}}
+\toprule
+& one backbone & full gradient ($m$ vars)\\ \midrule
+SSM adjoint            & $\mathcal O(p)$ reduced solves ($\perp$ amp., $\perp H$) & adjoint: $\perp m$ solves, $+\,m$ contractions\\
+EPMC, derivative-free  & $S$ Newton solves ($\sim\!nH$)              & $\sim\!m$ backbones $=mS$ solves\\
+EPMC adjoint           & $S$ Newton solves ($\sim\!nH$)             & $\perp m$ solves (reuse factor), $+\,m$ contract.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Smoothness and robustness of the objective.}
+The SSM objective is an \emph{analytic} function of the design --- the reduced
+coefficients $\gamma_{2k+1}(\theta)$ are smooth compositions of the eigenpairs and
+the multilinear forms --- so the backbone and its gradient vary smoothly and
+gradient descent is well conditioned (until the SSM itself loses validity). The EPMC
+objective is a point read from a \emph{numerical continuation}, and it can be
+non-smooth or even discontinuous in the design wherever the continuation \emph{folds}
+(turning points, where the frequency at a fixed amplitude becomes multivalued), where
+the nonlinear mode \emph{bifurcates} (an internal resonance splits the branch), or
+where a \emph{mode-jump}/snap-through changes which branch is primary --- precisely
+the pathologies we met steering into the deep-arch regime. Across these features
+gradients are undefined or misleading and zeroth-order methods see cliffs; robust
+EPMC optimization needs branch tracking, fold/bifurcation detection, and careful
+point selection, machinery the smooth SSM landscape never requires.
+
+\paragraph{Validity and locality.}
+Conversely, the SSM is an \emph{asymptotic} model built at one equilibrium: exact in
+the leading coefficient but truncation-limited to a convergence radius in amplitude,
+and blind to isolated branches (isolas) and to global bifurcation structure away from
+the equilibrium. EPMC is \emph{exact} at every amplitude the continuation reaches ---
+capturing folds, the large-amplitude softening/hardening reversal, and internal
+resonances directly --- and it traces the \emph{global} branch. Where the objective
+lives beyond the SSM radius or involves the global response, EPMC (or its
+forced-response form) is not optional.
+
+\begin{table}[t]
+\centering\footnotesize
+\caption{EPMC- vs SSM-based optimization of nonlinear response.}
+\label{tab:prosncons}
+\begin{tabular}{@{}lll@{}}
+\toprule
+& \textbf{SSM-based} & \textbf{EPMC-based (full order)}\\ \midrule
+backbone model         & reduced polynomial, asymptotic     & full order, exact\\
+cost per backbone      & very low (no continuation)         & high, $\sim\!10^{2}$--$10^{3}\times$\\
+gradient               & analytic adjoint, $\perp m$         & derivative-free, \emph{or} adjoint\\
+scales to fields?      & yes (adjoint)                       & no (deriv.-free); costly (adjoint)\\
+objective landscape    & smooth, analytic                    & non-smooth at folds/bifurcations\\
+amplitude validity     & convergence radius                  & any amplitude reached\\
+folds / internal res.  & needs high order (or fails)         & captured directly\\
+global branches, isolas & no (local)                         & yes (continuation)\\
+best used for          & field-scale, polynomial regime      & validation; large-amp/resonant; few vars\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Recommendation.}
+The two are complementary and the division of labour is clean (Tab.~\ref{tab:prosncons}):
+the \textbf{SSM adjoint} does the search --- cheap, smooth, and with a gradient whose
+cost is independent of $m$, the only option at field scale --- and \textbf{full-order
+EPMC} validates the optimum and designs in the regimes the SSM cannot reach
+(large amplitude, internal resonance, folds), warm-started from the SSM design. Both
+share the identical $\dd\bar{\bm Q}/\dd\theta$ chain (\S\ref{sec:epmc}), so the hybrid
+costs no extra sensitivity code.
+
+\subsection{Forced-response objectives, and the validity boundary}
+\label{sec:handoff}
+Two extensions decide how far the comparison reaches. First, most design targets live
+on the \emph{forced} response, not the backbone --- a peak amplitude at a given drive,
+the up- and down-jump frequencies, the saddle-node spacing, or whether a detached
+response branch (an isola) exists. Both engines carry over, and the tradeoff is
+unchanged. On the SSM side the leading-order forced response is algebraic in the
+\emph{same} reduced coefficients (\S\ref{sec:plate}),
+$[(\Om-\Om(\rho))^2+\alpha(\rho)^2]\,\rho^2=|f_1|^2$, so peak amplitude, jump locations
+and their design sensitivities follow from the same adjoint at no extra model cost ---
+cheap and smooth, but inheriting the amplitude radius and, being \emph{local}, blind to
+isolas detached from the main branch. On the EPMC side one replaces the self-excitation
+in Eq.~\eqref{eq:epmc-res} by the physical forcing and continues in frequency; the
+resulting harmonic-balance response curve is exact --- folds, jumps and isolas included
+--- and its design sensitivity is the \emph{same} implicit-differentiation adjoint
+(Eqs.~\eqref{eq:epmc-adj}--\eqref{eq:epmc-dtheta}) built around the forced residual. The
+one qualitative addition: an isola is invisible to a local reduced model but is found by
+global continuation, so objectives that turn on isola birth or death are an EPMC (or
+forced-harmonic-balance) domain. There is also a subtlety the smoothness analysis
+predicts --- a peak-amplitude objective is smooth, but a \emph{jump-frequency} objective
+is the location of a fold, a bifurcation, so it is non-smooth in the design and needs the
+fold-tracking machinery of \S\ref{sec:prosncons}.
+
+Second, the SSM's validity is bounded and the handoff is quantifiable. On our plate the
+cubic SSM backbone tracks full-order EPMC to $\lesssim\!2\%$ up to $a/h\approx0.3$ and
+then over-hardens --- $12.5\%$ versus the EPMC $10.5\%$ relative detuning at $a/h=0.4$
+(Fig.~\ref{fig:epmcssm}), a $\sim\!19\%$ error where the true backbone's quartic term
+bends below the cubic parabola. Objectives that live at $a/h\lesssim0.3$ are therefore
+safely designed on the cubic SSM; beyond that one raises the SSM order (the quintic
+$\gamma_5$ captures the turn-over) or hands the design to EPMC. Geometrically this is
+the SSM's radius of validity: the reduction is a polynomial \emph{graph} over the master
+eigenplane (Fig.~\ref{fig:manifold}), accurate in a neighbourhood of the equilibrium,
+whereas EPMC's continuation traces the exact invariant surface as far out as it stays
+connected. The rule of thumb is the whole comparison in one line: \emph{design on the
+SSM within its verified radius; verify, and if needed finish, on EPMC.}
 
 \section{Discussion and comparison to prior work}
 
@@ -561,21 +1630,268 @@ two-dimensional laminated plate (where a steered fiber \emph{field} has far more
 freedom and where the adjoint sensitivity of \cite{pozzi2025} becomes essential),
 are the clear paths to a larger effect.
 
+\paragraph{Numerical verification.} Every theoretical result in the paper is
+confirmed against an independent computation; Table~\ref{tab:verifyall} collects
+them (reproduced by \texttt{examples/verify\_all.py}). The reduced coefficients are
+checked against the analytic Duffing backbone and, on the plate, against full-order
+EPMC; every design gradient is verified against finite differences to machine
+precision and passes the isotropy-annihilation test; and the headline engineering
+number --- the jump-free amplitude --- is the numerically detected saddle-node onset
+of the forced response, not a formula.
+
+\begin{table}[t]
+\centering\footnotesize
+\caption{Numerical confirmation of every theoretical demonstration in the paper
+(\texttt{verify\_all.py}).}
+\label{tab:verifyall}
+\begin{tabular}{@{}lll@{}}
+\toprule
+demonstration & confirmed against & result\\ \midrule
+SSM cubic coefficient & analytic Duffing $3/8$ & exact\\
+SSM quintic coefficient & analytic Duffing $-21/256$ & exact (test suite)\\
+membrane relaxation softens $\gamma_3$ & restrained vs.\ relaxed SSM & $33\%$, converges\\
+$\gamma_{\mathrm{eff}}$ closed form & full multi-mode SSM & rel.\ err $9\times10^{-5}$\\
+coupled $(\bm z,\theta)$ gradient & central differences & $\lesssim\!10^{-7}$\\
+isotropy annihilation & $\partial J/\partial\theta$ at isotropic $\bar{\bm Q}$ & $5\times10^{-9}$\\
+mode-adaptive $\dd J/\dd\theta,\ \dd\omega_1/\dd\theta$ & central differences & $\lesssim\!10^{-7}$\\
+adapted-mode frequency & full six-mode plate & $332$ vs.\ $337$ Hz ($1.5\%$)\\
+SSM backbone & full-order EPMC (plate, $a/h\!=\!0.4$) & $10.5$ vs.\ $5.3\%$ ($49\%$)\\
+forced-response curve & brute-force time sweeps & peaks ride the curve\\
+jump / hysteresis & up- vs.\ down-sweep (time domain) & $0.054$ vs.\ $0.009\,h$ gap\\
+SSM \& EPMC optima (beam) & each other & $A_1=8.36$ vs.\ $8.26$ mm ($1.2\%$)\\
+jump-free amplitude & FRC saddle-node onset (numeric) & $a/h\,0.208\!\to\!0.296$\\
+flutter boundary $\lambda_{\mathrm{cr}}$ (1-D) & Dowell coalescence value & $343.35$ vs.\ $343.36$\\
+conforming BFS FE frequencies & closed-form orthotropic & exact (4 digits)\\
+assumed-modes vs.\ conforming FE flutter & bend--twist divergence & $10\times$ at $30^\circ$\\
+flutter-margin adjoint $\dd q_{\mathrm{cr}}/\dd\theta$ & finite differences & $2.1\times10^{-7}$\\
+steered flutter recovery (conforming FE) & vs.\ best uniform, held $f_1$ & $9\times$ ($0.37\!\to\!3.4$ MPa)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Conclusion}
 We have made a composite's nonlinear backbone a function of its manufacturable
 tow path, reduced it on a verified arbitrary-order spectral submanifold, and
 optimized the tow path for amplitude-robustness under a tow-curvature constraint.
-The bending--extension coupling of an unsymmetric, steered laminate is the lever;
-it is the steering, not merely the layup, that supplies the tunable
-nonlinearity. On a clamped beam the lever is real but bounded, which we quantify
-honestly. The framework --- fiber-steered, manufacturability-constrained design
-of nonlinear structural dynamics --- extends directly to forced-response
-objectives and to two-dimensional laminated plates.
+On a clamped beam the lever is the bending--extension coupling of an unsymmetric,
+steered laminate --- it is the steering, not merely the layup, that supplies the
+tunable nonlinearity --- and it is real but bounded, which we quantify honestly.
+On a two-dimensional laminated plate the anisotropic membrane stiffness itself
+becomes the knob and the effect is far stronger: a curl-feasible steered field
+halves the amplitude detuning at held linear frequency, a figure confirmed by the
+SSM backbone, full-order EPMC, and brute-force time-domain sweeps. The engineering
+consequence is the point (Sec.~\ref{sec:utility}): the steering removes the
+forced-response jump and widens the panel's jump- and hysteresis-free operating
+range by $1.42\times$ ($\sim\!2.4\times$ with an added topology field), the
+amplitude-robustness a resonant sensor, vibration harvester, or hysteresis-free
+actuator actually needs --- reshaping the \emph{nonlinear} response at fixed linear
+frequency and fixed mass, a lever no classical composite knob provides. The
+framework extends directly to forced-response objectives and, through the
+field-scale EPMC adjoint, to full finite-element models.
 
 \paragraph{Reproducibility.} All results are produced by the open
 \texttt{nltopt} code (depending on the \texttt{PyHB} harmonic-balance/EPMC
 library and borrowing the manufacturability machinery of \texttt{wavetopo});
 the verification suite and the figure scripts are included.
+
+\appendix
+\section{Computation of the SSM coefficients}\label{app:coeffs}
+
+This appendix gives the exact recursion that produces every coefficient
+$\bm w_{\bm m}$ (the geometry) and $\gamma_{2k+1}$ (the reduced dynamics) used in
+the paper, matching the implementation line for line.
+
+\subsection{Master spectral data}
+Cast~\eqref{eq:eom} in first order, $\bm{\mathcal B}\dot{\bm z}=\bm{\mathcal A}\bm z
++\bm F(\bm z)$, with $\bm{\mathcal A},\bm{\mathcal B}$ as in~\eqref{eq:firstorder}.
+Solve the linear generalized eigenproblem $\bm K\bm\varphi=\omega_0^2\bm M\bm\varphi$,
+mass-normalize $\bm\varphi^{\!\top}\bm M\bm\varphi=1$, and set
+$\zeta_0=\bm\varphi^{\!\top}\bm C\bm\varphi/(2\omega_0)$. The master pencil eigenpair
+solves $\bm{\mathcal A}\bm v_1=\lambda_1\bm{\mathcal B}\bm v_1$ with
+$\lambda_1=-\zeta_0\omega_0+i\omega_0\sqrt{1-\zeta_0^2}$; scale $\bm v_1$ so its
+displacement block is $\bm\varphi$. Take the left eigenvector $\bm u_1$
+($\bm u_1^{*}\bm{\mathcal A}=\lambda_1\bm u_1^{*}\bm{\mathcal B}$), normalized
+$\bm u_1^{*}\bm{\mathcal B}\bm v_1=1$, and set $\bm v_2=\bar{\bm v}_1$,
+$\lambda_2=\bar\lambda_1$. Seed the coefficient tables at first order:
+$\bm w_{(1,0)}=\bm v_1$, $\bm w_{(0,1)}=\bm v_2$, $R^1_{(1,0)}=\lambda_1$,
+$R^2_{(0,1)}=\lambda_2$.
+
+\subsection{Right-hand side at each order}
+For a multi-index $\bm m=(m_1,m_2)$, $|\bm m|\ge2$, the homological
+equation~\eqref{eq:homological} has right-hand side
+$\bm G_{\bm m}=\bm G^{\mathrm{nl}}_{\bm m}-\bm G^{\mathrm{cr}}_{\bm m}$, both assembled
+from \emph{lower} orders. The nonlinear part is the order-$\bm m$ term of
+$-\bm F(\bm W(\bm p))$, a multi-index convolution of the displacement blocks
+$\bm w^{x}$ over all non-trivial partitions,
+\begin{equation}
+\bm G^{\mathrm{nl}}_{\bm m}=-\!\!\!\sum_{\substack{\bm a+\bm b=\bm m\\ \bm a,\bm b\ne\bm 0}}\!\!\!
+\begin{bmatrix}\bm B_2(\bm w^{x}_{\bm a},\bm w^{x}_{\bm b})\\ \bm 0\end{bmatrix}
+-\!\!\!\!\sum_{\substack{\bm a+\bm b+\bm c=\bm m\\ \bm a,\bm b,\bm c\ne\bm 0}}\!\!\!\!
+\begin{bmatrix}\bm T_3(\bm w^{x}_{\bm a},\bm w^{x}_{\bm b},\bm w^{x}_{\bm c})\\ \bm 0\end{bmatrix},
+\label{eq:app-forcing}
+\end{equation}
+and the cross-term part is what $\mathrm D\bm W\,\bm R$ already contributes from known
+nonlinear reduced coefficients,
+$\bm G^{\mathrm{cr}}_{\bm m}=\bm{\mathcal B}\sum_{j=1,2}\sum_{\bm a+\bm e_j=\bm m,\,|\bm b|\ge2}
+a_j\,\bm w_{\bm a}R^{j}_{\bm b}$, evaluated over the already-computed $\bm w,R$.
+
+\subsection{Solving each order}
+Sweep $q=2,\dots,\text{order}$, and within each $q$ the indices $\bm m=(m_1,m_2)$ with
+$m_1\ge m_2$ (the conjugate partner is filled by symmetry). Put
+$\Lambda_{\bm m}=m_1\lambda_1+m_2\lambda_2$. Two cases:
+\begin{itemize}
+\item \textbf{Near-resonant} ($m_1-m_2=1$, i.e.\ $\bm m=(k{+}1,k)$, where
+$\Lambda_{\bm m}=\lambda_1$ conservatively): the operator $\Lambda_{\bm m}\bm{\mathcal B}
+-\bm{\mathcal A}$ is (near-)singular along $\bm v_1$. Project onto the left eigenvector
+to read the reduced coefficient, then solve the deflated system for the geometry under
+the normal-form gauge $\bm u_1^{*}\bm{\mathcal B}\bm w_{\bm m}=0$:
+\begin{equation}
+\boxed{\;\gamma_{2k+1}=R^1_{\bm m}=\bm u_1^{*}\bm G_{\bm m}\;},\qquad
+(\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A})\,\bm w_{\bm m}
+=\bm G_{\bm m}-\bm{\mathcal B}\bm v_1\,R^1_{\bm m},
+\label{eq:app-gamma}
+\end{equation}
+followed by $\bm w_{\bm m}\!\leftarrow\!\bm w_{\bm m}-(\bm u_1^{*}\bm{\mathcal B}\bm w_{\bm m})\bm v_1$.
+Under light damping $\Lambda_{\bm m}\ne\lambda_1$ exactly and the solve is nonsingular; at
+exact resonance one uses the least-squares pseudo-inverse and the same deflation.
+\item \textbf{Non-resonant}: set $R_{\bm m}=\bm 0$ and invert directly,
+$\bm w_{\bm m}=(\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A})^{-1}\bm G_{\bm m}$.
+\end{itemize}
+The reduced coefficients are $\{\gamma_{2k+1}\}=\{R^1_{(k+1,k)}\}$ ($\gamma_3$ at
+$k{=}1$, $\gamma_5$ at $k{=}2$, \dots), and the backbone is~\eqref{eq:backbone}.
+
+\subsection{Worked coefficient: the cubic term}
+At order 3 the only near-resonant index is $\bm m=(2,1)$. By~\eqref{eq:app-forcing} its
+forcing is the cubic force on the master eigenvectors plus the quadratic acting on the
+order-2 map, $\bm G_{(2,1)}=-\big[\,3\,\bm T_3(\bm v_1,\bm v_1,\bar{\bm v}_1)
++2\bm B_2(\bm v_1,\bm w_{(1,1)})+\bm B_2(\bar{\bm v}_1,\bm w_{(2,0)})\,\big]$ (displacement
+block), and \eqref{eq:app-gamma} gives $\gamma_3=\bm u_1^{*}\bm G_{(2,1)}$. For a
+single-DOF Duffing $\ddot x+\omega_0^2x+\varepsilon x^3=0$ the quadratic vanishes, the
+order-2 map is zero, and $\gamma_3$ reduces to the classical
+$\Om=\omega_0\big(1+\tfrac38(\varepsilon/\omega_0^2)A^2\big)$. For the von~K\'arm\'an
+plate the membrane coupling $\bm B_2$ (the $u\!\leftrightarrow\!w^2$ term) is nonzero, its
+order-2 slaving $\bm w_{(1,1)},\bm w_{(2,0)}$ enters through $\bm B_2$ above, and
+$\gamma_3$ is exactly the relaxed cubic $\gamma_{\mathrm{eff}}$ of
+Eq.~\eqref{eq:gammaeff}: the direct membrane cubic \emph{minus} the in-plane relaxation.
+This is why Eq.~\eqref{eq:gamma}, $\gamma_{2k+1}=\bm u_1^{*}\bm G_{(k+1,k)}$, is already an
+adjoint projection --- and why its design sensitivity is inexpensive.
+
+\section{Finite-element validation of the assumed-modes discretization}\label{app:fe}
+
+\paragraph{Why this is needed.} The reductions above are verified against the analytic
+Duffing backbone and against full-order EPMC and direct time integration. Those
+confirmations, however, are of the \emph{same} assumed-modes system solved at higher
+fidelity: they validate the SSM \emph{reduction}, not the assumed-modes
+\emph{discretization}. A steered laminate is spatially heterogeneous and, off the
+principal axes, develops bend--twist couplings $D_{16},D_{26}$; whether a handful of
+global sine modes resolve its response is a separate question. We settle it with an
+independent finite-element (FE) model and the identical backbone coefficient.
+
+\subsection{FE model}
+We take a flat, symmetric ($\bm B=\bm0$) plate on a uniform $n_x\times n_y$ rectangular
+mesh, bending and membrane discretized independently (they decouple linearly for
+$\bm B=\bm 0$).
+
+\emph{Bending (Kirchhoff).} The non-conforming 12-DOF ACM rectangular element carries
+nodal degrees of freedom $\bm d_e=\{w,\;w_{,y},\;-w_{,x}\}$ at the four corners. On the
+element (local $s,t\in[0,1]$) the deflection is the 12-term polynomial
+\begin{equation}
+w(s,t)=\bm p^{\!\top}\bm a,\quad
+\bm p=[1,s,t,s^2,st,t^2,s^3,s^2t,st^2,t^3,s^3t,st^3]^{\!\top};
+\end{equation}
+enforcing the nodal DOF gives $\bm d_e=\bm C\bm a\Rightarrow\bm a=\bm C^{-1}\bm d_e$. With
+the curvature $\bm\kappa=[w_{,xx},w_{,yy},2w_{,xy}]^{\!\top}=\bm B_b\bm C^{-1}\bm d_e$
+($\bm B_b$ the side-scaled second derivatives of $\bm p$), and $4\times4$ Gauss quadrature,
+\begin{equation}
+\bm K^b_e=\!\int_{\Omega_e}\!\bm C^{-\top}\bm B_b^{\!\top}\,\bm D(\theta_e)\,\bm B_b\bm C^{-1}\,\dd\Omega,
+\quad
+\bm M^b_e=\rho h\!\int_{\Omega_e}\!\bm C^{-\top}\bm p\bm p^{\!\top}\bm C^{-1}\,\dd\Omega,
+\end{equation}
+$\bm D(\theta_e)=\tfrac{h^3}{12}\bar{\bm Q}(\theta_e)$ evaluated per element, so
+$D_{16},D_{26}$ are retained exactly.
+
+\emph{Membrane (Q4).} The in-plane fields use the 8-DOF bilinear quadrilateral; with the
+membrane strain--displacement $\bm B_m$ and $\bm A(\theta_e)=h\,\bar{\bm Q}(\theta_e)$,
+$\bm K^{\mathrm{in}}_e=\int_{\Omega_e}\bm B_m^{\!\top}\bm A(\theta_e)\bm B_m\,\dd\Omega$.
+
+\emph{Boundary conditions.} Navier simple support: $w=0$ on the boundary (bending) and
+$u=v=0$ on the boundary (membrane) --- matching the sine in-plane modes, which vanish on
+the edges. \emph{Self-validation:} for a specially-orthotropic UD $[0]$ plate the FE
+reproduces the closed form
+$\omega_{mn}=\pi^2\sqrt{[D_{11}(m/a)^4+2(D_{12}{+}2D_{66})(m/a)^2(n/b)^2+D_{22}(n/b)^4]/\rho h}$
+to $f_1=256.0$ vs.\ $256.3$~Hz, converging monotonically with mesh
+(\texttt{examples/plate\_fe\_check.py}).
+
+\subsection{Backbone by static condensation on the mesh}
+We compute the \emph{same} backbone coefficient the plate results use ---
+Eq.~\eqref{eq:gammaeff} --- but FE-discretized. Solve $\bm K^b\bm\varphi=\omega_1^2\bm M^b\bm\varphi$
+for the fundamental mode (unit peak deflection); its von~K\'arm\'an membrane strain is
+$\bm\varepsilon_{NL}=[\tfrac12 w_{,x}^2,\tfrac12 w_{,y}^2,w_{,x}w_{,y}]^{\!\top}$, with the
+gradients read off the ACM element. Assembling
+$\bm g=\!\int\bm B_m^{\!\top}\bm A\,\bm\varepsilon_{NL}$,
+$\mathrm{knl}=2\!\int\bm\varepsilon_{NL}^{\!\top}\bm A\,\bm\varepsilon_{NL}$ and
+$K_b=\bm\varphi^{\!\top}\bm K^b\bm\varphi$, static condensation of the fast in-plane fields gives
+\begin{equation}
+\gamma_{\mathrm{eff}}=\mathrm{knl}-2\,\bm g^{\!\top}(\bm K^{\mathrm{in}})^{-1}\bm g,
+\qquad
+\Om(a)/\omega_1=1+\beta\,(a/h)^2,\quad \beta=\tfrac38\,(\gamma_{\mathrm{eff}}/K_b)\,h^2 .
+\end{equation}
+This costs \emph{one} sparse solve --- no continuation or time integration --- because the
+condensation \emph{is} the order-2 SSM slaving (App.~\ref{app:coeffs}) evaluated on the mesh.
+The identical formula on the sine basis returns the assumed-modes backbone, so any difference
+is purely discretization (\texttt{examples/plate\_fe\_backbone.py}).
+
+\subsection{Results}
+Table~\ref{tab:fe} compares the two discretizations for a homogeneous and a strongly steered
+field ($\theta=20^\circ+45^\circ\sin\tfrac{\pi x}{a}\sin\tfrac{\pi y}{b}$, sweeping
+$20^\circ$--$65^\circ$).
+
+\begin{table}[t]
+\centering\footnotesize
+\begin{tabular}{llccc}
+\toprule
+field & model & $f_1$ [Hz] & $\gamma_{\mathrm{eff}}$ & detuning @ $a/h{=}0.4$\\
+\midrule
+UD $[0]$ (homogeneous) & FE (converged) & $256.0$ & $2.878\!\times\!10^{10}$ & $11.06\%$\\
+                       & assumed-modes  & $256.3$ & $2.842\!\times\!10^{10}$ & $10.96\%$ \;($1\%$)\\
+\midrule
+steered (strong)       & FE (converged) & $334.4$ & $2.515\!\times\!10^{10}$ & $5.73\%$\\
+                       & assumed, $8$ modes  & $358.9$ & $2.546\!\times\!10^{10}$ & $5.30\%$ \;($8\%$)\\
+                       & assumed, $24$ modes & $345.7$ & $2.584\!\times\!10^{10}$ & $5.65\%$ \;($2\%$)\\
+\bottomrule
+\end{tabular}
+\caption{Assumed-modes vs.\ FE backbone (parenthesized: detuning error vs.\ FE). Homogeneous:
+the two agree to $1\%$, validating the FE nonlinear model. Strong steering: the frequency is a
+slowly-converging Ritz upper bound ($+7\%$ at $8$ modes, $+3\%$ at $24$), but the
+\emph{normalized detuning} --- the design quantity --- matches FE to $8\%$ at $8$ modes and
+$2\%$ at $24$.}
+\label{tab:fe}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figs/plate_fe_validation.pdf}
+\caption{Finite-element validation of the assumed-modes nonlinear backbone.
+\emph{(a)} $\Om/\omega_1$ vs.\ amplitude: for the homogeneous UD plate the assumed-modes and
+FE backbones coincide (upper pair --- validating the FE model), while for the strongly steered
+plate the assumed-modes backbone converges to FE as modes are added (lower pair: $8$-mode dotted,
+$24$-mode dashed, overlying FE). \emph{(b)} Ritz convergence toward FE (steered): the normalized
+backbone detuning enters the $\pm2\%$ band by $\sim\!24$ modes, whereas the absolute frequency is
+a slowly-converging Ritz upper bound. The design quantity (relative detuning) is the well-resolved
+one.}
+\label{fig:fe}
+\end{figure}
+
+Two conclusions. \emph{(i)} For a homogeneous laminate the FE and assumed-modes backbones
+agree to $1\%$, validating the FE nonlinear model (membrane, coupling, condensation).
+\emph{(ii)} For strong steering the assumed-modes frequency is a Ritz upper bound that
+converges slowly, but the \emph{normalized backbone detuning} $\beta\propto\gamma_{\mathrm{eff}}/K_b$
+is far more robust --- a ratio of two integrals of the \emph{same} slightly-inaccurate mode, so
+the mode-shape error largely cancels, leaving a $2\%$ discrepancy at $24$ modes. The relative
+detuning results the designs are built on are therefore FE-accurate to a few percent; absolute
+frequencies of strongly steered designs should be read from FE or an enriched
+($\gtrsim24$-mode) expansion. A displacement-based von~K\'arm\'an FE would replace the assumed
+modes throughout at higher cost, reduced by the same SSM.
 
 \begin{thebibliography}{99}
 \bibitem{haller2016} G.\ Haller and S.\ Ponsioen, ``Nonlinear normal modes and
@@ -594,6 +1910,9 @@ spectral submanifolds,'' 2025 (arXiv:2510.07900).
 dynamics of nonlinear systems,'' PhD thesis, University of Bristol, 2026.
 \bibitem{li2024} M.\ Li, ``Explicit sensitivity analysis of spectral submanifolds
 of mechanical systems,'' \emph{Nonlinear Dyn.}, 2024.
+\bibitem{krack2015} M.\ Krack, ``Nonlinear modal analysis of nonconservative
+systems: extension of the periodic motion concept,'' \emph{Computers \& Structures}
+\textbf{154}, 59--71, 2015.
 \bibitem{shaw} S.\,W.\ Shaw and C.\ Pierre, ``Normal modes for non-linear
 vibratory systems,'' \emph{J.\ Sound Vib.} \textbf{164}(1), 85--124, 1993.
 \bibitem{touze} C.\ Touz\'e, A.\ Vizzaccaro, O.\ Thomas, ``Model order reduction

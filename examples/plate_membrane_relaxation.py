@@ -12,9 +12,10 @@ Three panels:
 
     python examples/plate_membrane_relaxation.py
 """
+import sys
+sys.path.insert(0, "/home/jrt/NLTopt/examples")
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import paperstyle as ps
 import matplotlib.pyplot as plt
 
 from nltopt.plate import VonKarmanPlate
@@ -66,36 +67,36 @@ def main():
         U += qu[c] * s; V += qv[c] * s
 
     # ---- figure -------------------------------------------------------------
-    fig, ax = plt.subplots(1, 3, figsize=(14, 3.8))
-    ax[0].plot(ns, bc, "o-", color="#2e7d32", lw=2)
-    ax[0].axhline(bc[0], color="0.6", ls="--", lw=1, label="restrained (immovable)")
-    ax[0].axhline(bc[-1], color="#d1495b", ls=":", lw=1.5, label="relaxed (converged)")
-    ax[0].set_xlabel("in-plane modes per direction  $n_{in}$")
+    fig, ax = plt.subplots(1, 3, figsize=(ps.FULL, 2.55))
+    ax[0].plot(ns, bc, "o-", color=ps.GREEN, lw=1.5, ms=4)
+    ax[0].axhline(bc[0], color=ps.GREY, ls="--", lw=1, label="restrained (immovable)")
+    ax[0].axhline(bc[-1], color=ps.RED, ls=":", lw=1.3, label="relaxed (converged)")
+    ax[0].set_xlabel(r"in-plane modes / direction  $n_{\mathrm{in}}$")
     ax[0].set_ylabel(r"backbone hardening $d\Omega/dA^2$")
-    ax[0].set_title(f"(a) membrane relaxation softens hardening "
-                    f"({100*(1-bc[-1]/bc[0]):.0f}%)")
-    ax[0].legend(frameon=False, fontsize=9); ax[0].grid(alpha=0.3)
+    ax[0].set_title("(a) relaxation softens hardening")
+    ps.grid(ax[0]); ps.despine(ax[0])
+    ax[0].legend(frameon=False, loc="best")
 
-    ax[1].plot(o_r, a_r, color="0.55", lw=2.4, label="restrained (immovable edges)")
-    ax[1].plot(o_x, a_x, color="#2e7d32", lw=2.4, label="relaxed (in-plane DOF)")
-    ax[1].axvline(1.0, color="0.85", ls=":", lw=1)
+    ax[1].plot(o_r, a_r, color=ps.GREY, lw=1.6, label="restrained")
+    ax[1].plot(o_x, a_x, color=ps.GREEN, lw=1.6, label="relaxed")
+    ax[1].axvline(1.0, color=ps.GRID, ls=":", lw=1)
     ax[1].set_xlabel(r"$\Omega/\omega_1$"); ax[1].set_ylabel(r"mid-plate amplitude $A/h$")
-    ax[1].set_title("(b) backbone: relaxation reduces detuning")
-    ax[1].legend(frameon=False, fontsize=9); ax[1].grid(alpha=0.3)
+    ax[1].set_title("(b) relaxation reduces detuning")
+    ps.grid(ax[1]); ps.despine(ax[1])
+    ax[1].legend(frameon=False, loc="best")
 
     sp = 1
     ax[2].quiver(GX[::sp, ::sp], GY[::sp, ::sp], U[::sp, ::sp], V[::sp, ::sp],
-                 np.hypot(U, V)[::sp, ::sp], cmap="viridis", pivot="mid", scale=None)
+                 np.hypot(U, V)[::sp, ::sp], cmap="cividis", pivot="mid", scale=None)
     ax[2].set_aspect("equal"); ax[2].set_xlim(0, A); ax[2].set_ylim(0, B)
-    ax[2].set_title(r"(c) in-plane field slaved to $w^2$ (membrane relaxation)")
+    ax[2].set_xlabel(r"$x$ (m)"); ax[2].set_ylabel(r"$y$ (m)")
+    ax[2].set_title(r"(c) in-plane field slaved to $w^2$")
+    ps.despine(ax[2])
 
-    fig.suptitle("Von Karman plate: in-plane relaxation slaves to the transverse mode "
-                 "(SSM order-2 manifold)", fontweight="bold")
     fig.tight_layout()
-    fig.savefig("figs/plate_membrane_relaxation.png", dpi=130)
+    ps.save(fig, "/home/jrt/NLTopt/figs/plate_membrane_relaxation")
     print(f"restrained bc={bc[0]:.3e}  relaxed bc={bc[-1]:.3e}  "
           f"({100*(1-bc[-1]/bc[0]):.0f}% reduction)")
-    print("wrote figs/plate_membrane_relaxation.png")
 
 
 if __name__ == "__main__":

@@ -29,10 +29,12 @@ computes the *same* quantity at a cost independent of the number of parameters.
     python examples/coupled_osc_sensitivity.py
 """
 
+import sys
+sys.path.insert(0, "/home/jrt/NLTopt/examples")
 import numpy as np
-import matplotlib
-matplotlib.use("Agg")
+import paperstyle as ps
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 from nltopt import ssm_from_system
 from nltopt.benchmarks import coupled_oscillators
@@ -86,7 +88,7 @@ def main():
     rms_max = RMS_MAX
     on_line, ar_line = backbone_curve(NOMINAL, rms_max)
 
-    fig, axes = plt.subplots(2, 2, figsize=(10.5, 8.0), sharex=False, sharey=True)
+    fig, axes = plt.subplots(2, 2, figsize=(ps.FULL, 5.0), sharex=False, sharey=True)
     print(f"\n{'param':>5} {'dOmega/dmu @0.3':>16} {'dmu':>8} {'max |pred-actual|':>18}")
     for ax, param in zip(axes.ravel(), ["m", "k", "k2", "k3"]):
         dmu = FRAC[param] * NOMINAL[param]
@@ -97,14 +99,12 @@ def main():
         om_act = omega_at_levels(p_pert, LEVELS)
         on_p, ar_p = backbone_curve(p_pert, rms_max)
 
-        c = COLORS[param]
-        ax.plot(on_line, ar_line, "k-", lw=1.8, label="nominal")
-        ax.plot(on_p, ar_p, color=c, lw=1.8, label=f"perturbed ($\\delta {param}$)")
-        ax.plot(om_pred, LEVELS, "+", color=c, ms=11, mew=2.0,
-                label="sensitivity prediction")
-        ax.set_title(f"$\\delta {param} = {FRAC[param]*100:.0f}\\%$", fontsize=11)
-        ax.grid(alpha=0.25)
-        ax.legend(frameon=False, fontsize=8, loc="upper left")
+        sub = param if len(param) == 1 else f"{param[0]}_{param[1]}"
+        ax.plot(on_line, ar_line, color=ps.INK, lw=1.3)
+        ax.plot(on_p, ar_p, color=ps.STEEL, lw=1.5)
+        ax.plot(om_pred, LEVELS, "+", color=ps.RED, ms=6.5, mew=1.3)
+        ax.set_title(rf"$\delta {sub} = {FRAC[param]*100:.0f}\%$")
+        ps.grid(ax); ps.despine(ax)
 
         s_at = np.interp(0.30, LEVELS, sens)
         err = np.max(np.abs(om_pred - om_act))
@@ -114,12 +114,14 @@ def main():
         ax.set_ylabel(r"RMS amplitude of $x_2$")
     for ax in axes[1, :]:
         ax.set_xlabel(r"backbone frequency $\Omega$")
-    fig.suptitle("Backbone-sensitivity validation of two coupled oscillators "
-                 "(cf. Pozzi et al. 2025, Fig. 2)", fontweight="bold")
-    fig.tight_layout()
-    out = "coupled_osc_sensitivity.png"
-    fig.savefig(out, dpi=130)
-    print("\nwrote", out)
+    handles = [Line2D([0], [0], color=ps.INK, lw=1.3, label="nominal backbone"),
+               Line2D([0], [0], color=ps.STEEL, lw=1.5, label="perturbed backbone (recomputed)"),
+               Line2D([0], [0], color=ps.RED, marker="+", ls="none", ms=6.5, mew=1.3,
+                      label="sensitivity prediction")]
+    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
+               bbox_to_anchor=(0.5, -0.01), handlelength=1.5, columnspacing=1.6)
+    fig.tight_layout(rect=(0, 0.055, 1, 1))
+    ps.save(fig, "/home/jrt/NLTopt/figs/coupled_osc_sensitivity")
 
 
 if __name__ == "__main__":

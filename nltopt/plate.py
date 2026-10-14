@@ -101,16 +101,33 @@ class VonKarmanPlate:
             cx, cy = np.cos(kx * self.qx), np.cos(ky * self.qy)
             self.PSI[i], self.PSIx[i], self.PSIy[i] = sx*sy, kx*cx*sy, ky*sx*cy
 
-        # modal mass (transverse + in-plane translational inertia)
-        m_w = RHO * h * np.einsum("q,iq,jq->ij", self.qw, self.PHI, self.PHI)
-        m_in = RHO * h * np.einsum("q,iq,jq->ij", self.qw, self.PSI, self.PSI)
+        # structural density (SIMP-weighted stiffness, linear mass); default solid
+        self.dens_E = np.ones(self.Nq)
+        self.dens_m = np.ones(self.Nq)
+        self._assemble_mass()
+        self.set_theta(np.zeros(self.Nq))
+
+    def _assemble_mass(self):
+        """(Density-weighted) modal mass: transverse + in-plane translational inertia."""
+        m_w = RHO * self.h * np.einsum("q,q,iq,jq->ij", self.dens_m, self.qw, self.PHI, self.PHI)
+        m_in = RHO * self.h * np.einsum("q,q,iq,jq->ij", self.dens_m, self.qw, self.PSI, self.PSI)
         self.M = np.zeros((self.ndof, self.ndof))
         self.M[:self.nw, :self.nw] = m_w
         s = self.nw
         self.M[s:s+self.nu, s:s+self.nu] = m_in
         self.M[s+self.nu:, s+self.nu:] = m_in
 
-        self.set_theta(np.zeros(self.Nq))
+    def set_density(self, rho_q, penal=3.0, eps=1e-4):
+        """SIMP-weight the plate by a per-quadrature-point density in [0,1]:
+        stiffness x (eps+(1-eps)rho^penal), mass x rho.  The multi-mode
+        eigenproblem then sees the perforated structure, so the master mode
+        ADAPTS to the topology (no fixed-mode assumption).  Reassembles M, K."""
+        rho = np.clip(np.broadcast_to(np.asarray(rho_q, float), (self.Nq,)), 0.0, 1.0)
+        self.dens_E = eps + (1.0 - eps) * rho ** penal
+        self.dens_m = rho.copy()
+        self._assemble_mass()
+        self.set_theta(self.theta_q)
+        return self
 
     # slices
     @property
@@ -126,7 +143,7 @@ class VonKarmanPlate:
         Dq = np.empty((self.Nq, 3, 3)); Aq = np.empty((self.Nq, 3, 3))
         for q in range(self.Nq):
             Qb = Qbar(theta_q[q], self.Q)
-            Dq[q] = self.CB * Qb; Aq[q] = self.CM * Qb
+            Dq[q] = self.dens_E[q] * self.CB * Qb; Aq[q] = self.dens_E[q] * self.CM * Qb
         self.Dq, self.Aq = Dq, Aq
         # bending stiffness (w-w block)
         Kb = np.einsum("q,iaq,qab,jbq->ij", self.qw, self.KAP, Dq, self.KAP)
