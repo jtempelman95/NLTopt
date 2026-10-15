@@ -350,9 +350,10 @@ per backbone evaluation (wall times are indicative only).}
 
 
 \section{Verification and reproducibility}\label{app:repro}
-Every result quoted in the main text and in Appendices A--C is a macro generated
+Every computed result quoted in the main text and in Appendices A--C is a macro generated
 from the result files by \texttt{examples/paper\_numbers.py} (\texttt{docs/paper/numbers.tex}),
-or a table written by a listed script. The calibration values of Appendix~\ref{app:calib} (the replicated
+or a table written by a listed script; the few rounded bounds and estimates stated in words
+(e.g.\ ``less than $0.02$'', the bang-bang estimate $0.4$--$0.5$) follow from those values. The calibration values of Appendix~\ref{app:calib} (the replicated
 benchmarks of \cite{pozzi2025}) are printed by the scripts listed for them below. Table~\ref{tab:repro}
 maps each result to the script that produces it. Unit tests are in \texttt{tests/}
 (\texttt{pytest}).

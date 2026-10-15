@@ -58,8 +58,6 @@ ax[2].plot(o, a, color=ps.GREY, lw=1.6, label="UD")
 for tag, lab, col, ls in designs:
     o, a = R[tag + "_curve"]
     ax[2].plot(o, a, color=col, ls=ls, lw=1.4, label=lab)
-ob, ab = Bl["opt_curve"]
-ax[2].plot(ob, ab, color=ps.RED, lw=1.2, ls="-.", label=r"unsymmetric ($B$) design")
 
 ax[2].set_xlabel(r"$\Omega/\omega_1$"); ax[2].set_ylabel(r"mid-span amplitude $a/h$")
 

@@ -22,7 +22,9 @@ gs = fig.add_gridspec(1, 3, width_ratios=[1, 1, 0.62], wspace=0.42, left=0.075, 
 ax = [fig.add_subplot(gs[0, k]) for k in range(3)]
 d = M["dose"]
 ratio, Jopt = d[:, 1], d[:, 2]
-ax[0].plot(np.r_[1.0, ratio], np.r_[1.0, Jopt], "o-", color=ps.GREEN, ms=4, lw=1.4)
+ax[0].plot(np.r_[1.0, ratio], np.r_[1.0, Jopt], "-", color=ps.GREEN, lw=1.4)
+ax[0].plot(ratio, Jopt, "o", color=ps.GREEN, ms=4)
+ax[0].plot(1.0, 1.0, "o", color=ps.GREEN, ms=4.5, mfc="white", mew=1.2, zorder=5)    # exact (Corollary), not computed
 ax[0].axhline(1.0, color=ps.GREY, lw=0.8, ls="--")
 ax[0].annotate("isotropic:\nno lever", (1.0, 1.0), xytext=(1.05, 0.62), fontsize=7, color=ps.GREY,
                arrowprops=dict(arrowstyle="->", color=ps.GREY, lw=0.6))

@@ -19,8 +19,20 @@ its physical backbone curve, validated against analytic results and against
 PyHB's EPMC.
 """
 
-from .ssm import SSM2D, compute_ssm_2d, ssm_from_system
-from .nonlinearity import multilinear_forms, nonlinear_force
+# The SSM / nonlinearity layer builds on the author's harmonic-balance package PyHB (not
+# public; available from the author on request). It is imported lazily, so the relaxed
+# evaluator (nltopt.relaxed_plate, nltopt.laminate) and the paper's number generation run
+# without PyHB.
+_LAZY = {"SSM2D": ".ssm", "compute_ssm_2d": ".ssm", "ssm_from_system": ".ssm",
+         "multilinear_forms": ".nonlinearity", "nonlinear_force": ".nonlinearity"}
+
+
+def __getattr__(name):
+    if name in _LAZY:
+        import importlib
+        return getattr(importlib.import_module(_LAZY[name], __name__), name)
+    raise AttributeError(name)
+
 
 __version__ = "0.0.1"
 

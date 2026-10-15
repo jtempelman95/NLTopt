@@ -100,13 +100,15 @@ for o in np.linspace(-1.6, 1.6, 11):                                  # fibers a
 bx.annotate("", xy=(0, 1.42), xytext=(0, -1.42), arrowprops=dict(arrowstyle="<->", color=ps.STEEL, lw=1.6))
 bx.text(-0.12, 1.46, r"principal curvature $\kappa$", color=ps.STEEL, fontsize=7.5, va="bottom", ha="right")
 bx.text(-0.12, 1.78, r"$\omega_1^2=\int\kappa^{\!\top}\!D(\theta)\,\kappa$", color=ps.STEEL, fontsize=7.5, va="bottom", ha="right")
-bx.annotate("", xy=(1.42, 0), xytext=(-1.42, 0), arrowprops=dict(arrowstyle="<->", color=ps.RED, lw=1.6))
-bx.text(1.48, -0.06, "relaxed\nstretch\n" + r"$\varepsilon_r$", color=ps.RED, fontsize=7.5, va="top")
-bx.text(-1.0, -1.32, r"$\gamma=\tfrac12\int\varepsilon_r^{\!\top}\!A(\theta)\,\varepsilon_r$", color=ps.RED, fontsize=7.5, va="top")
+_ps = np.deg2rad(90 + 33)                                            # principal stretch: 33 deg (the mean
+_u = 1.42 * np.array([np.cos(_ps), np.sin(_ps)])                    # conflict) away from the curvature
+bx.annotate("", xy=tuple(-_u), xytext=tuple(_u), arrowprops=dict(arrowstyle="<->", color=ps.RED, lw=1.6))
+bx.text(-_u[0] + 0.12, -_u[1] + 0.1, "principal relaxed\nstretch " + r"$\varepsilon_r$", color=ps.RED, fontsize=7.5, va="center", ha="left")
+bx.text(-1.0, -1.62, r"$\gamma=\tfrac12\int\varepsilon_r^{\!\top}\!A(\theta)\,\varepsilon_r$", color=ps.RED, fontsize=7.5, va="top")
 bx.annotate("", xy=(0.75 * np.cos(tf), 0.75 * np.sin(tf)), xytext=(0.0, 0.0),
             arrowprops=dict(arrowstyle="-|>", color=ps.GREEN, lw=1.3))
 bx.text(0.62, 0.12, r"$\theta$", color=ps.GREEN, fontsize=9)
-bx.set_xlim(-1.6, 2.25); bx.set_ylim(-1.65, 2.05)
+bx.set_xlim(-1.6, 2.4); bx.set_ylim(-1.95, 2.05)
 fig.text(0.45, 0.95, r"(\textbf{b})", fontsize=9)
 
 # ---------------------------------------------------------------- (c) consequence

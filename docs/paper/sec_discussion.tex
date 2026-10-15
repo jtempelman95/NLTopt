@@ -109,8 +109,10 @@ two functionals of the same stiffness are weighted by different strain fields.
   principal directions (Proposition~\ref{prop:fourier}).
 \item A uniform single angle cannot change the frequency-normalized hardening of a
   single-ply beam. Symmetric steering cuts it by up to $\nBInfHeldRed\%$ with the
-  frequency within $\nBeamFreqBand\%$ of the UD value, by placing compliant fibers at the inflection points. Bending--extension
-  coupling is a minor lever ($\nBBred\%$ on its own drift objective).
+  frequency within $\nBeamFreqBand\%$ of the UD value, by placing compliant fibers at the inflection points. In our comparison
+  bending--extension coupling was a minor lever ($\nBBred\%$ on its own drift objective,
+  against $\nBNineNinetyRed\%$ for symmetric steering at the same $900^\circ$/m tow limit and
+  frequency floor); a richer coupled parametrization might do better.
 \item On a simply supported plate, a curvature-feasible steered field reduces the
   frequency-normalized hardening by $\nFTenRed\%$ at the unidirectional frequency
   (held exactly in the design model, to within $\nHeldTol\%$ on refined bases and an independent finite-element model) and mass. This point is unreachable by any uniform layup, and the steered
@@ -128,6 +130,8 @@ two functionals of the same stiffness are weighted by different strain fields.
 
 \paragraph{Data and code availability.} The code, result files and the scripts that generate
 every number, table and figure (Appendix~\ref{app:repro}) are in the repository
-\url{https://github.com/jtempelman95/NLTopt} (branch \texttt{paper-revision}; see \texttt{docs/paper/README\_REPRODUCE.md}).
+\url{https://github.com/jtempelman95/NLTopt} (branch \texttt{paper-revision}; see \texttt{docs/paper/README\_REPRODUCE.md}). The SSM, EPMC and time-integration scripts build on the author's
+harmonic-balance package PyHB, which is not public and is available on request; the design
+evaluator and the regeneration of every number from the committed result files do not need it.
 
 \paragraph{Competing interests.} The author declares no competing interests.

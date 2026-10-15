@@ -15,11 +15,12 @@ keywords = [
     "topology-optimization", "fiber-steering", "composites",
     "manufacturability", "adjoint", "reduced-order-models",
 ]
-# pyhb is a sibling repo (../PyHB), installed editable:  pip install -e ../PyHB
+# The SSM/EPMC layer additionally needs the author's harmonic-balance package PyHB (import name
+# `pyhb`; NOT the unrelated PyPI package of that name). It is not public; install it from a local
+# copy (pip install -e ../PyHB). The relaxed evaluator and paper_numbers.py run without it.
 dependencies = [
     "numpy>=1.21",
     "scipy>=1.7",
-    "pyhb>=0.1.0",
 ]
 
 [project.optional-dependencies]
