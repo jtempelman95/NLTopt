@@ -103,7 +103,7 @@ bx.text(-0.12, 1.78, r"$\omega_1^2=\int\kappa^{\!\top}\!D(\theta)\,\kappa$", col
 _ps = np.deg2rad(90 + 33)                                            # principal stretch: 33 deg (the mean
 _u = 1.42 * np.array([np.cos(_ps), np.sin(_ps)])                    # conflict) away from the curvature
 bx.annotate("", xy=tuple(-_u), xytext=tuple(_u), arrowprops=dict(arrowstyle="<->", color=ps.RED, lw=1.6))
-bx.text(-_u[0] + 0.12, -_u[1] + 0.1, "principal relaxed\nstretch " + r"$\varepsilon_r$", color=ps.RED, fontsize=7.5, va="center", ha="left")
+bx.text(-_u[0] + 0.14, -_u[1] - 0.12, "principal relaxed\nstretch " + r"$\varepsilon_r$", color=ps.RED, fontsize=7.5, va="center", ha="left")
 bx.text(-1.0, -1.62, r"$\gamma=\tfrac12\int\varepsilon_r^{\!\top}\!A(\theta)\,\varepsilon_r$", color=ps.RED, fontsize=7.5, va="top")
 bx.annotate("", xy=(0.75 * np.cos(tf), 0.75 * np.sin(tf)), xytext=(0.0, 0.0),
             arrowprops=dict(arrowstyle="-|>", color=ps.GREEN, lw=1.3))

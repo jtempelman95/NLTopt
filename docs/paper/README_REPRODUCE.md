@@ -11,7 +11,7 @@ use the CS-RBF map of the companion repository `wavetopo`, branch `paper-revisio
 `mode_ratios.py` and the Appendix D scripts) build on the author's harmonic-balance package PyHB
 (import name `pyhb`), which is not public and is available from the author on request. Do not
 install the unrelated PyPI package called `pyhb`. The relaxed evaluator (`nltopt/relaxed_plate.py`),
-the plate design and stacking studies, the tests, and `paper_numbers.py` (which regenerates every
+the plate design and stacking studies, `tests/test_laminate.py`, and `paper_numbers.py` (which regenerates every
 number and table from the committed result files) run without it.
 
 Order (each step writes into `results/`; see Table "Result → script map" in the appendix):
@@ -23,4 +23,4 @@ Order (each step writes into `results/`; see Table "Result → script map" in th
 3. figures: `examples/fig_*.py`, `examples/plate_fe_fig.py`, calibration scripts listed in the appendix
 4. `examples/paper_numbers.py` → `docs/paper/numbers.tex` and generated tables; then `pdflatex nltopt_paper`.
 
-Unit tests: `pytest tests/`. Scripts in `examples/` not listed above belong to earlier, archived studies.
+Unit tests: `pytest tests/` (all test files except `test_laminate.py` need PyHB). Scripts in `examples/` not listed above belong to earlier, archived studies.
