@@ -19,9 +19,12 @@ The flagship swaps this for a multi-mode / full-FE von Karman plate + the SAME S
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_framework_prototype.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 
 import numpy as np
@@ -284,7 +287,7 @@ def main():
     ps.grid(ax[2]); ps.despine(ax[2])
 
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_framework_prototype")
+    ps.save(fig, (_ROOT + "/figs/plate_framework_prototype"))
     print(f"baseline drift {d_b:.2f}% -> optimized {d_o:.2f}%  (-{100*(1-d_o/d_b):.0f}%)")
 
 

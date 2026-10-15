@@ -12,9 +12,12 @@ surface over the master mode's phase plane, with the periodic backbone orbits on
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/ssm_manifold.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import numpy as np
 import matplotlib.pyplot as plt
@@ -75,7 +78,8 @@ def main():
     pl0, ref0 = build_plate(np.zeros(P.M))
     s0 = ssm_from_system(pl0.to_system(), mode=0, ref_dof=ref0, order=3)
     print("Optimizing (relaxed SSM objective)...")
-    J0, best = P.run(1.0 / 0.020, freq_cap=1.05, verbose=False)
+    from design_source import heldfreq_design
+    best = (None, heldfreq_design())          # held-frequency optimum (single source)
     plo, refo = build_plate(best[1])
     so = ssm_from_system(plo.to_system(), mode=0, ref_dof=refo, order=3)
 
@@ -85,7 +89,7 @@ def main():
     panel(axA, s0, pl0, ref0, rf"(a) unidirectional ($f_1={s0.omega0/2/np.pi:.0f}$ Hz)", ps.STEEL)
     panel(axB, so, plo, refo, rf"(b) optimized tow ($f_1={so.omega0/2/np.pi:.0f}$ Hz)", ps.GREEN)
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/ssm_manifold")
+    ps.save(fig, (_ROOT + "/figs/ssm_manifold"))
 
 
 if __name__ == "__main__":

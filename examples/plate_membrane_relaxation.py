@@ -12,8 +12,11 @@ Three panels:
 
     python examples/plate_membrane_relaxation.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np
 import paperstyle as ps
 import matplotlib.pyplot as plt
@@ -94,7 +97,7 @@ def main():
     ps.despine(ax[2])
 
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_membrane_relaxation")
+    ps.save(fig, (_ROOT + "/figs/plate_membrane_relaxation"))
     print(f"restrained bc={bc[0]:.3e}  relaxed bc={bc[-1]:.3e}  "
           f"({100*(1-bc[-1]/bc[0]):.0f}% reduction)")
 

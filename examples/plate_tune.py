@@ -11,9 +11,12 @@ becomes a least-squares match to a target relative detuning tau = J/J_uni:
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_tune.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import numpy as np
 import matplotlib
@@ -112,7 +115,7 @@ def main():
     for (tau, th, ach, zmax), a in zip(designs, ax[1, :]):
         toolpath(a, th, rf"$\tau={tau:.2f}$  ($R\geq{1000/zmax:.0f}$ mm)")
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_tune")
+    ps.save(fig, (_ROOT + "/figs/plate_tune"))
 
 
 if __name__ == "__main__":

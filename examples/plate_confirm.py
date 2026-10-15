@@ -13,11 +13,14 @@ genuine nonlinear tailoring, not a stiffer plate.
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_confirm.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import os
 import pickle
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 from matplotlib.lines import Line2D
 
@@ -154,7 +157,8 @@ def _epmc_task(args):
 def main():
     print("Optimizing (frequency held: K_b ceiling -> pure nonlinear tailoring)...")
     R_mm = 20.0
-    J0, best = P.run(1.0 / (R_mm / 1000.0), freq_cap=1.05, verbose=False)
+    from design_source import heldfreq_design
+    best = (None, heldfreq_design(R_mm / 1000.0))   # held-frequency optimum (single source)
     th_opt = best[1]
     print(f"optimized on the relaxed SSM coefficient (analytic adjoint): "
           f"curl-feasible R>={R_mm:.0f}mm, frequency held within +5% "
@@ -233,7 +237,7 @@ def _plot(curves, omr):
     fig.legend(handles=handles, loc="lower center", ncol=5, frameon=False,
                bbox_to_anchor=(0.5, -0.02), handlelength=1.4, columnspacing=1.3)
     fig.tight_layout(rect=(0, 0.07, 1, 1))
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_confirm")
+    ps.save(fig, (_ROOT + "/figs/plate_confirm"))
 
 
 CACHE = "figs/plate_confirm_cache.pkl"

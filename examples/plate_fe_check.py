@@ -6,7 +6,10 @@ creates). Self-validated against the closed-form specially-orthotropic simply-
 supported frequency, then used to check the assumed-modes (Galerkin sine) model on a
 HETEROGENEOUS steered plate -- the validation we never had (all prior 'ground truth'
 was EPMC / time-domain of the SAME modal model)."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from scipy.linalg import eigh
 from nltopt.laminate import Qbar, lamina_Q, RHO

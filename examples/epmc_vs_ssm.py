@@ -12,10 +12,13 @@ cost.
 
 Reads the EPMC curves computed by the companion run; re-derives the SSM backbones.
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys, time
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import matplotlib.pyplot as plt
 import plate_framework_prototype as P
@@ -41,7 +44,8 @@ def main():
     Ao, Oo, w1o = d["Ao"], d["Oo"], float(d["w1o"])
     amax = max(Au.max(), Ao.max())
 
-    J0, best = P.run(1.0 / 0.020, freq_cap=1.05, verbose=False)
+    from design_source import heldfreq_design
+    best = (None, heldfreq_design())          # held-frequency optimum (single source)
     au, ou, f1u, t_ssm = ssm_backbone(np.zeros(P.M), amax)
     ao, oo, f1o, t_ssm2 = ssm_backbone(best[1], amax)
 
@@ -78,7 +82,7 @@ def main():
     ps.grid(ax[1]); ps.despine(ax[1])
     ax[1].legend(frameon=False, loc="lower right")
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/epmc_vs_ssm")
+    ps.save(fig, (_ROOT + "/figs/epmc_vs_ssm"))
 
 
 if __name__ == "__main__":

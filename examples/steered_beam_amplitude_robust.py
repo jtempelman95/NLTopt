@@ -23,9 +23,12 @@ shallow initial curvature -- a documented extension).
 
     python examples/steered_beam_amplitude_robust.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 
 import sys
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np
 import paperstyle as ps
 import matplotlib.pyplot as plt
@@ -165,7 +168,7 @@ def main():
     axB.legend(frameon=False, loc="upper right")
 
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/steered_beam_amplitude_robust")
+    ps.save(fig, (_ROOT + "/figs/steered_beam_amplitude_robust"))
 
 
 if __name__ == "__main__":

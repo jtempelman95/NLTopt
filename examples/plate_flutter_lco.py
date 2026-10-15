@@ -3,7 +3,10 @@ import os
 self-excited nonlinear aeroelastic plate (von Karman + piston-theory aero, in-plane
 statically condensed).  Above q_cr the flat panel is unstable; the geometric
 nonlinearity saturates the growth into a bounded limit-cycle oscillation (LCO)."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from scipy.integrate import solve_ivp
 from nltopt.plate import VonKarmanPlate

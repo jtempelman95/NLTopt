@@ -18,9 +18,12 @@ The gradient is analytic and FD-verified:
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_ritz.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import numpy as np
 from scipy.linalg import eigh
@@ -205,7 +208,7 @@ def _demo():
     ax[1].set_title(rf"(b) the toolpath ($R\geq{1000/zmax:.0f}$ mm)")
     plt.colorbar(sp.lines, ax=ax[1], fraction=0.046, pad=0.02, label=r"min tow radius $R$ (mm)")
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_designpoints")
+    ps.save(fig, (_ROOT + "/figs/plate_designpoints"))
 
 
 if __name__ == "__main__":

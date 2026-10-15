@@ -1,0 +1,223 @@
+\section{Theory: why a fiber field can decouple hardening from frequency}\label{sec:theory}
+
+\subsection{Two energy densities over one stiffness}
+With the mass-normalized adapted mode, the Rayleigh quotient and
+Proposition~\ref{prop:relaxed} write both design quantities as integrals of local energy
+densities:
+\begin{equation}
+\omega_1^2=\int_\Omega e_K\,\dd\Omega,\quad e_K=\bm\kappa_1^{\!\top}\bm D\,\bm\kappa_1;\qquad
+\gamma=\int_\Omega e_G\,\dd\Omega,\quad e_G=\tfrac12\bm\varepsilon_r^{\!\top}\bm A\,\bm\varepsilon_r .
+\label{eq:densities}
+\end{equation}
+$J=\gamma/(\omega_1^2w_c^2)$ is their ratio up to the mode's mid-plate value. Both
+densities read the \emph{same} rotated material \eqref{eq:qbar}, but through different
+strain fields: $\bm\kappa_1$ (second derivatives of $w_1$, largest where the mode bends)
+and $\bm\varepsilon_r$ (squared first derivatives minus the in-plane relief). For the simply
+supported fundamental both peak at the center, but with different principal directions
+(Sec.~\ref{sec:mechanism}). The following proposition shows exactly how
+each density depends on the local fiber angle.
+
+\subsection{Local Fourier structure}
+\begin{proposition}[Angular dependence of a laminate energy density]\label{prop:fourier}
+Let $\bm s$ be an engineering strain vector whose tensor has principal values
+$e_{\max},e_{\min}$, ordered so that $|e_{\max}|\ge|e_{\min}|$, and let $\hat\varphi$ be the
+direction of $e_{\max}$. Then for the single-ply stiffness \eqref{eq:qbar},
+\begin{equation}
+\bm s^{\!\top}\bar{\bm Q}(\theta)\bm s=
+\underbrace{U_1(e_{\max}^2+e_{\min}^2)+2U_4e_{\max}e_{\min}}_{\text{isotropic}}
++U_2\,\Delta\cos2(\theta-\hat\varphi)+U_3\,\Sigma\cos4(\theta-\hat\varphi),
+\label{eq:fourier}
+\end{equation}
+with $\Delta=e_{\max}^2-e_{\min}^2\ge0$ and $\Sigma=(e_{\max}-e_{\min})^2\ge0$.
+\end{proposition}
+\begin{proof}
+Rotation invariance gives $\bm s^{\!\top}\bar{\bm Q}(\theta)\bm s=\bm s'^{\!\top}\bar{\bm
+Q}(\theta-\hat\varphi)\bm s'$, with $\bm s'=[e_{\max},e_{\min},0]^{\!\top}$ the strain in
+its principal frame. Let $\psi=\theta-\hat\varphi$. Using \eqref{eq:qbar},
+$\bar Q_{11}=U_1+U_2\cos2\psi+U_3\cos4\psi$,
+$\bar Q_{22}=U_1-U_2\cos2\psi+U_3\cos4\psi$ and $\bar Q_{12}=U_4-U_3\cos4\psi$, we get
+$\bar Q_{11}e_{\max}^2+2\bar Q_{12}e_{\max}e_{\min}+\bar Q_{22}e_{\min}^2
+=U_1(e_{\max}^2+e_{\min}^2)+2U_4e_{\max}e_{\min}+U_2(e_{\max}^2-e_{\min}^2)\cos2\psi
++U_3(e_{\max}-e_{\min})^2\cos4\psi$.
+\end{proof}
+
+Applying \eqref{eq:fourier} to the two densities, pointwise:
+\begin{align}
+e_K(\bm x,\theta)&=\tfrac{h^3}{12}\big[I_K+U_2\Delta_K\cos2(\theta-\varphi_K)+U_3\Sigma_K\cos4(\theta-\varphi_K)\big],
+\label{eq:eK}\\
+e_G(\bm x,\theta)&=\tfrac{h}{2}\big[I_G+U_2\Delta_G\cos2(\theta-\varphi_G)+U_3\Sigma_G\cos4(\theta-\varphi_G)\big],
+\label{eq:eG}
+\end{align}
+where $(\Delta_K,\Sigma_K,\varphi_K)$ come from the principal curvatures of $w_1$ and
+$(\Delta_G,\Sigma_G,\varphi_G)$ from the principal relaxed stretches. For CFRP
+$U_2\approx\nUtwoUthree\,U_3$, so the $2\theta$ harmonic dominates. To leading order, then:
+\begin{itemize}[itemsep=1pt]
+\item $e_K$ is largest (the point contributes most to $\omega_1^2$) when the fiber lies
+\emph{along} the principal curvature, $\theta=\varphi_K$;
+\item $e_G$ is smallest (the point contributes least to $\gamma$) when the fiber lies
+\emph{across} the principal stretch, $\theta=\varphi_G+\pi/2$.
+\end{itemize}
+Which way the frequency pulls depends on the sign of the multiplier $\Lambda$ of
+Proposition~\ref{prop:pointwise} below, which weights $e_K$ against $e_G$. If the target
+frequency lies above the one the stretch alone would select, $\Lambda>0$ and the fiber is
+drawn toward the principal curvature, $\theta=\varphi_K$. If it lies below, $\Lambda<0$
+and the fiber is pushed \emph{across} the principal curvature, $\theta=\varphi_K+\pi/2$,
+the bending-compliant direction. We call $\varphi_G+\pi/2$ and the frequency-favored
+direction the \emph{preferred directions}, and the angle between them,
+$\chi(\bm x)\in[0,\pi/2]$, the \emph{conflict}. Where $\chi=0$, one fiber direction
+serves both energies. Where $\chi$ is large, any single direction compromises.
+
+\begin{corollary}[The unidirectional floor]\label{cor:udfloor}
+Among all uniform symmetric laminates of the same thickness and mass, whatever the
+stacking sequence, the lowest linear frequency is attained by a single-angle laminate.
+\end{corollary}
+\begin{proof}
+For a symmetric laminate $\bm D=\tfrac{h^3}{12}\big(\bm\Gamma_0+\sum_k\xi^D_k\bm\Gamma_k\big)$ is affine
+in its four lamination parameters $\bm\xi^D$, and the set of $\bm\xi^D$ reachable by
+stacking lies in the convex hull of the single-angle curve
+$\bm\xi^D(\theta)=(\cos2\theta,\sin2\theta,\cos4\theta,\sin4\theta)$ \cite{tsai1968}.
+$\omega_1^2$ is the minimum over admissible $w$ of a Rayleigh quotient that is affine in
+$\bm\xi^D$, hence a concave function of $\bm\xi^D$, and a concave function on a convex
+hull attains its minimum at an extreme point, i.e.\ at a single-angle laminate.
+\end{proof}
+\noindent For the plate studied here the single-angle frequency rises monotonically from
+$\theta=0^\circ$ (Sec.~\ref{sec:levers}), so UD is the lowest-frequency uniform laminate of
+\emph{any} stacking sequence, not only of the enumerated ones, and at $\omega_{1,\UD}$ there
+is no other uniform competitor.
+
+\begin{corollary}[P1: isotropy annihilates the lever]\label{cor:iso}
+If $U_2=U_3=0$, then $\bm A$ and $\bm D$ are independent of every ply angle at every point.
+Hence $\omega_1$, $\gamma$ and $J$ are independent of the orientation field, uniform or
+steered or stacked, and every orientation sensitivity vanishes identically. This is exact,
+including mode adaptation and relaxation, because the operators themselves do not depend
+on $\theta$.
+\end{corollary}
+\noindent Numerically, $\partial J/\partial\theta\equiv0$ to $10^{-10}$ relative when
+$\bm Q$ is set isotropic (\texttt{tests/test\_relaxed\_plate.py}).
+
+\subsection{Two separation channels}\label{sec:channels}
+Inserting \eqref{eq:lampar} into \eqref{eq:densities} gives
+\begin{equation}
+e_K=\tfrac{h^3}{12}\Big[\bm\kappa_1^{\!\top}\bm\Gamma_0\bm\kappa_1+\sum_i\xi^D_i(\bm x)\,
+\bm\kappa_1^{\!\top}\bm\Gamma_i\bm\kappa_1\Big],\qquad
+e_G=\tfrac{h}{2}\Big[\bm\varepsilon_r^{\!\top}\bm\Gamma_0\bm\varepsilon_r+\sum_i\xi^A_i(\bm x)\,
+\bm\varepsilon_r^{\!\top}\bm\Gamma_i\bm\varepsilon_r\Big].
+\label{eq:channels}
+\end{equation}
+\emph{The frequency reads only the bending lamination parameters, and the hardening only
+the membrane ones.} Each design class corresponds to a different freedom in the field
+$(\bm\xi^A(\bm x),\bm\xi^D(\bm x))$:
+
+\begin{center}\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+class & $\bm\xi^A$ & $\bm\xi^D$ & separation available\\ \midrule
+uniform single angle & $\bm v(\theta_0)$ & $=\bm\xi^A$ & none (one scalar)\\
+uniform stack & const. & const.\ $\ne\bm\xi^A$ & through the thickness\\
+steered single ply & $\bm v(\theta(\bm x))$ & $=\bm\xi^A$ & in the plane\\
+steered stack & $\mathcal R_{\theta(\bm x)}\bm\xi^A_0$ & $\mathcal R_{\theta(\bm x)}\bm\xi^D_0$ & both\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Here $\mathcal R_\theta$ rotates the parameter pairs,
+$(\xi_1+i\xi_2)\mapsto e^{2i\theta}(\xi_1+i\xi_2)$ and
+$(\xi_3+i\xi_4)\mapsto e^{4i\theta}(\xi_3+i\xi_4)$. Section~\ref{sec:levers} measures the
+achievable $(\omega_1,J)$ set of each class.
+
+\subsection{Pointwise optimality: what an optimal field must do}\label{sec:pointwise}
+Consider the problem
+\begin{equation}
+\min_{\theta(\cdot)}\;J\quad\text{s.t.}\quad\omega_1=\omega_\star
+\label{eq:heldproblem}
+\end{equation}
+over single-ply fields. Freeze $w_1$ and $\bm\varepsilon_r$ at a reference design. This
+\emph{frozen-field} model is exact to first order in the design change: $\bm
+s^\star$ is stationary (Proposition~\ref{prop:relaxed}) and $\omega_1^2$ is a Rayleigh
+quotient. In this model $w_c$ is fixed, so \eqref{eq:heldproblem} reads
+$\min\int e_G(\bm x,\theta(\bm x))$ subject to $\int e_K(\bm x,\theta(\bm x))=\omega_\star^2$.
+
+\begin{proposition}[Pointwise optimality and strict benefit of steering]\label{prop:pointwise}
+In the frozen-field model the optimal field is
+\begin{equation}
+\theta^\star(\bm x)=\argmin_\theta\big[e_G(\bm x,\theta)-\Lambda\,e_K(\bm x,\theta)\big],
+\label{eq:thetastar}
+\end{equation}
+with the scalar multiplier $\Lambda$ fixed by the frequency constraint. A uniform angle
+$\theta_u$ can be optimal among all fields only if
+\begin{equation}
+U_2\Delta_G\sin2(\theta_u-\varphi_G)+2U_3\Sigma_G\sin4(\theta_u-\varphi_G)
+=\Lambda'\big[U_2\Delta_K\sin2(\theta_u-\varphi_K)+2U_3\Sigma_K\sin4(\theta_u-\varphi_K)\big]
+\label{eq:uniformkkt}
+\end{equation}
+holds at almost every $\bm x$, with one constant $\Lambda'=\tfrac{h^2}{6}\Lambda$.
+Otherwise a steered field strictly lowers $J$ at the same frequency.
+\end{proposition}
+\begin{proof}
+The Lagrangian $\int e_G-\Lambda(\int e_K-\omega_\star^2)$ has no derivative coupling
+between points, so it is minimized pointwise, giving \eqref{eq:thetastar}. Every
+uniform angle is a feasible field, so the field optimum is never worse. If the uniform
+optimum were also the field optimum, it would satisfy the pointwise stationarity
+condition $\partial_\theta e_G=\Lambda\partial_\theta e_K$ at every point. By
+\eqref{eq:eK}--\eqref{eq:eG} this is \eqref{eq:uniformkkt}.
+\end{proof}
+
+Condition \eqref{eq:uniformkkt} asks the anisotropic parts of two different strain
+fields to be proportional with one constant at a single angle. That fails whenever the
+conflict $\chi(\bm x)$ or the ratio $\Delta_G/\Delta_K$ varies over the plate. Since the
+principal curvature and the principal relaxed stretch of a bending mode turn differently
+over the plate, and their energy ratio varies, it fails generically. Proposition~\ref{prop:pointwise} is the
+precise form of the hypothesis. It also yields a test (P4): $\theta^\star$ computed from
+the \emph{unidirectional} fields alone, with no optimizer, should already capture much
+of the gain, and the optimized field should resemble it.
+
+\subsection{One dimension in closed form}\label{sec:beamtheory}
+\begin{proposition}[Beam: harmonic against curvature-weighted mean]\label{prop:beam}
+Consider a symmetric single-ply beam with immovable ends, $A=bhE(x)$ and
+$D=\tfrac{bh^3}{12}E(x)$, and a mass-normalized fundamental $\varphi$ with mid-span value
+$\varphi_c$. Then
+\begin{equation}
+\gamma=\frac{bh\,(\int_0^L\varphi'^2)^2}{2\int_0^LE^{-1}},\qquad
+\omega_1^2=\frac{bh^3}{12}\int_0^LE\,\varphi''^2,\qquad
+J=\frac{6}{h^2\varphi_c^2}\,
+\frac{(\int\varphi'^2)^2}{\int E^{-1}\;\int E\varphi''^2}.
+\label{eq:beamJ}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Axial equilibrium makes $N$ uniform. Integrating $\varepsilon=N/A=u'+\tfrac12q^2\varphi'^2$
+over the span with $u(0)=u(L)=0$ gives $N\int A^{-1}=\tfrac12q^2\int\varphi'^2$. The
+membrane energy is then $\tfrac12N^2\int A^{-1}=q^4(\int\varphi'^2)^2/(8\int A^{-1})$,
+which equals $\tfrac\gamma4q^4$. The frequency is the Rayleigh quotient, and $J$ follows
+from \eqref{eq:J}.
+\end{proof}
+
+\begin{corollary}[P2: uniform invariance]\label{cor:beaminv}
+For uniform $E\equiv E_0$, $\int E^{-1}\int E\varphi''^2=L\int\varphi''^2$, and $\varphi$
+itself is independent of $E_0$ (the operators scale together). Hence $J$ is
+\emph{exactly} independent of any uniform single-ply angle, and every change in $J$ is
+caused by spatial variation of $E(x)$.
+\end{corollary}
+
+Equation \eqref{eq:beamJ} makes the mechanism transparent. The hardening sees the
+\emph{harmonic} mean of $E$ over the whole span, which is dominated by the softest
+segment. The frequency sees the mean of $E$ \emph{weighted by the curvature} $\varphi''^2$,
+which vanishes at the inflection points ($x/L\approx0.224$ and $0.776$ for the
+clamped fundamental). Compliant fibers placed there raise $\int E^{-1}$, and so lower the
+hardening, at almost no cost in frequency.
+
+\begin{corollary}[Bang-bang bound]\label{cor:bang}
+Suppose $E=E_{\max}$ except on zones of total length $\ell$ where $E=E_{\min}$ and
+$\varphi''\approx0$. Then, to frozen-mode accuracy,
+\begin{equation}
+J/J_{\UD}\approx\big[1+(\ell/L)(E_{\max}/E_{\min}-1)\big]^{-1}.
+\label{eq:bang}
+\end{equation}
+\end{corollary}
+\noindent For CFRP, $E_{\max}/E_{\min}=\bar Q_{11}(0)/\bar Q_{11}(90^\circ)=14.6$, so
+$\ell/L=0.05$ already gives $J/J_{\UD}\approx0.59$. Equation \eqref{eq:bang} contains P5
+in one dimension. The lever grows with the anisotropy ratio and with how narrow the
+compliant zones can be made while staying where $\varphi''\approx0$. The narrowness is set
+by the tow curvature: turning a tow by $90^\circ$ at rate $\kappa_{\mathrm{tow}}$ needs a
+run of $(\pi/2)/\kappa_{\mathrm{tow}}$, which is $\SI{0.10}{m}$ at
+$900^\circ/\mathrm{m}$, a third of the span.

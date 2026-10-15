@@ -7,7 +7,10 @@ results use (Eq. gammaeff), now discretized by FE. Compare to the assumed-modes
 (Galerkin sine) gamma_eff for UD (validation: must match) and a steered field (the
 discretization error in the NONLINEAR hardening). No EPMC / full-order continuation:
 the condensation is exact at cubic order and costs one sparse solve."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from scipy.linalg import eigh
 from nltopt.laminate import Qbar, RHO

@@ -13,8 +13,11 @@ frequency sweeps confirm it.
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_design.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys, pickle
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")

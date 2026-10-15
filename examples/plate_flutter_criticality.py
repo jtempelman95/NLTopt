@@ -1,6 +1,9 @@
 r"""Stuart-Landau LCO amplitude from the SSM/normal-form coefficient of the flutter
 mode -- the cheap analytical design surrogate -- checked vs the time-domain LCO."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from scipy.linalg import eig
 import plate_flutter as F

@@ -20,9 +20,12 @@ tow angle is inert -> dJ/dtheta = 0), per the wavetopo gradient rules.
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_topopt.py --check
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_topopt.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 
 import numpy as np
@@ -277,7 +280,7 @@ def figure(z, th, Jref, path="figs/plate_topopt.png"):
     for a in ax[:3]:
         a.set_xlabel(r"$x$ (m)"); a.set_ylabel(r"$y$ (m)")
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_topopt")
+    ps.save(fig, (_ROOT + "/figs/plate_topopt"))
     print("wrote plate_topopt")
 
 

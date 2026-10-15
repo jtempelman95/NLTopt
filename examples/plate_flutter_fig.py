@@ -7,9 +7,12 @@ Run examples/plate_flutter.py first to produce figs/flutter_steered_30.npy.
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_flutter_fig.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import os
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 
 import numpy as np
 import matplotlib

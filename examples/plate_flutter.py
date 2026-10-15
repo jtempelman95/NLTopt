@@ -23,9 +23,12 @@ angle (4057 vs 2121 kPa), exceeding even the flow-aligned [0] panel.
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_flutter.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import os
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 
 import numpy as np
 from scipy.linalg import eig, eigh

@@ -1,0 +1,148 @@
+\section{Design problems and sensitivities}\label{sec:design}
+
+\subsection{Orientation field and the tow-curvature constraint}\label{sec:manuf}
+The fiber angle is a smooth field interpolated from $M$ support values $\hat{\bm\theta}$
+by normalized compactly supported Wendland $C^2$ radial basis functions \cite{wendland1995},
+\begin{equation}
+\theta(\bm x)=\sum_{i=1}^M\Phi_i(\bm x)\hat\theta_i,\qquad
+\Phi_i=\frac{\phi(\|\bm x-\bm x_i\|/r_s)}{\sum_j\phi(\|\bm x-\bm x_j\|/r_s)},\qquad
+\phi(q)=(1-q)_+^4(4q+1),
+\label{eq:csrbf}
+\end{equation}
+on a regular support grid of spacing $h_s$ with $r_s=1.5h_s$. The baseline is
+$h_s=\SI{50}{mm}$ ($M=20$); Sec.~\ref{sec:limits} refines it. The spatial derivatives
+$\bm\Phi_x,\bm\Phi_y$ are analytic. A tow laid along $\bm n=(\cos\theta,\sin\theta)$
+turns at the rate
+\begin{equation}
+\kappa_{\mathrm{tow}}(\bm x)=(\bm n\!\cdot\!\nabla)\theta=\cos\theta\,\theta_{,x}+\sin\theta\,\theta_{,y},
+\label{eq:towcurv}
+\end{equation}
+so its steering radius is $1/|\kappa_{\mathrm{tow}}|$. AFP and continuous-fiber printing require
+$|\kappa_{\mathrm{tow}}|\le\zall=1/R_{\min}$; this pointwise form follows \cite{wong2026}. We impose this at every quadrature point $e$
+as $c_e=1-\kappa_{\mathrm{tow},e}^2/\zall^2\ge0$, with the analytic Jacobian
+\begin{equation}
+\frac{\partial\kappa_{\mathrm{tow},e}}{\partial\hat{\bm\theta}}=
+\big(-\sin\theta_e\,\bm\Phi_{x,e}\hat{\bm\theta}+\cos\theta_e\,\bm\Phi_{y,e}\hat{\bm\theta}\big)\bm\Phi_e
++\cos\theta_e\,\bm\Phi_{x,e}+\sin\theta_e\,\bm\Phi_{y,e}.
+\end{equation}
+The baseline limit is $R_{\min}=\SI{20}{mm}$.
+
+\subsection{The design problems}\label{sec:problems}
+\paragraph{Steered plate.} For a target frequency $\omega_\star$,
+\begin{equation}
+\min_{\hat{\bm\theta}}\;\frac{J(\hat{\bm\theta})}{J_{\UD}}\quad\text{s.t.}\quad
+\frac{\omega_1(\hat{\bm\theta})}{\omega_\star}-1=0,\qquad c_e(\hat{\bm\theta})\ge0\ \ \forall e,
+\label{eq:designprob}
+\end{equation}
+where $J$ and $\omega_1$ are those of the adapted-mode, relaxed model
+(Sec.~\ref{sec:relaxed}). The frequency is an \emph{equality}, so a gain can never come
+from a stiffer or softer panel. The mass is fixed by construction. We solve
+\eqref{eq:designprob} by sequential quadratic programming (SLSQP \cite{kraft1988}), which satisfies both
+constraints to $10^{-4}$, from six starts (uniform $0^\circ,20^\circ,45^\circ,70^\circ$ and
+two random fields), and keep the best feasible result.
+
+\paragraph{Uniform stacks.} We enumerate every symmetric eight-ply laminate
+$[\theta_4/\theta_3/\theta_2/\theta_1]_s$ with $\theta_i\in\{-75^\circ,-60^\circ,\dots,90^\circ\}$:
+$12^4=\nSnum$ stacks, each evaluated exactly on the same model. A uniform laminate
+needs no optimizer, because its operators are linear combinations of precomputed moment
+tensors (e.g.\ $\bm K_b=\sum_{ab}D_{ab}\bm I^K_{ab}$).
+
+\paragraph{Steered stack.} The best uniform stack at $\omega_\star$ is rotated pointwise,
+$\bm C(\bm x)=\bm T(\theta(\bm x))\bm C_0\bm T(\theta(\bm x))^{\!\top}$ for $\bm C\in\{\bm A,\bm
+D\}$, and \eqref{eq:designprob} is solved for $\theta(\bm x)$.
+
+\paragraph{Beam.} $\theta(x)$ is mirror symmetric about mid-span and piecewise linear on
+13 knots over the half span. The tow limit is the slope bound
+$|\theta'|\le\kappa_{\mathrm{tow}}$, and the frequency is held as
+$\omega_1\ge f_{\mathrm{hold}}\,\omega_{1,\UD}$. A uniform-angle beam cannot change $J$
+(Corollary~\ref{cor:beaminv}) and every steered beam is \emph{softer} than UD, so an
+equality at $f_{\mathrm{hold}}=1$ admits only UD. We report
+$f_{\mathrm{hold}}\in\{0.98,0.90\}$ and $\kappa_{\mathrm{tow}}\in\{900,1800,\infty\}$\,deg/m.
+The optimizer works on the condensed beam evaluator (adapted mode, exact axial
+condensation), and every design is \emph{confirmed} on the full FE beam by its cubic SSM.
+
+\subsection{Sensitivities on the adapted mode}\label{sec:sens}
+Let a perturbation $\delta\theta(\bm x)$ change the stiffnesses by
+$\delta\bm D=\bm D'\delta\theta$ and $\delta\bm A=\bm A'\delta\theta$, with
+$\bm C'=\bm T'\bm C_0\bm T^{\!\top}+\bm T\bm C_0\bm T'^{\!\top}$. Let
+$(\lambda_j,\bm v_j)$ be the Ritz pairs of the bending block ($\lambda_1=\omega_1^2$),
+with curvature fields $\bm\kappa_j$. The mass does not depend on $\theta$.
+
+\emph{Frequency.} The Rayleigh quotient is stationary (Fox--Kapoor), so
+\begin{equation}
+\delta\omega_1^2=\int\bm\kappa_1^{\!\top}\delta\bm D\,\bm\kappa_1 .
+\label{eq:dom}
+\end{equation}
+
+\emph{Mode shape.} The eigenvector derivative is
+\begin{equation}
+\delta\bm v_1=\sum_{j\ge2}\frac{\bm v_j^{\!\top}\delta\bm K_b\bm v_1}{\lambda_1-\lambda_j}\bm v_j,
+\qquad \bm v_j^{\!\top}\delta\bm K_b\bm v_1=\int\bm\kappa_j^{\!\top}\delta\bm D\,\bm\kappa_1 .
+\end{equation}
+
+\emph{Hardening.} By Proposition~\ref{prop:relaxed}, $\gamma$ is a minimum over the
+in-plane state, so its total derivative needs \emph{no in-plane adjoint}: only the
+explicit $\bm A$-dependence and the dependence on the mode (through $\bm m$) remain.
+With $\partial\gamma/\partial\bm m=\bm A\bm\varepsilon_r$ and
+$\partial\bm m/\partial v_k=[2w_{1,x}\phi_{k,x},\,2w_{1,y}\phi_{k,y},\,
+2(w_{1,x}\phi_{k,y}+w_{1,y}\phi_{k,x})]$,
+\begin{equation}
+\delta\gamma=\int\Big[\tfrac12\bm\varepsilon_r^{\!\top}\delta\bm A\,\bm\varepsilon_r
++\bm\kappa_\beta^{\!\top}\delta\bm D\,\bm\kappa_1\Big],\qquad
+\bm\kappa_\beta=\sum_{j\ge2}\frac{\bm v_j^{\!\top}\partial_{\bm v}\gamma}{\lambda_1-\lambda_j}\bm\kappa_j,\quad
+\partial_{v_k}\gamma=\int(\bm A\bm\varepsilon_r)^{\!\top}\partial_{v_k}\bm m .
+\label{eq:dgamma}
+\end{equation}
+The \emph{adjoint curvature field} $\bm\kappa_\beta$ collapses every eigenvector term into
+one field.
+
+\emph{Mid-plate value.} In the same way,
+$\delta w_c=\int\bm\kappa_{\mathrm{mid}}^{\!\top}\delta\bm D\,\bm\kappa_1$, with
+$\bm\kappa_{\mathrm{mid}}=\sum_{j\ge2}\frac{w_c(\bm v_j)}{\lambda_1-\lambda_j}\bm\kappa_j$.
+
+\emph{Detuning.} Since $J=\gamma/(\omega_1^2w_c^2)$,
+\begin{equation}
+\delta J=\frac{\delta\gamma}{\omega_1^2w_c^2}-\frac{\gamma\,\delta\omega_1^2}{\omega_1^4w_c^2}
+-\frac{2\gamma\,\delta w_c}{\omega_1^2w_c^3},\qquad
+\frac{\partial J}{\partial\hat{\bm\theta}}=\bm\Phi^{\!\top}\Big[w_q\frac{\partial J}{\partial\theta_q}\Big]_q ,
+\label{eq:dJ}
+\end{equation}
+where $w_q$ are the quadrature weights. The whole gradient costs one eigensolve of
+dimension $N_w$, one in-plane solve of dimension $2N_s$, and pointwise contractions. It
+does not depend on $M$, so the support grid can be refined freely.
+Equation~\eqref{eq:dJ} is the local optimality condition of
+Proposition~\ref{prop:pointwise}, plus the mode-shape corrections carried by
+$\bm\kappa_\beta$ and $\bm\kappa_{\mathrm{mid}}$.
+
+\subsection{Verification of the evaluator and its gradient}\label{sec:verify}
+\begin{itemize}[itemsep=1pt]
+\item \textbf{Gradient.} Directional finite differences agree with \eqref{eq:dJ}, and with
+  the $\omega_1$ and $\gamma$ derivatives, to $10^{-9}$--$10^{-7}$ relative.
+\item \textbf{Isotropy.} With $\bm Q$ isotropic, $\partial J/\partial\theta$ vanishes to
+  $10^{-10}$ relative (Corollary~\ref{cor:iso}).
+\item \textbf{Proposition~\ref{prop:relaxed}.} $\int e_G=\gamma$ and $\int e_K=\omega_1^2$
+  hold to $10^{-10}$.
+\item \textbf{Rotation.} The rotation \eqref{eq:rot} reproduces the classical $\bar{\bm Q}$
+  to machine precision, and Proposition~\ref{prop:fourier} holds to $10^{-9}$ for random
+  strains.
+\item \textbf{Uniform path.} The fast uniform-laminate path equals the general one to
+  $10^{-13}$.
+\item \textbf{Reference values.} For the UD plate the evaluator gives $f_1=\nUDf$\,Hz and a
+  $\nUDdet\%$ shift at $a/h=0.4$, in agreement with the $\nFEtabUDdet\%$ of the assumed-modes
+  model of the finite-element comparison (Appendix~\ref{app:fe}).
+\end{itemize}
+Basis convergence is in Table~\ref{tab:conv}. All checks are in
+\texttt{tests/test\_relaxed\_plate.py}.
+
+\begin{table}[t]
+\centering\footnotesize
+\caption{Convergence of the evaluator on the reported held-frequency steered design
+(generated by \texttt{conv\_table.py}). $J/J_{\UD}$ and the relaxed share are converged on
+the bold basis; three in-plane modes per direction under-resolve the steered relaxation.
+The steered frequency is a Ritz upper bound that falls by $\nConvFreqDrop\%$ as the transverse basis
+grows (the UD frequency does not change), so ``held frequency'' holds to about $\nConvFreqDrop\%$
+across bases and $\nHeldTol\%$ against the independent FE model.
+Bold: the basis used throughout.}
+\label{tab:conv}
+\IfFileExists{conv_table.tex}{\input{conv_table.tex}}{\textit{table pending}}
+\end{table}

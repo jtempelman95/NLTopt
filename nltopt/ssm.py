@@ -335,17 +335,46 @@ def compute_ssm_2d(M, C, K, bilinear=None, trilinear=None, mode=0, ref_dof=0,
     B = np.block([[C, M], [M, Z]])
     lam_target = -zeta0 * omega0 + 1j * omega0 * np.sqrt(max(1.0 - zeta0 ** 2, 0.0))
 
-    lr, Vr = eig(A, B)
-    ll, Vl = eig(A.T, B.T)
-    i1 = int(np.argmin(np.abs(lr - lam_target)))
-    lam1 = lr[i1]
-    v1 = Vr[:, i1]
-    v1 = v1 / ((phi @ v1[:n]) / (phi @ phi))          # scale so v1[:n] == phi
+    symmetric = (np.allclose(K, K.T, rtol=0, atol=1e-12 * np.abs(K).max())
+                 and np.allclose(C, C.T, rtol=0, atol=1e-12 * (np.abs(C).max() + 1e-300))
+                 and np.allclose(M, M.T, rtol=0, atol=1e-12 * np.abs(M).max()))
+    if symmetric:
+        # For symmetric M, C, K the pencil (A, B) is complex-SYMMETRIC, so the left
+        # eigenvector is the conjugate of the right one (u1 = conj v1) and the master
+        # pair is obtained to machine precision by Rayleigh-quotient inverse iteration
+        # seeded from the second-order mode.  (A dense QZ of the stiff first-order
+        # pencil can lose many digits in the master eigenvector -- condition numbers
+        # ~1e14 occur for laminated beams -- which corrupts gamma.)
+        lam1 = lam_target
+        v1 = np.concatenate([phi, lam1 * phi]).astype(complex)
+        for _ in range(6):
+            try:
+                y = solve(A - lam1 * B, B @ v1)
+            except np.linalg.LinAlgError:              # seed already an exact eigenpair
+                break
+            if not np.all(np.isfinite(y)):
+                break
+            v1 = y / np.linalg.norm(y)
+            lam_new = (v1 @ A @ v1) / (v1 @ B @ v1)
+            if abs(lam_new - lam1) <= 1e-14 * abs(lam1):
+                lam1 = lam_new
+                break
+            lam1 = lam_new
+        v1 = v1 / ((phi @ v1[:n]) / (phi @ phi))      # scale so v1[:n] == phi
+        u1 = np.conjugate(v1)
+        u1 = u1 / np.conjugate(np.vdot(u1, B @ v1))    # u1^* B v1 = 1
+    else:
+        lr, Vr = eig(A, B)
+        ll, Vl = eig(A.T, B.T)
+        i1 = int(np.argmin(np.abs(lr - lam_target)))
+        lam1 = lr[i1]
+        v1 = Vr[:, i1]
+        v1 = v1 / ((phi @ v1[:n]) / (phi @ phi))      # scale so v1[:n] == phi
+        j1 = int(np.argmin(np.abs(ll - np.conjugate(lam1))))
+        u1 = Vl[:, j1]
+        u1 = u1 / np.conjugate(np.vdot(u1, B @ v1))    # u1^* B v1 = 1
     v2 = np.conjugate(v1)
     lam2 = np.conjugate(lam1)
-    j1 = int(np.argmin(np.abs(ll - np.conjugate(lam1))))
-    u1 = Vl[:, j1]
-    u1 = u1 / np.conjugate(np.vdot(u1, B @ v1))        # u1^* B v1 = 1
 
     Bv1 = B @ v1
     ez = [(1, 0), (0, 1)]

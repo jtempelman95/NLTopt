@@ -28,9 +28,12 @@ computes the *same* quantity at a cost independent of the number of parameters.
 
     python examples/coupled_osc_sensitivity.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 
 import sys
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np
 import paperstyle as ps
 import matplotlib.pyplot as plt
@@ -88,7 +91,8 @@ def main():
     rms_max = RMS_MAX
     on_line, ar_line = backbone_curve(NOMINAL, rms_max)
 
-    fig, axes = plt.subplots(2, 2, figsize=(ps.FULL, 5.0), sharex=False, sharey=True)
+    fig, axes = plt.subplots(2, 2, figsize=(ps.FULL, 4.3), sharex=False, sharey=True)
+    from matplotlib.ticker import MultipleLocator
     print(f"\n{'param':>5} {'dOmega/dmu @0.3':>16} {'dmu':>8} {'max |pred-actual|':>18}")
     for ax, param in zip(axes.ravel(), ["m", "k", "k2", "k3"]):
         dmu = FRAC[param] * NOMINAL[param]
@@ -103,7 +107,8 @@ def main():
         ax.plot(on_line, ar_line, color=ps.INK, lw=1.3)
         ax.plot(on_p, ar_p, color=ps.STEEL, lw=1.5)
         ax.plot(om_pred, LEVELS, "+", color=ps.RED, ms=6.5, mew=1.3)
-        ax.set_title(rf"$\delta {sub} = {FRAC[param]*100:.0f}\%$")
+        ax.set_title(rf"(\textbf{{{'abcd'[['m', 'k', 'k2', 'k3'].index(param)]}}}) $\delta {sub} = {FRAC[param]*100:.0f}\%$", loc="left")
+        ax.xaxis.set_major_locator(MultipleLocator(0.005)); ax.tick_params(axis="y", labelleft=True)
         ps.grid(ax); ps.despine(ax)
 
         s_at = np.interp(0.30, LEVELS, sens)
@@ -112,16 +117,16 @@ def main():
 
     for ax in axes[:, 0]:
         ax.set_ylabel(r"RMS amplitude of $x_2$")
-    for ax in axes[1, :]:
+    for ax in axes.ravel():
         ax.set_xlabel(r"backbone frequency $\Omega$")
     handles = [Line2D([0], [0], color=ps.INK, lw=1.3, label="nominal backbone"),
                Line2D([0], [0], color=ps.STEEL, lw=1.5, label="perturbed backbone (recomputed)"),
                Line2D([0], [0], color=ps.RED, marker="+", ls="none", ms=6.5, mew=1.3,
                       label="sensitivity prediction")]
     fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
-               bbox_to_anchor=(0.5, -0.01), handlelength=1.5, columnspacing=1.6)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
-    ps.save(fig, "/home/jrt/NLTopt/figs/coupled_osc_sensitivity")
+               bbox_to_anchor=(0.5, 0.0), handlelength=1.5, columnspacing=1.6, fontsize=7.5)
+    fig.tight_layout(rect=(0, 0.045, 1, 1), h_pad=0.8)
+    ps.save(fig, (_ROOT + "/figs/coupled_osc_sensitivity"))
 
 
 if __name__ == "__main__":

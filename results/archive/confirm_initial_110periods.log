@@ -1,0 +1,5 @@
+[ssm+jump done 204s]
+  ud: f1=256.3 Hz  beta_SSM=0.6888  a_c/h=0.208  F_c=1.056e+00
+  opt: f1=258.3 Hz  beta_SSM=0.2475  a_c/h=0.347  F_c=1.736e+00
+  ud: up/down hysteresis gap = 0.151 h  (drive between thresholds)
+  opt: up/down hysteresis gap = 0.200 h  (drive between thresholds)

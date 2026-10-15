@@ -3,7 +3,10 @@ rectangular element (C1-continuous, nodal DOF w, w_x, w_y, w_xy). Carries full
 anisotropic D(theta) (D16,D26) and the piston-theory aero. Self-validated against the
 closed-form frequency, then used for the definitive coupled-case flutter boundary that
 the non-conforming ACM element got wrong."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from scipy.linalg import eigh, eig
 from nltopt.laminate import Qbar, RHO

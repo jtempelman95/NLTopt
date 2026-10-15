@@ -1,7 +1,10 @@
 r"""Redo the flutter design on the CONFORMING BFS FE: steer the tow field to MAXIMIZE
 the (correct) flutter boundary q_cr at held f1, curl-feasible -- recovering the flutter
 margin the bend-twist coupling craters for a uniform layup."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 from concurrent.futures import ProcessPoolExecutor
 from wavetopo.cfrp_optimizer import MMA

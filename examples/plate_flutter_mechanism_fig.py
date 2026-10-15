@@ -6,10 +6,13 @@ cause -> onset -> aftermath:
  (b) growth rate (V-g): max Re(s) crosses zero at q_cr; steering slides the onset ~9x -- REAL data.
  (c) post-flutter bifurcation: supercritical Hopf (Re gamma<0) -> a bounded limit cycle; the
      normal-form branch a ~ sqrt(q-q_cr), with the recovered-margin band between the two onsets.
-Run: /home/jrt/miniforge3/bin/python plate_flutter_mechanism_fig.py"""
+Run: python plate_flutter_mechanism_fig.py"""
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np
 from scipy.linalg import eigh, eig
 import paperstyle as ps
@@ -24,7 +27,7 @@ deg = np.array([p[0] for p in front]); f1u = np.array([p[1] for p in front]); qu
 near = np.abs(f1u - 300.0) < 15
 bu = qu[near].max(); bu_ang = deg[near][np.argmax(qu[near])]
 
-th_s = np.load("/home/jrt/NLTopt/figs/bfs_steered_300.npy")
+th_s = np.load((_ROOT + "/figs/bfs_steered_300.npy"))
 basis_s = BF.build_basis(mesh, th_s, 60)
 qcs, f1s = BF.flutter(mesh, th_s, basis_s, grad=False)
 ratio = qcs / bu
@@ -127,4 +130,4 @@ axc.set_xlim(0, 3.62); axc.set_ylim(-0.03, 1.02); axc.set_yticks([])
 axc.set_xlabel(XL); axc.set_ylabel("LCO amplitude (norm. form)")
 ps.panel(axc, "c")
 
-ps.save(fig, "/home/jrt/NLTopt/figs/plate_flutter_mechanism")
+ps.save(fig, (_ROOT + "/figs/plate_flutter_mechanism"))

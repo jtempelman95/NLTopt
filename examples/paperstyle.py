@@ -8,6 +8,9 @@ the article), restrained palette, no decorative titles. Import FIRST, before pyp
     ps.panel(ax, "a"); ps.despine(ax)
     ps.save(fig, "figs/foo")                      # writes foo.pdf
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import matplotlib
 matplotlib.use("pgf")
 # Lock the backend: many example modules call matplotlib.use("Agg") at import time,
@@ -57,7 +60,13 @@ rcParams.update({
     "figure.facecolor": "white",
     "savefig.facecolor": "white",
     "axes.grid": False,
+    "savefig.dpi": 300,           # rasterized field maps embedded at print resolution
 })
+
+
+def use_palatino():
+    """Typeset figure text in Palatino (mathpazo), for manuscripts set in Palatino."""
+    rcParams["pgf.preamble"] = r"\usepackage{amsmath}\usepackage{amssymb}\usepackage{mathpazo}\usepackage{bm}"
 
 
 def figure(width=FULL, height=2.2):
@@ -80,7 +89,7 @@ def panel(ax, letter):
     ax.set_title(rf"(\textbf{{{letter}}})", loc="left", pad=4)
 
 
-PAPER_FIGS = "/home/jrt/NLTopt/docs/paper/figs"
+PAPER_FIGS = (_ROOT + "/docs/paper/figs")
 
 
 def save(fig, stem):

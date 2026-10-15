@@ -11,10 +11,13 @@ single-valued (no jump) at a drive where the baseline panel already jumps.
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_jump.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import matplotlib.pyplot as plt
 
@@ -50,7 +53,8 @@ def a_crit(pl, ref):
 
 
 def main():
-    J0, best = P.run(1.0 / 0.020, freq_cap=1.05, verbose=False)
+    from design_source import heldfreq_design
+    best = (None, heldfreq_design())          # held-frequency optimum (single source)
     pl_u, ref_u = build_plate(np.zeros(P.M))
     pl_o, ref_o = build_plate(best[1])
     acu, f1u, ku = a_crit(pl_u, ref_u)
@@ -118,7 +122,7 @@ def main():
     ps.grid(ax[1], axis="y"); ps.despine(ax[1])
 
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_jump")
+    ps.save(fig, (_ROOT + "/figs/plate_jump"))
 
 
 if __name__ == "__main__":

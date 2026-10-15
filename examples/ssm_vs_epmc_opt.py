@@ -14,8 +14,11 @@ softening target, and check that both frameworks land on the same A1.
 
     python examples/ssm_vs_epmc_opt.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np, time
 import paperstyle as ps
 import matplotlib.pyplot as plt
@@ -103,30 +106,25 @@ def main():
 
     oi, ai = ssm_curve(1e-6); oS, aS_c = ssm_curve(aS); oE_s, aE_s = ssm_curve(aE)
     oE, aE_c = epmc_curve(aE)
-    fig, ax = plt.subplots(1, 2, figsize=(ps.FULL, 2.9))
-    ax[0].plot(oi, ai, color=ps.GREY, lw=1.6, label="straight beam (hardening)")
-    ax[0].plot(oS, aS_c, color=ps.GREEN, lw=1.8, label=rf"SSM-optimized ($A_1={aS*1e3:.1f}$ mm)")
-    ax[0].plot(oE, aE_c, "--", color=ps.RED, lw=1.4, label="EPMC (full-order)")
-    ax[0].plot(1.0 + TARGET, CAMP, "o", color=ps.INK, ms=6, mfc="none", mew=1.5, label="softening target")
-    ax[0].axvline(1.0, color=ps.GRID, ls=":", lw=1)
-    ax[0].set_xlabel(r"$\Omega/\omega_1$"); ax[0].set_ylabel(r"RMS mid-span $v/h_0$")
-    ax[0].set_title("(a) optimized curvature softens")
-    ps.grid(ax[0]); ps.despine(ax[0])
-    ax[0].legend(frameon=False, loc="upper left")
-
-    ax[1].axis("off")
-    rows = [["", "SSM", "EPMC"],
-            [r"optimal $A_1$ (mm)", f"{aS*1e3:.3f}", f"{aE*1e3:.3f}"],
-            [r"detuning at $0.2h_0$", rf"{dS*100:+.2f}\%", rf"{dE*100:+.2f}\%"],
-            ["backbone evals", f"{nS}", f"{nE}"],
-            ["wall time", f"{tS:.2f} s", f"{tE:.0f} s"],
-            ["cost / backbone", r"$1\times$", rf"$\sim{int(round((tE/nE)/(tS/max(nS,1))))}\times$"]]
-    tb = ax[1].table(cellText=rows, cellLoc="center", loc="center", bbox=[0.02, 0.1, 0.96, 0.8])
-    tb.auto_set_font_size(False); tb.set_fontsize(8)
-    for j in range(3): tb[0, j].set_text_props(fontweight="bold")
-    ax[1].set_title("(b) same optimum, huge cost gap")
-    fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/ssm_vs_epmc_opt")
+    fig, a0 = plt.subplots(figsize=(3.45, 2.45))
+    a0.plot(oi, ai, color=ps.GREY, lw=1.5, label="straight (hardening)")
+    a0.plot(oS, aS_c, color=ps.GREEN, lw=1.7, label="SSM-optimized")
+    a0.plot(oE, aE_c, "--", color=ps.RED, lw=1.3, label="EPMC-optimized")
+    a0.plot(1.0 + TARGET, CAMP, "o", color=ps.INK, ms=5.5, mfc="none", mew=1.3, zorder=5, label="target")
+    a0.set_xlabel(r"$\Omega/\omega_1$ (each design's own $\omega_1$)"); a0.set_ylabel(r"RMS mid-span $v/h_0$")
+    ps.grid(a0); ps.despine(a0); ps.panel(a0, "a")
+    a0.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.53, 1.0), fontsize=7, handlelength=1.8, borderaxespad=0.1)
+    fig.tight_layout(pad=0.3)
+    ps.save(fig, (_ROOT + "/figs/ssm_vs_epmc_opt"))
+    ratio = int(round((round(tE, 1) / nE) / (round(tS, 3) / max(nS, 1)), -1))    # from the displayed values
+    with open((_ROOT + "/docs/paper/svse_table.tex"), "w") as fh:
+        fh.write("\\begin{tabular}{@{}lrr@{}}\n\\toprule\n & SSM & EPMC\\\\ \\midrule\n")
+        fh.write(f"optimal $A_1$ (mm) & {aS*1e3:.2f} & {aE*1e3:.2f}\\\\\n")
+        fh.write(f"detuning at $0.2h_0$ & ${dS*100:+.2f}\\%$ & ${dE*100:+.2f}\\%$\\\\\n".replace("+", "{+}").replace("-", "$-$").replace("$$-$", "$-"))
+        fh.write(f"backbone evaluations & {nS} & {nE}\\\\\n")
+        fh.write(f"wall time (s) & {tS:.3f} & {tE:.1f}\\\\\n")
+        fh.write(f"cost per backbone & $1\\times$ & $\\approx{ratio}\\times$\\\\\n\\bottomrule\n\\end{{tabular}}\n")
+    print("wrote docs/paper/svse_table.tex")
 
 
 if __name__ == "__main__":

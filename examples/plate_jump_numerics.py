@@ -10,10 +10,13 @@ Fig.~plate_jump (which uses the SSM forced-response curve).
 
     PYTHONPATH=/home/jrt/wavetopo:/home/jrt/NLTopt python3 examples/plate_jump_numerics.py
 """
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
+sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_ROOT + "/examples"))
 import paperstyle as ps
 import matplotlib.pyplot as plt
 from concurrent.futures import ProcessPoolExecutor
@@ -26,7 +29,8 @@ OMR = (0.985, 1.075)
 
 
 def main():
-    J0, best = P.run(1.0 / 0.020, freq_cap=1.05, verbose=False)
+    from design_source import heldfreq_design
+    best = (None, heldfreq_design())          # held-frequency optimum (single source)
     pl0, ref0 = build_plate(np.zeros(P.M))
     F = 0.0100 * pl0.h * pl0.K[ref0, ref0]                   # the drive from Fig. plate_jump
     designs = [("unidirectional", np.zeros(P.M)), ("steered tow", best[1])]
@@ -81,7 +85,7 @@ def main():
         print(f"  {name:16}: max up-down gap = {gap:.3f} a/h -> {'JUMP' if jumped else 'no jump'}")
     ax[0].set_ylabel(r"steady amplitude  $a/h$")
     fig.tight_layout()
-    ps.save(fig, "/home/jrt/NLTopt/figs/plate_jump_numerics")
+    ps.save(fig, (_ROOT + "/figs/plate_jump_numerics"))
 
 
 if __name__ == "__main__":

@@ -2,7 +2,10 @@ r"""Corrected panel-flutter figure (conforming BFS FE), styled:
  (a) the bend-twist 'flutter hole' a uniform layup falls into at 300 Hz
  (b) the two layups compared -- horizontal pill bars, steered vs best uniform
  (c) the steered tow layout."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -109,5 +112,5 @@ panel_title(axc, "c", "the steered tow layout", "#b3760a")
 fig.text(0.5, 0.95, "Same 300 Hz fundamental and mass — the steered tow field flutters at "
          f"{ratio:.0f}$\\times$ the pressure of the best uniform layup",
          ha="center", fontsize=13, fontweight="bold", color=INK)
-fig.savefig("/home/jrt/NLTopt/figs/plate_flutter.png", dpi=160, facecolor="white")
+fig.savefig((_ROOT + "/figs/plate_flutter.png"), dpi=160, facecolor="white")
 print(f"wrote figs/plate_flutter.png; best-uniform {bu*1000:.0f} kPa, steered {qcs*1000:.0f} kPa -> {ratio:.1f}x")

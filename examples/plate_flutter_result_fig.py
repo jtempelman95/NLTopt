@@ -2,10 +2,13 @@ r"""Flutter design/result figure (LaTeX-typeset, vector PDF):
  (a) the flutter boundary q_cr vs uniform ply angle -- the bend-twist 'flutter hole' near
      30-40 deg that craters a uniform layup at the required 300 Hz;
  (b) the manufacturable steered tow layout that recovers the boundary (9x, held f1 & mass).
-Run: /home/jrt/miniforge3/bin/python plate_flutter_result_fig.py"""
+Run: python plate_flutter_result_fig.py"""
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
 import sys
-sys.path.insert(0, "/home/jrt/wavetopo")
-sys.path.insert(0, "/home/jrt/NLTopt/examples")
+sys.path.insert(0, (_WAVETOPO + ""))
+sys.path.insert(0, (_ROOT + "/examples"))
 import numpy as np
 import paperstyle as ps
 import matplotlib.pyplot as plt
@@ -19,7 +22,7 @@ front = BF.uniform_front(mesh, range(0, 91, 2))
 deg = np.array([p[0] for p in front]); f1u = np.array([p[1] for p in front]); qu = np.array([p[2] for p in front]) / 1e6
 near = np.abs(f1u - 300.0) < 15
 bu = qu[near].max(); bu_ang = deg[near][np.argmax(qu[near])]
-th_s = np.load("/home/jrt/NLTopt/figs/bfs_steered_300.npy")
+th_s = np.load((_ROOT + "/figs/bfs_steered_300.npy"))
 basis = BF.build_basis(mesh, th_s, 60); qcs = BF.flutter(mesh, th_s, basis, grad=False)[0] / 1e6
 print(f"best uniform near 300Hz: {bu_ang:.0f} deg, {bu:.3f} MPa | steered {qcs:.3f} MPa | {qcs/bu:.1f}x")
 
@@ -62,4 +65,4 @@ axc.set_xlim(0, BF.A); axc.set_ylim(0, BF.B); axc.set_aspect("equal")
 axc.set_xlabel(r"chordwise $x$ (m)"); axc.set_ylabel(r"spanwise $y$ (m)")
 ps.panel(axc, "b")
 
-ps.save(fig, "/home/jrt/NLTopt/figs/plate_flutter")
+ps.save(fig, (_ROOT + "/figs/plate_flutter"))

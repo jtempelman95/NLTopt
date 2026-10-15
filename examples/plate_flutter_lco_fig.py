@@ -2,7 +2,10 @@ r"""Post-flutter LCO figure: limit-cycle amplitude vs dynamic pressure for the
 import os
 uniform vs steered panel (the nonlinear flutter bifurcation), + time traces at a
 flight condition between the two boundaries (baseline flutters, steered is quiet)."""
-import sys; sys.path.insert(0, "/home/jrt/wavetopo")
+import os as _os
+_ROOT = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+_WAVETOPO = _os.environ.get("WAVETOPO_DIR", _os.path.join(_os.path.dirname(_ROOT), "wavetopo"))
+import sys; sys.path.insert(0, (_WAVETOPO + ""))
 import numpy as np
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -89,5 +92,5 @@ if __name__ == "__main__":
     fig.suptitle("Steering the tows does not just delay flutter --- it keeps the panel quiet where the "
                  "baseline is in limit-cycle flutter", fontsize=11.5, fontweight="bold", y=0.99)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    fig.savefig("/home/jrt/NLTopt/figs/plate_flutter_lco.png", dpi=150)
+    fig.savefig((_ROOT + "/figs/plate_flutter_lco.png"), dpi=150)
     print(f"wrote figs/plate_flutter_lco.png; uniform LCO@qop={np.interp(qop/1e3,qu,au):.2f}, steered=0")
