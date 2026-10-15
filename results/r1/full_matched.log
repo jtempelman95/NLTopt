@@ -1,0 +1,8 @@
+c=-0.05521  f/f_UD=1.0000107
+c=-0.05529  f/f_UD=1.0000000
+ud: SSM beta = 0.6888
+asis: SSM beta = 0.2475
+matched: SSM beta = 0.2529
+[ud] EPMC H=3: 201 points, beta=0.6805  (1636s)
+[matched] EPMC H=3: 201 points, beta=0.2518  (1677s)
+{'c': -0.0553, 'f_asis': 1.0078, 'f_matched': 1.0, 'ud_ssm_beta': 0.6888, 'asis_ssm_beta': 0.2475, 'matched_ssm_beta': 0.2529, 'ud_epmc_beta': 0.6805, 'matched_epmc_beta': 0.2518, 'ssm_ratio_asis': 0.3594, 'ssm_ratio_matched': 0.3672, 'epmc_ratio_matched': 0.3701}

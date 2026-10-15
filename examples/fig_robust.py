@@ -39,10 +39,10 @@ for i in range(len(names)):
     ax.text(x[i] + 0.19, ste[i] + 0.02, f"{ste[i]:.2f}", ha="center", fontsize=6.6)
     if uni[i] < 0.999:
         ax.text(x[i] - 0.19, uni[i] + 0.02, f"{uni[i]:.2f}", ha="center", fontsize=6.6)
+
 ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=6.6, linespacing=0.95)
-ax.set_ylabel(r"$J/J_{\mathrm{UD}}$ at $\omega_{1,\mathrm{UD}}$"); ax.set_ylim(0, 1.32)
-ax.legend(frameon=False, fontsize=6.5, loc="upper center", ncol=2, handlelength=1.2, columnspacing=0.8,
-          bbox_to_anchor=(0.5, 1.0), borderaxespad=0.1)
+ax.set_ylabel(r"$J/J_{\mathrm{UD}}$ at $\omega_{1,\mathrm{UD}}$"); ax.set_ylim(0, 1.5); ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+ax.legend(frameon=False, fontsize=6.8, loc="upper left", ncol=1, handlelength=1.2, borderaxespad=0.1)
 ax.set_title(r"(\textbf{a}) other plates, frequency held", loc="left", fontsize=8, pad=3)
 ps.grid(ax, axis="y"); ps.despine(ax)
 
@@ -70,15 +70,15 @@ m = D[:, 1] == 0
 cx.loglog(100 * D[m, 0], D[m, 2], "-s", color=ps.GREY, ms=3.6, mfc="white", mew=1.0, label="UD")
 cx.loglog(100 * D[m, 0], D[m, 3], "-o", color=ps.GREEN, ms=3.6, mfc="white", mew=1.0, label="steered")
 s = D[:, 1] == 1
-cx.loglog(100 * D[s, 0], D[s, 2], "x", color=ps.GREY, ms=5, mew=1.1)
-cx.loglog(100 * D[s, 0], D[s, 3], "x", color=ps.GREEN, ms=5, mew=1.1, label=r"$\boldsymbol C\propto\boldsymbol K$")
+cx.loglog(100 * D[s, 0] * 1.18, D[s, 2], "x", color=ps.GREY, ms=5, mew=1.2)
+cx.loglog(100 * D[s, 0] * 1.18, D[s, 3], "x", color=ps.GREEN, ms=5, mew=1.2, label=r"$\boldsymbol C\propto\boldsymbol K$")
 cx.set_xlabel(r"damping ratio $\zeta$ (\%)"); cx.set_ylabel(r"jump-free amplitude $a_c/h$")
 cx.set_xticks([0.5, 1, 2, 4]); cx.set_xticklabels(["0.5", "1", "2", "4"])
 cx.set_yticks([0.1, 0.2, 0.3, 0.5]); cx.set_yticklabels(["0.1", "0.2", "0.3", "0.5"])
 cx.minorticks_off()
 r = D[m, 4]
-cx.text(0.55, 0.40, rf"ratio ${r.min():.3f}$--${r.max():.3f}$", fontsize=6.6, color=ps.GREEN)
-cx.legend(frameon=False, fontsize=6.4, loc="lower right", handlelength=1.4, borderaxespad=0.1)
+cx.text(0.52, 0.44, rf"ratio ${r.min():.2f}$" + "\n" + r"at every $\zeta$", fontsize=6.8, color=ps.GREEN, ha="left", va="top")
+cx.legend(frameon=False, fontsize=6.6, loc="lower right", handlelength=1.4, borderaxespad=0.1)
 cx.set_title(r"(\textbf{c}) damping level and law", loc="left", fontsize=8, pad=3)
 ps.grid(cx); ps.despine(cx)
 
@@ -106,28 +106,30 @@ dx.set_title(r"(\textbf{d}) tow spreading along the tow paths", loc="left", font
 # ------------------------------------------------------------ (e) as-built plane
 ex = fig.add_axes([0.585, 0.085, 0.40, HD])
 w_ud, J_ud = float(L["w_ud"]), float(L["J_ud"])
-ex.plot(L["U_f"] / w_ud, L["U_J"] / J_ud, color=ps.INK, lw=1.2, label="uniform angle")
 Fp = np.array([(d["omega1"] / w_ud, d["J"] / J_ud) for d in L["F"] if d is not None])
-ex.plot(Fp[:, 0], Fp[:, 1], "-", color=ps.GREEN, lw=0.9, zorder=2, label="steered optima")
+ex.plot(Fp[:, 0], Fp[:, 1], "-", color=ps.GREEN, lw=0.9, zorder=2, label="steered front (fixed mass)")
 keys = list(A["res_keys"]); R = A["res"]
 MC = A["MC"]
-ex.plot(MC[:, 1], MC[:, 0], ".", color="#9aa5ae", ms=2.5, zorder=3, label=r"$2^\circ$ angle error")
-ex.plot(*R[keys.index("ideal")][[1, 0]], "o", color=ps.GREEN, ms=6, zorder=5, label="design (ideal)")
+from matplotlib.patches import Ellipse
+cov = np.cov(MC[:, 1], MC[:, 0]); ev, evec = np.linalg.eigh(cov)
+ang = np.degrees(np.arctan2(evec[1, 1], evec[0, 1]))
+ex.add_patch(Ellipse((MC[:, 1].mean(), MC[:, 0].mean()), 4 * np.sqrt(ev[1]), 4 * np.sqrt(ev[0]), angle=ang,
+                     fc="#d9dde2", ec=ps.GREY, lw=0.8, zorder=3, label=r"$2^\circ$ angle error ($\pm2\sigma$)"))
+ex.plot(*R[keys.index("ideal")][[1, 0]], "o", color=ps.GREEN, ms=6, zorder=5, label="design (idealized)")
 for N, ms in ((4, 6.5), (8, 5.5), (16, 4.5)):
     g, o = R[keys.index(f"GAP{N}")], R[keys.index(f"OVL{N}")]
     ex.plot(g[1], g[0], "v", color=ps.RED, ms=ms, mfc="white", mew=1.1, zorder=6,
             label="gaps, 0\\% coverage" if N == 4 else None)
     ex.plot(o[1], o[0], "^", color=ps.STEEL, ms=ms, mfc="white", mew=1.1, zorder=6,
-            label="overlaps, 100\\% cov." if N == 4 else None)
-    if N == 4:
-        ex.annotate(f"$N={N}$", (g[1], g[0]), xytext=(0, -10), textcoords="offset points", fontsize=6.2,
-                    color=ps.RED, ha="center")
-        ex.annotate(f"$N={N}$", (o[1], o[0]), xytext=(0, -11), textcoords="offset points", fontsize=6.2,
-                    color=ps.STEEL, ha="center")
-ex.plot(1, 1, "*", color=ps.INK, ms=9, zorder=7); ex.annotate("UD", (1, 1), xytext=(5, -2), textcoords="offset points", fontsize=7)
-ex.set_xlim(0.80, 1.20); ex.set_ylim(0.15, 1.08)
+            label="overlaps, 100\\% coverage" if N == 4 else None)
+    ex.annotate(rf"$N={N}$: ${100*(o[2]-1):+.0f}\%$", (o[1], o[0]), xytext={8: (5, 5), 16: (-3, -9)}.get(N, (-6, -16)),
+                textcoords="offset points", fontsize=6.3, color=ps.STEEL, ha={8: "left", 16: "right"}.get(N, "center"), va="bottom" if N == 8 else "top")
+_g = [R[keys.index(f"GAP{N}")] for N in (4, 8, 16)]
+ex.annotate(r"gaps, $N=4,8,16$:" + "\n" + r"mass " + ", ".join(rf"${100*(g_[2]-1):+.0f}$" for g_ in _g) + r"\%",
+            (_g[0][1], _g[0][0]), xytext=(-2, 14), textcoords="offset points", fontsize=6.3, color=ps.RED, ha="center", va="bottom")
+ex.set_xlim(0.94, 1.15); ex.set_ylim(0.22, 0.46)
 ex.set_xlabel(r"$\omega_1/\omega_{1,\mathrm{UD}}$"); ex.set_ylabel(r"$J/J_{\mathrm{UD}}$")
-ex.legend(frameon=False, fontsize=6.3, loc="upper left", handlelength=1.3, borderaxespad=0.1)
+ex.legend(frameon=False, fontsize=6.4, loc="upper right", handlelength=1.3, borderaxespad=0.1, ncol=1)
 ex.set_title(r"(\textbf{e}) as built: tow cut/add, $N$ tows per course", loc="left", fontsize=8, pad=3)
 ps.grid(ex); ps.despine(ex)
 ps.save(fig, _os.path.join(_ROOT, "figs", "fig_robust"))

@@ -344,7 +344,7 @@ if _VF is not None:
     _ms = _VF["ms"]; _b = _ms[:, 0].min()
     put("nMSgood", int(np.sum(_ms[:, 0] <= 1.05 * _b)), "{:d}")
     put("nMSworst", float(_ms[:, 0].max()), "{:.2f}")
-    put("nMSspread", 100 * (float(np.sort(_ms[:, 0])[int(np.sum(_ms[:, 0] <= 1.05 * _b)) - 1]) / _b - 1), "{:.0f}")
+    put("nMSspread", 100 * (float(np.sort(_ms[:, 0])[int(np.sum(_ms[:, 0] <= 1.05 * _b)) - 1]) / _b - 1), "{:.1f}")
     def _sci(x):
         if x == 0:
             return "0"
@@ -357,6 +357,37 @@ if _VF is not None:
         fh.write("\\begin{tabular}{@{}lcccc@{}}\n\\toprule\nstart & $J/J_{\\UD}$ & $\\omega_1/\\omega_\\star-1$ & $\\min_e c_e$ & iterations\\\\\n\\midrule\n")
         fh.write("\n".join(_tabrows) + "\n")
         fh.write("\\bottomrule\n\\end{tabular}\n")
+
+# ---------------------------------------------------------------- Revision R1, audit fixes
+_FM = load("r1_full_matched.npz")
+if _FM is not None:
+    put("nFullMatchedJ", float(_FM["ssm_ratio_matched"]), "{:.3f}")
+    put("nFullAsisPct", 100 * (float(_FM["f_asis"]) - 1), "{:.1f}")
+    if "epmc_ratio_matched" in _FM.files:
+        put("nFullMatchedEPMC", float(_FM["epmc_ratio_matched"]), "{:.3f}")
+if _CF is not None and _CF["rows"].shape[1] >= 4:
+    _n = list(_CF["names"]); _r = _CF["rows"]
+    put("nFreeFreqTwo", float(_r[_n.index("ss_21"), 3]), "{:.2f}")
+    put("nFreeFreqSq", float(_r[_n.index("ss_11"), 3]), "{:.2f}")
+if _DP is not None:
+    put("nDampAcHiOpt", float(_DP["rows"][_DP["rows"][:, 1] == 0][-1, 3]), "{:.3f}")
+if _AB is not None:
+    _cts = _R[_k.index("CTS")]; put("nCtsJ", float(_cts[0]), "{:.0f}")
+    _F = [float(_R[_k.index(f"{t}{N}")][1]) for t in ("GAP", "OVL") for N in (4, 8, 16)]
+    _Mm = [float(_R[_k.index(f"{t}{N}")][2]) for t in ("GAP", "OVL") for N in (4, 8, 16)]
+    put("nAsBuiltFmin", min(_F), "{:.2f}"); put("nAsBuiltFmax", max(_F), "{:.2f}")
+    put("nAsBuiltMmin", min(_Mm), "{:.2f}"); put("nAsBuiltMmax", max(_Mm), "{:.2f}")
+if _VF is not None:
+    _g = _VF["grad_rows"]
+    _e2 = int(np.ceil(np.log10(_g[:, 3].max())))
+    put("nGradErrAll", f"10^{{{_e2}}}", "{}")
+_G21 = None
+try:
+    _G21 = [float(l.split("J/J_UD=")[1].split()[0]) for l in open("results/r1/grid21.log") if "J/J_UD=" in l]
+except FileNotFoundError:
+    pass
+if _G21 and len(_G21) >= 3:
+    put("nGridTwoB", _G21[1], "{:.2f}"); put("nGridTwoC", _G21[2], "{:.2f}")
 
 import glob, re
 used = set()

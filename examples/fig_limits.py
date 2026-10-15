@@ -43,7 +43,7 @@ R, J = M["front_R"] * 1000, M["front_J"]
 ax[1].plot(R, J, "o-", color=ps.GREEN, ms=4, lw=1.4, label=r"best steered design found")
 ax[1].axhline(float(C["res_50_inf"]), color=ps.GREEN, lw=0.9, ls="--", label="no tow limit")
 if "ceiling_J" in C.files:
-    ax[1].axhline(float(C["ceiling_J"]), color=ps.RED, lw=1.0, ls=":", label="pointwise ceiling (bound)")
+    ax[1].axhline(float(C["ceiling_J"]), color=ps.RED, lw=1.0, ls=":", label="pointwise ceiling (estimate)")
 ax[1].set_xscale("log")
 from matplotlib.ticker import FixedLocator, NullLocator, FixedFormatter
 rt = [10, 20, 50, 100, 200, 400]
@@ -52,7 +52,7 @@ ax[1].xaxis.set_minor_locator(NullLocator())
 ax[1].set_xlabel(r"minimum tow radius $R_{\min}$ (mm)")
 ax[1].set_ylabel(r"$J/J_{\mathrm{UD}}$ at held $\omega_1$")
 ax[1].set_ylim(0, 1.0)
-ax[1].legend(frameon=False, fontsize=7, loc="upper left")
+ax[1].legend(frameon=False, fontsize=7, loc="lower right", borderaxespad=0.1)
 ps.panel(ax[1], "b"); ps.grid(ax[1]); ps.despine(ax[1])
 
 hs = np.array([50, 33, 25]); xk = np.arange(3)

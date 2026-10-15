@@ -116,3 +116,41 @@ def test_ssm_scale_invariance_regression():
         vals.append(s.gamma.imag / s.omega0)
         assert abs(s.gamma.real) < 1e-8 * abs(s.gamma.imag)
     assert abs(vals[1] / vals[0] - 1) < 1e-8
+
+
+def _iso(E=70e9, nu=0.3):
+    return E / (1 - nu ** 2) * np.array([[1, nu, 0], [nu, 1, 0], [0, 0, (1 - nu) / 2]])
+
+
+def test_clamped_basis_frequency_parameter():
+    """Clamped isotropic square plate: omega a^2 sqrt(rho h / D) -> 35.99 (Leissa)."""
+    h, rho, a, E, nu = 0.002, 2700.0, 0.2, 70e9, 0.3
+    P = RelaxedPlate(a=a, b=a, h=h, rho=rho, mmax=8, bc="clamped")
+    st = P.evaluate(h ** 3 / 12 * _iso(E, nu), h * _iso(E, nu), full=False)
+    lam = st["omega1"] * a ** 2 * np.sqrt(rho * h / (E * h ** 3 / 12 / (1 - nu ** 2)))
+    assert abs(lam / 35.985 - 1) < 3e-3
+
+
+def test_movable_basis_converges_and_relaxes_more():
+    """Traction-free in-plane edges: gamma converges in the Chebyshev degree and is far
+    smaller than with immovable edges (the rigid rotation is in the basis; lstsq handles it)."""
+    h = 0.002
+    D, A = h ** 3 / 12 * _iso(), h * _iso()
+    g = [RelaxedPlate(a=0.2, b=0.2, h=h, mmax=4, inplane="movable", n_in=n).evaluate(D, A, full=False)["gamma"]
+         for n in (8, 10)]
+    assert abs(g[1] / g[0] - 1) < 1e-3
+    gi = RelaxedPlate(a=0.2, b=0.2, h=h, mmax=4).evaluate(D, A, full=False)["gamma"]
+    assert g[1] < 0.3 * gi
+
+
+def test_gradient_fd_clamped():
+    """The adjoint gradient is basis-agnostic: check it on the clamped basis."""
+    P = RelaxedPlate(mmax=4, n_in=3, nx=40, ny=30, bc="clamped")
+    sp = SteeredPlate(P)
+    rng = np.random.default_rng(1)
+    th = 0.3 * rng.standard_normal(P.Nq)
+    st = sp.forward(th); g = sp.grad(st)["J"]
+    dv = rng.standard_normal(P.Nq)
+    eps = 1e-6
+    fd = (sp.forward(th + eps * dv, full=False)["J"] - sp.forward(th - eps * dv, full=False)["J"]) / (2 * eps)
+    assert abs(g @ dv / fd - 1) < 1e-5

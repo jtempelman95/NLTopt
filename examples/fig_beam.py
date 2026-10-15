@@ -36,7 +36,7 @@ wpp2 = wpp ** 2 / (wpp ** 2).max()
 
 designs = [("k900_f98", r"$900^\circ$/m, $f\geq0.98$", ps.GREEN, "-"),
            ("k900_f90", r"$900^\circ$/m, $f\geq0.90$", ps.GREEN, "--"),
-           ("k99999_f98", r"no tow limit, $f\geq0.98$", ps.STEEL, "-")]
+           ("k99999_f98", r"no tow limit, $f\geq0.98$", ps.STEEL, (0, (5, 1.5, 1, 1.5)))]
 
 fig, ax = plt.subplots(1, 3, figsize=(ps.FULL, 2.75))
 for tag, lab, col, ls in designs:
@@ -64,7 +64,7 @@ ax[2].set_xlabel(r"$\Omega/\omega_1$"); ax[2].set_ylabel(r"mid-span amplitude $a
 ps.panel(ax[2], "c"); ps.grid(ax[2]); ps.despine(ax[2])
 h_, l_ = ax[2].get_legend_handles_labels()
 h_.append(plt.Line2D([], [], color=ps.GREY, ls=":", lw=0.8)); l_.append("UD inflection points")
-fig.legend(h_, l_, loc="lower center", ncol=3, frameon=False, fontsize=7, handlelength=2.0,
+fig.legend(h_, l_, loc="lower center", ncol=3, frameon=False, fontsize=7.2, handlelength=2.6,
            columnspacing=1.4, bbox_to_anchor=(0.5, 0.0))
 fig.tight_layout(w_pad=0.8, rect=(0, 0.15, 1, 1))
 ps.save(fig, (_ROOT + "/figs/fig_beam"))

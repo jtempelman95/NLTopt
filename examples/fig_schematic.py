@@ -74,10 +74,13 @@ for seg in _sp.lines.get_segments():
     ax.plot(*pr(seg[:, 0], seg[:, 1], w(seg[:, 0], seg[:, 1]) + 0.2), color=ps.GREEN, lw=0.55, zorder=3,
             solid_capstyle="round")
 edge = [(0, 0), (a, 0), (a, b), (0, b), (0, 0)]
-ax.plot(*pr(np.array([e[0] for e in edge]), np.array([e[1] for e in edge]), np.zeros(5)), color=ps.INK, lw=1.1, zorder=4)
+# all edges and supports lie at w = 0, so where the deflected dome projects over them they are hidden:
+# draw them UNDER the opaque surface (hidden-line removal), the front edge y = 0 on top
+ax.plot(*pr(np.array([e[0] for e in edge]), np.array([e[1] for e in edge]), np.zeros(5)), color=ps.INK, lw=1.1, zorder=0.8)
+ax.plot(*pr(np.array([0, a]), np.array([0, 0]), np.zeros(2)), color=ps.INK, lw=1.1, zorder=4)
 for t in np.linspace(0.08, 0.92, 6):                                  # simple supports
     for (xa, ya) in ((t * a, 0), (0, t * b), (a, t * b)):
-        X0, Y0 = pr(xa, ya, 0); ax.plot([X0], [Y0 - 5], marker="^", color=ps.GREY, ms=3.2, zorder=4)
+        X0, Y0 = pr(xa, ya, 0); ax.plot([X0], [Y0 - 5], marker="^", color=ps.GREY, ms=3.2, zorder=4 if ya == 0 else 0.8)
 xc, yc = pr(a / 2, b / 2, W)
 ax.annotate("", xy=(xc, yc + 2), xytext=(xc, yc + 48), arrowprops=dict(arrowstyle="-|>", color=ps.RED, lw=1.4), zorder=6)
 ax.text(xc + 5, yc + 40, r"$F\cos\Omega t$", color=ps.RED, fontsize=8, zorder=6)
@@ -126,6 +129,6 @@ for beta, col in ((0.35, ps.GREY), (0.12, ps.GREEN)):
 cx.set_xlim(0.85, 1.42); cx.set_ylim(0, 0.95)
 cx.set_xticks([1.0]); cx.set_xticklabels([r"$\omega_1$"]); cx.set_yticks([])
 cx.set_xlabel(r"drive frequency $\Omega$", fontsize=8); cx.set_ylabel(r"amplitude $a$", fontsize=8)
-cx.legend(frameon=False, fontsize=7, loc="upper left", handlelength=1.4)
+cx.legend(frameon=False, fontsize=7, loc="center right", handlelength=1.4, borderaxespad=0.1)
 ps.despine(cx); fig.text(0.735, 0.95, r"(\textbf{c})", fontsize=9)
 ps.save(fig, (_ROOT + "/figs/fig_schematic"))

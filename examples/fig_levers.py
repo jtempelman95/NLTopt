@@ -33,7 +33,7 @@ def envelope(f, J, edges):
     return c, e
 
 
-fig = plt.figure(figsize=(ps.FULL, 3.35))
+fig = plt.figure(figsize=(ps.FULL, 3.75))
 gs = fig.add_gridspec(1, 2, width_ratios=[1.30, 0.80], wspace=0.62)
 ax = fig.add_subplot(gs[0]); bx = fig.add_subplot(gs[1])
 
@@ -43,8 +43,8 @@ ax.text(0.925, 1.13, "no uniform\nlaminate\n(proved)", ha="center", va="top", fo
 ax.scatter(fS, JS, s=1.2, color="#c9ced4", lw=0, rasterized=True, zorder=1,
            label=rf"uniform stacks, $15^\circ$ grid (all {len(fS):,})".replace(",", "{,}"))
 c, e = envelope(fS, JS, np.linspace(0.95, 1.60, 40))
-ax.plot(c, e, color=ps.GREY, lw=1.0, ls="--", zorder=2, label=r"lower envelope of the grid stacks")
-ax.plot(L["U_f"] / w_ud, L["U_J"] / J_ud, color=ps.INK, lw=1.4, zorder=3,
+ax.plot(c, e, color="#8f98a1", lw=0.8, ls=(0, (2.5, 1.5)), zorder=1.5, label=r"lower envelope of the grid stacks")
+ax.plot(L["U_f"] / w_ud, L["U_J"] / J_ud, color=ps.INK, lw=1.7, zorder=3,
         label=r"uniform single angle (all $\theta$)")
 SC = np.load("results/stack_cont.npz")
 kc = SC["targets"] > 1.01                      # at 1.0 the continuous optimum is UD (the star)
@@ -83,11 +83,16 @@ items = [("UD (best uniform)", 1.0, 1.0, ps.GREY, None),
          ("FE model, as designed", float(R1["fe_asis_J"]), float(R1["fe_asis_f"]), "#9cc9b3", None),
          ("FE model, re-matched", float(R1["fe_matched_J"]), float(R1["fe_matched_f"]), ps.GREEN, "////"),
          ("pointwise ceiling", float(Cc["ceiling_J"]), np.nan, "white", "xxxx")]
+import os
+if os.path.exists("results/r1_full_matched.npz"):
+    FM = np.load("results/r1_full_matched.npz")
+    items.insert(5, ("full plate (SSM), as designed", float(FM["ssm_ratio_asis"]), float(FM["f_asis"]), "#9cc9b3", None))
+    items.insert(6, ("full plate (SSM), re-matched", float(FM["ssm_ratio_matched"]), float(FM["f_matched"]), ps.GREEN, "xx"))
 yy = np.arange(len(items))[::-1]
 for y, (lab, v, f, col, hat) in zip(yy, items):
     bx.barh(y, v, color=col, height=0.62, edgecolor=ps.GREY if col == "white" else "white", hatch=hat, lw=0.6)
     bx.text(v + 0.02, y, f"{v:.3f}", ha="left", va="center", fontsize=7)
-labs = [lab + ("\n" + rf"$\omega_1={f:.3f}\,\omega_{{1,\mathrm{{UD}}}}$" if np.isfinite(f) else "\n(unmanufacturable bound)")
+labs = [lab + ("\n" + rf"$\omega_1={f:.3f}\,\omega_{{1,\mathrm{{UD}}}}$" if np.isfinite(f) else "\n(unmanufacturable; estimate)")
         for lab, v, f, col, hat in items]
 bx.set_yticks(yy); bx.set_yticklabels(labs, fontsize=6.8, linespacing=1.0)
 bx.set_xlabel(r"$J/J_{\mathrm{UD}}$ at held frequency")

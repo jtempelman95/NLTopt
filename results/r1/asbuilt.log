@@ -1,0 +1,13 @@
+tow density tau on the plate: min 0.032  max 21.747  area with gaps (tau<0.95) 84.9%  overlaps (tau>1.05) 12.0%  untraced 0
+ideal: J/J_UD=0.3659  f/f_UD=1.0000  mass/mass_UD=1.0000
+CTS  : J/J_UD=100.0222  f/f_UD=0.4152  mass/mass_UD=0.4319
+GAP  : J/J_UD=0.5639  f/f_UD=0.6477  mass/mass_UD=0.8247
+OVL  : J/J_UD=0.3013  f/f_UD=1.4670  mass/mass_UD=1.1329
+GAP4 : J/J_UD=0.3765  f/f_UD=0.9635  mass/mass_UD=0.9701
+OVL4 : J/J_UD=0.2901  f/f_UD=1.1220  mass/mass_UD=1.1197
+GAP8 : J/J_UD=0.3710  f/f_UD=0.9820  mass/mass_UD=0.9849
+OVL8 : J/J_UD=0.3244  f/f_UD=1.0616  mass/mass_UD=1.0605
+GAP16: J/J_UD=0.3684  f/f_UD=0.9911  mass/mass_UD=0.9924
+OVL16: J/J_UD=0.3441  f/f_UD=1.0310  mass/mass_UD=1.0305
+angle error 2 deg RMS (40 samples): J/J_UD 0.3645 +- 0.0070 (range 0.3501-0.3806); f/f_UD 1.0029 +- 0.0072
+wrote results/r1_asbuilt.npz

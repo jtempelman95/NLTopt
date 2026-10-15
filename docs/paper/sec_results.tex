@@ -117,8 +117,9 @@ and against every surveyed uniform class above it.
 \begin{figure}[!tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/fig_levers.pdf}
-\caption{\textbf{Steering reaches hardening levels that no uniform laminate reaches at the same
-frequency and mass, and the held-frequency result holds in every model.} \textbf{(a)}~Linear
+\caption{\textbf{At the unidirectional frequency and mass, steering reaches a hardening that no uniform
+symmetric laminate can reach, and above it steering undercuts every uniform class surveyed; the
+held-frequency result holds with the frequency re-matched in every model.} \textbf{(a)}~Linear
 frequency vs.\ frequency-normalized hardening. Provenance is marked in the legend.
 \emph{Proved}: the shaded band $\omega_1<\omega_{1,\UD}$, where no uniform laminate exists
 (Corollary~\ref{cor:udfloor}). \emph{Exhaustive}: the uniform single angle (black curve) and all
@@ -130,7 +131,8 @@ none exists at $0.9\,\omega_{1,\UD}$). The arrow marks the held-frequency reduct
 \textbf{(b)}~The held-frequency design's $J/J_{\UD}$ in each model, with the frequency at which it
 is evaluated: the design model (equality exact); a refined basis ($m,n\le12$) with the equality
 re-imposed; the independent FE model as designed ($\omega_1$ $\nHeldTol\%$ low) and with the
-frequency re-matched; and the unmanufacturable pointwise ceiling of Sec.~\ref{sec:limits}. At
+frequency re-matched; the full multi-mode plate's SSM as designed ($\omega_1$ $\nFullAsisPct\%$ high) and
+re-matched; and the pointwise ceiling of Sec.~\ref{sec:limits} (unmanufacturable; an estimate). At
 $\omega_{1,\UD}$ the best uniform laminate is UD itself; the best grid stack there is UD to within
 $\nGridStackDiff\%$ in $J$ ($[0/0/0/15]_s$), and steering it gives $\nSFTen$.}
 \label{fig:levers}
@@ -163,7 +165,7 @@ Figure~\ref{fig:mechanism} tests the mechanism of Sec.~\ref{sec:theory} directly
   departs from it in detail: the energy-weighted RMS angle difference is $\nStarDev^\circ$
   over the plate and $\nStarDevHigh^\circ$ where the energies are large, and at the energy
   peak the optimum is tilted to $\nOptAtPeak^\circ$. The frozen-field design ignores the
-  adaptation of the mode and the smoothness and tow limit of a manufacturable field, both
+  adaptation of the mode and the smoothness and tow limit of a curvature-feasible field, both
   of which the optimizer must respect.
 \end{itemize}
 
@@ -195,8 +197,9 @@ across the principal curvature, $\varphi_K+90^\circ$). \textbf{(b)}~Relaxed-stre
 which integrates to $\gamma$, on the same normalized gray scale. Red ticks: the direction that
 minimizes it (across the principal stretch, $\varphi_G+90^\circ$). Tick length in (a) and (b)
 scales with the local anisotropic amplitude. \textbf{(c)}~Conflict $\chi$, the angle between the
-ticks of (a) and (b). It vanishes at the center and along the axes, where one direction serves
-both energies. The sharp ridges are lines where one of the two principal directions is undefined
+ticks of (a) and (b). It vanishes at the center and along the central cross ($x=\SI{100}{mm}$, and
+$y=\SI{75}{mm}$ for $60<x<\SI{140}{mm}$), where one direction serves both energies, and reaches $90^\circ$
+along $y=\SI{75}{mm}$ near the short edges. The sharp ridges are lines where one of the two principal directions is undefined
 (equal principal strains). \textbf{(d)}~First-order pointwise design $\theta^\star$ from the UD
 fields alone (Proposition~\ref{prop:pointwise}); black ticks: the same direction field.
 \textbf{(e)}~Optimized curvature-limited field; colors give the fiber angle and black lines the tow
@@ -235,13 +238,14 @@ the saturation is physical rather than an artifact of the 50\,mm support grid.
   only to $\nResBTwenty$ and $\nResCTwenty$ at $R_{\min}=\SI{20}{mm}$, and to
   $\nResBInf$ and $\nResCInf$ with no tow limit.
 \item \textbf{Pointwise ceiling.} Freeing $\theta$ at every quadrature point, with no
-  smoothness and no tow limit (an unmanufacturable bound on single-ply steering), gives
-  $\nCeil$.
+  smoothness and no tow limit, gives $\nCeil$. This field cannot be laid, and it is the best
+  local optimum found for a nonconvex problem, so it estimates rather than bounds what
+  single-ply steering can reach.
 \end{itemize}
 The plate's strain fields vary on a length scale of a few centimeters. Once tows can
 turn on that scale, further manufacturing freedom buys little. The front of
-Fig.~\ref{fig:limits}b is the best design found from six starts at each radius, so it bounds the
-attainable front from above; the pointwise ceiling bounds it from below. Prediction P5 holds:
+Fig.~\ref{fig:limits}b is the best design found from six starts at each radius, so the attainable
+front lies at or below it; the pointwise ceiling indicates how much lower it could plausibly go. Prediction P5 holds:
 the lever is set by the material anisotropy and by the ratio of the tow radius to the
 length scale of the mode's strain fields. Its third ingredient, the conflict between the two
 fields, is tested across plates in Sec.~\ref{sec:robust}.
@@ -253,9 +257,10 @@ fields, is tested across plates in Sec.~\ref{sec:robust}.
 once tows can turn on the strain-field length scale.} All at held frequency. \textbf{(a)}~Steered optimum vs.\
 lamina anisotropy along a family that scales only the anisotropic invariants
 ($E_1/E_2=1$ is isotropic, where $J/J_{\UD}=1$ exactly by Corollary~\ref{cor:iso}, so that point is
-not computed; dashed: parity with UD; dotted: CFRP). \textbf{(b)}~Manufacturability front: optimum vs.\ minimum tow
+not computed; dashed: parity with UD; dotted: CFRP). \textbf{(b)}~Tow-radius front: best design found vs.\ minimum tow
 radius on the 50\,mm support grid; dashed: the same grid with no tow limit; dotted: the
-pointwise (unmanufacturable) ceiling, a lower bound. Each point is the best of six starts.
+pointwise ceiling (unconstrained, unsmoothed; an estimate, not a bound). Each point is the best of six
+starts.
 \textbf{(c)}~Support-grid refinement (zoomed
 ordinate; the three support spacings are plotted as equally spaced categories, with the two
 series offset slightly for visibility): at $R_{\min}=\SI{20}{mm}$ (open) and with no tow limit (filled) the optimum
@@ -285,24 +290,28 @@ deflection (Table~\ref{tab:confirm}).
   steered design's frequency lies within $\pm\nHeldTol\%$ of the UD value.
 \end{itemize}
 
-\paragraph{Matched-frequency comparison.} In every refined model the steered frequency comes out
-slightly \emph{below} the UD value, so the comparison above sets the steered plate at a slightly lower
-frequency. That bias is unfavorable to steering, because $J$ falls as the frequency rises along the
-steered front (Fig.~\ref{fig:levers}a). To remove the drift rather than bound it, we re-impose the
-equality in each refined model (\texttt{r1\_\allowbreak matched\_\allowbreak frequency.py};
-Fig.~\ref{fig:levers}b).
+\paragraph{Matched-frequency comparison.} In the refined design basis and in the FE model the steered
+frequency comes out slightly \emph{below} the UD value, which is unfavorable to steering because $J$ falls
+as the frequency rises along the steered front (Fig.~\ref{fig:levers}a). In the full multi-mode plate it
+comes out $\nFullAsisPct\%$ \emph{above}, which favors it. To remove the drift in both directions rather
+than bound it, we re-impose the equality in each model (\texttt{r1\_\allowbreak matched\_\allowbreak
+frequency.py}, \texttt{r1\_\allowbreak full\_\allowbreak matched.py}; Fig.~\ref{fig:levers}b).
 \begin{itemize}[itemsep=1pt]
 \item \textbf{Refined basis.} On $m,n\le12$ (144 transverse and 128 in-plane modes) the published design
   has $\omega_1=\nRefEvalF\,\omega_{1,\UD}$ and $J/J_{\UD}=\nRefEvalJ$. Re-solving the held-frequency
   problem on that basis, with the equality exact, gives $J/J_{\UD}=\nRefHeldJ$.
 \item \textbf{Independent FE model.} The design as laid has $\omega_1=\nFEasisF\,\omega_{1,\UD}$ and ratio
   $\nFEasisJ$. We move it along the design model's frequency-gradient direction until the FE
-  frequencies agree to $10^{-5}$. The ratio is then $\nFEmatchedJ$. Along that path
+  frequencies agree to $10^{-5}$ (a one-parameter move, not a re-optimization, so conservative). The ratio
+  is then $\nFEmatchedJ$. Along that path
   $\dd(J/J_{\UD})/\dd(\omega_1/\omega_{1,\UD})=-\nFEslope$, so a frequency drift of $1\%$ moves the
   headline ratio by less than $0.01$.
+\item \textbf{Full multi-mode plate.} Moved in the same way until its linear frequency equals the UD
+  value to $10^{-6}$, the steered design has an SSM detuning ratio of $\nFullMatchedJ$ (as designed:
+  $\nCratioSSM$) and an EPMC ratio of $\nFullMatchedEPMC$.
 \end{itemize}
 The held-frequency result is therefore not an artifact of the design discretization. With the
-frequency matched in each model, the steered plate is at $\nFEmatchedJ$--$\nFTen$ of the UD
+frequency matched in each model, the steered plate is at $\nFEmatchedJ$--$\nFullMatchedJ$ of the UD
 hardening.
 
 \begin{table}[!tbp]
@@ -386,7 +395,13 @@ their principal directions. The energy-weighted conflict $\chi$ of each UD plate
 fundamental bends nearly cylindrically across the short span ($\nGenTwoJ$); $\nChiBase^\circ$ on the
 4:3 plate ($\nGenBaseJ$); and $\nChiSq^\circ$ on the square plate ($\nGenSqJ$). The clamped
 ($\nChiCl^\circ$) and movable-edge ($\nChiMv^\circ$) plates fall near the same trend
-(Fig.~\ref{fig:robust}b). This is a test of P5 that was not used to construct the designs.
+(Fig.~\ref{fig:robust}b). The test is suggestive rather than decisive. The conflict was added to P5
+in this revision, only three simply supported plates order it, and another property of the UD fields,
+the frequency that minimizing the stretch energy alone would select ($\nFreeFreqTwo$, $\nFreeFreq$ and
+$\nFreeFreqSq\,\omega_{1,\UD}$ for the three plates), orders them equally well. The 2:1 value is also
+limited by the support grid, which has only three rows across its 100\,mm span: refining the grid to
+33\,mm and 25\,mm lowers it to $\nGridTwoB$ and $\nGridTwoC$, against $2\%$ on the 4:3 plate. The ordering
+of the plates is unchanged.
 
 \paragraph{Damping level and law.} We recompute the jump-free amplitude of both designs on the full
 damped SSM (\texttt{r1\_\allowbreak damping.py}) for mass-proportional damping $\zeta=0.5$, $1$, $2$
@@ -394,8 +409,14 @@ and $4\%$, and for stiffness-proportional damping at $2\%$. The absolute thresho
 $\zeta^{\nDampScale}$ (UD: $a_c/h=\nDampAcLo$ to $\nDampAcHi$), as Proposition~\ref{prop:cusp}'s
 $\zeta^{1/2}$ predicts. The steered/UD ratio is $\nDampRatioMin$--$\nDampRatioMax$ for every
 mass-proportional level and $\nDampStiffRatio$ for stiffness-proportional damping
-(Fig.~\ref{fig:robust}c). The widening of the jump-free range is therefore a property of the
-hardening, not of the damping model.
+(Fig.~\ref{fig:robust}c). Two caveats apply. With mass-proportional damping the cubic damped SSM is the
+model for which Proposition~\ref{prop:cusp} is exact, so the constancy of the ratio there is largely a
+consistency check; the stiffness-proportional case, whose decay rate depends on amplitude through the
+mode, is the independent test. And at $\zeta=4\%$ the thresholds ($a_c/h=\nDampAcHi$ for UD,
+$\nDampAcHiOpt$ steered) exceed the amplitude range over which the cubic SSM is verified against EPMC
+($a/h\le\nEPMCmaxUD$ and $\le\nEPMCmaxOpt$), so those two points are cubic-model predictions only.
+Within those limits, the widening of the jump-free range is a property of the hardening, not of the
+damping model.
 
 \paragraph{As built.}\label{sec:asbuilt} The designs are idealized tow fields
 (Sec.~\ref{sec:intro}). Laying them with tows of constant width along the tow paths changes the local
@@ -406,8 +427,8 @@ $\tau(\bm x)=\exp(-\int\nabla\!\cdot\bm n\,\dd\ell)$, integrated back along the 
 (\texttt{r1\_\allowbreak asbuilt.py}). For the held-frequency design $\tau$ spans $\nTauMin$ to
 $\nTauMax$ (Fig.~\ref{fig:robust}d). Uncut courses are therefore not an option: they would leave
 $\nTauGapArea\%$ of the plate thinned. In a constant-tow-count model (thickness $h\tau$, as in continuous
-tow shearing \cite{kim2012}) the frequency would fall to $\nCtsF\,\omega_{1,\UD}$ at $\nCtsM$ of the mass. The
-field requires tow cut/add. With cut/add inside courses of $N$ tows, the coverage mismatch at a course
+tow shearing \cite{kim2012}) the frequency would fall to $\nCtsF\,\omega_{1,\UD}$ at $\nCtsM$ of the mass, and
+$J/J_{\UD}$ would rise to about $\nCtsJ$. The field requires tow cut/add. With cut/add inside courses of $N$ tows, the coverage mismatch at a course
 boundary never exceeds one tow width and averages half of one. We model this, in the spirit of the
 defect-layer method \cite{fayazbakhsh2013}, as a defect area fraction
 $f_d=\tfrac{1}{2N}\min\!\big(1,|\ln\tau|/\ln(1+1/N)\big)$. It is either resin-filled gaps (0\%
@@ -417,13 +438,16 @@ $1+f_d$). Fig.~\ref{fig:robust}e places the results in the frequency--hardening 
 \item With $N=8$ tows per course, gaps give $J/J_{\UD}=\nGapEightJ$ at $\nGapEightF\,\omega_{1,\UD}$
   (mass $\nGapEightM\%$), and overlaps give $\nOvlEightJ$ at $\nOvlEightF\,\omega_{1,\UD}$ (mass
   $\nOvlEightM\%$).
-\item Over $N=4$--$16$, $J/J_{\UD}$ stays between $\nAsBuiltJmin$ and $\nAsBuiltJmax$, and every as-built
-  point lies on or near the steered front, far below the uniform curve.
+\item Over $N=4$--$16$, $J/J_{\UD}$ stays between $\nAsBuiltJmin$ and $\nAsBuiltJmax$, but the frequency and
+  mass are no longer held: the frequency ranges over $\nAsBuiltFmin$--$\nAsBuiltFmax\,\omega_{1,\UD}$ and the mass
+  over $\nAsBuiltMmin$--$\nAsBuiltMmax$ of UD. The lowest ratio, $\nAsBuiltJmin$, belongs to the heaviest and
+  stiffest variant (overlaps, $N=4$). The as-built points lie near the steered front of the idealized
+  designs, which is computed at fixed mass, so the comparison with that front is indicative only.
 \item A smooth random angle error of $2^\circ$ RMS (correlation length 25\,mm, 40 samples) gives
   $J/J_{\UD}=\nAngJmean\pm\nAngJstd$, with a frequency scatter of $\nAngFstd\%$.
 \end{itemize}
-Defects move the design \emph{along} the steered front, mainly through their effect on frequency and
-mass, rather than off it. A buildable design at an exactly held frequency would put the defect model
+Defects mainly shift the frequency and mass and leave $J/J_{\UD}$ near the steered front; the
+defect model, in particular its cap $f_d\le1/(2N)$, is an assumption that largely sets this result. A buildable design at an exactly held frequency would put the defect model
 inside the optimization, which is beyond the present scope (Sec.~\ref{sec:discussion}).
 
 \paragraph{The optimizer.} The analytic gradients of $J$, $\omega_1$, $\gamma$ and the tow curvature agree
@@ -437,20 +461,22 @@ of the starts (\texttt{r1\_\allowbreak verification.py}).
 \begin{figure}[!tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/fig_robust.pdf}
-\caption{\textbf{The lever persists across plates, supports, damping laws and as-built defects, and
-its size follows the conflict between the two strain fields.} \textbf{(a)}~Held-frequency $J/J_{\UD}$ of
+\caption{\textbf{The lever persists across plates, supports, damping laws and as-built defects, and its size
+is ordered by the conflict between the two strain fields.} \textbf{(a)}~Held-frequency $J/J_{\UD}$ of
 the steered optimum (green) and of the best uniform laminate at the same frequency (gray) for simply
 supported (SS) plates of aspect ratio 4:3 (the paper's plate, $\ast$), 1:1 and 2:1, a clamped plate
 (CL) and a simply supported plate with in-plane movable edges (SM). Each plate is normalized by its
 own UD design; only the clamped plate has a uniform competitor other than UD at $\omega_{1,\UD}$.
 \textbf{(b)}~Steered optimum vs.\ the energy-weighted conflict $\chi$ of the UD fields; line: the three
 SS plates. \textbf{(c)}~Jump-free amplitude $a_c/h$ from the full damped SSM vs.\ damping ratio
-(mass-proportional, lines; stiffness-proportional, crosses). Both designs scale as $\zeta^{1/2}$, and
+(mass-proportional, lines; stiffness-proportional at $\zeta=2\%$, crosses, drawn slightly to the right for
+visibility). Both designs scale as $\zeta^{1/2}$, and
 their ratio does not change. \textbf{(d)}~Relative density $\tau$ of uncut constant-width tows laid
 along the tow paths of the held-frequency design (black lines). Purple: spreading (gaps if uncut);
-orange: convergence (overlaps). \textbf{(e)}~As-built laminates with tow cut/add, $N=4$, $8$, $16$ tows
-per course (larger markers: smaller $N$): resin gaps (down triangles), overlaps (up triangles), and a
-$2^\circ$ RMS angle error (gray dots). They sit on the steered front, far from the uniform single-angle
-curve.}
+orange: convergence (overlaps); color scale clipped at $1/16$ and $16$ ($\tau$ spans
+$\nTauMin$--$\nTauMax$). \textbf{(e)}~As-built laminates with tow cut/add, $N=4$, $8$, $16$ tows per course
+(labels: $N$ and the mass change): resin gaps (down triangles), overlaps (up triangles), and a $2^\circ$ RMS
+angle error (gray ellipse: mean $\pm2$ standard deviations). Their mass differs from UD, unlike the steered
+front, which is at fixed mass.}
 \label{fig:robust}
 \end{figure}

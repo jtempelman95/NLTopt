@@ -84,17 +84,15 @@ eK, eG = M["ud_eK"], M["ud_eG"]
 # curvature (phi_K + 90); the stretch favors fibers ACROSS the principal stretch (phi_G + 90).
 a, im = field(0, 1, eK / eK.max(), "Greys", vmin=0, vmax=1, ylab=True)
 directors(a, M["ud_phiK"] + np.pi / 2, M["ud_aK2"], color=ps.STEEL, scale=9.0, width=0.009)
-title(a, "a", r"bending density $e_K$")
-inset(a, r"$\textstyle\int e_K\,\mathrm{d}\Omega=\omega_1^2$")
+title(a, "a", r"$e_K$, integrates to $\omega_1^2$")
 a, im = field(1, 1, eG / eG.max(), "Greys", vmin=0, vmax=1)
 directors(a, M["ud_phiG"] + np.pi / 2, M["ud_aG2"], color=ps.RED, scale=9.0, width=0.009)
-title(a, "b", r"relaxed-stretch density $e_G$")
-inset(a, r"$\textstyle\int e_G\,\mathrm{d}\Omega=\gamma$")
+title(a, "b", r"$e_G$, integrates to $\gamma$")
 cbar(im, X0[1] + mw + 0.06, 1, r"density / its max", ticks=[0, 0.5, 1])
 conflict = np.rad2deg(np.abs(np.angle(np.exp(2j * (M["ud_phiK"] - M["ud_phiG"])))) / 2)
 wgt = (eK / eK.sum() + eG / eG.sum())
 a, im = field(2, 1, conflict, "magma_r", vmin=0, vmax=90, ylab=True)
-title(a, "c", r"conflict $\chi$ between ticks (a), (b)")
+title(a, "c", r"conflict $\chi$")
 cbar(im, X0[2] + mw + 0.06, 1, r"$\chi$ (deg)", ticks=[0, 30, 60, 90])
 
 a, im = field(0, 0, np.rad2deg(np.angle(np.exp(2j * M["theta_star"])) / 2), "twilight_shifted",
@@ -103,8 +101,10 @@ directors(a, M["theta_star"], np.ones(P.Nq), step=8, scale=8.0)
 title(a, "d", r"pointwise design $\theta^\star$")
 th = M["theta_opt"]
 a, im = field(1, 0, np.rad2deg(np.angle(np.exp(2j * th)) / 2), "twilight_shifted", vmin=-90, vmax=90)
-a.streamplot(X[0], Y[:, 0], np.cos(G(th)), np.sin(G(th)), density=0.9,
-             color=ps.INK, linewidth=0.6, arrowsize=0)
+_sp = a.streamplot(X[0], Y[:, 0], np.cos(G(th)), np.sin(G(th)), density=0.9,
+                   color=ps.INK, linewidth=0.6, arrowsize=0)
+import matplotlib.patheffects as pe
+_sp.lines.set_path_effects([pe.Stroke(linewidth=1.5, foreground="white", alpha=0.8), pe.Normal()])
 a.set_xlim(0, 200); a.set_ylim(0, 150)
 title(a, "e", r"optimized $\theta_{\mathrm{opt}}$, tow paths")
 cbar(im, X0[1] + mw + 0.06, 0, r"fiber angle $\theta$ (deg)", ticks=[-90, -45, 0, 45, 90])

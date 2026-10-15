@@ -38,14 +38,15 @@ for d, lab, col, th in designs:
                    label=f"{lab}: EPMC")
     aa = np.linspace(0, 0.45, 50)
     ax[0].plot(1 + float(R[f"{d}_ssm_beta"]) * aa ** 2, aa, ":", color=col, lw=0.9)
-ax[0].set_xlim(0.99, 1.20); ax[0].set_xticks([1.0, 1.05, 1.1, 1.15, 1.2]); ax[0].set_xlabel(r"$\Omega/\omega_1$"); ax[0].set_ylabel(r"mid-plate amplitude $a/h$")
+ax[0].set_xlim(0.99, 1.24); ax[0].set_xticks([1.0, 1.1, 1.2]); ax[0].set_xlabel(r"$\Omega/\omega_1$ (full plate, 36+72 modes)"); ax[0].set_ylabel(r"mid-plate amplitude $a/h$")
 from matplotlib.lines import Line2D
 h_ = [Line2D([], [], color=ps.GREY, lw=1.5, marker="s", ms=3.6, mfc="white", mew=1.1),
       Line2D([], [], color=ps.GREEN, lw=1.5, marker="o", ms=3.6, mfc="white", mew=1.1),
       Line2D([], [], color=ps.INK, ls=":", lw=0.9)]
 l_ = ["UD", "steered", "cubic parabola"]
-ax[0].legend(h_, l_, frameon=False, fontsize=6.8, loc="lower right", handlelength=2.0, borderaxespad=0.1,
-             title="lines: SSM; marks: EPMC", title_fontsize=6.6)
+ax[0].legend(h_, l_, frameon=False, fontsize=6.6, loc="lower right", handlelength=1.8, borderaxespad=0.0,
+             bbox_to_anchor=(1.02, 0.0), title="SSM lines, EPMC marks ($H{=}%d$)" % HARM,
+             title_fontsize=6.3, alignment="right")
 ax[0].set_title(r"(\textbf{a}) free backbones", loc="left", fontsize=8, pad=4)
 ps.grid(ax[0]); ps.despine(ax[0])
 

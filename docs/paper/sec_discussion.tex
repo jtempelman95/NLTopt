@@ -1,6 +1,7 @@
 \section{Discussion}\label{sec:discussion}
 
 \subsection{What is proved, what is computed, and what is not established}
+Table~\ref{tab:verdict} summarizes the evidence for each prediction.
 \begin{itemize}[itemsep=2pt]
 \item \textbf{Proved} (for the stated model classes). Orientation enters each energy density only
   through $U_2,U_3$ and the local principal directions (Proposition~\ref{prop:fourier}). Isotropic
@@ -17,6 +18,8 @@
   its ordering by the conflict $\chi$, and the as-built sensitivity. These are best-found values of a
   local optimizer (Table~\ref{tab:ms}). The steered values are therefore upper bounds on the attainable
   hardening, and the uniform values above $\omega_{1,\UD}$ are upper bounds on the best uniform laminate.
+  For mass-proportional damping the damping tests are consistency checks of the cubic SSM, and the
+  as-built results rest on an assumed defect model.
 \item \textbf{Not established.} That the reported fields are global optima. That no uniform laminate
   outside the surveyed classes (more plies, a lamination-parameter search) does better above
   $\omega_{1,\UD}$; the steered values are at most $\nSteerVsUniformMax\%$ of the present uniform
@@ -58,7 +61,8 @@ postbuckling stiffness \cite{gurdal,wu2013}.
 \item \textbf{Buildability.} The designs are curvature-feasible idealized tow fields. The curvature limit
   holds pointwise (radius $\ge\nRminFine$\,mm on an independent grid), but the field spreads tows by more
   than a decade (Sec.~\ref{sec:asbuilt}). Laying it requires course-level tow cut/add, and the as-built
-  model shifts frequency and mass by several percent. A buildable design at exactly held frequency would
+  model shifts the frequency by $\nAsBuiltFmin$--$\nAsBuiltFmax\,\omega_{1,\UD}$ and the mass by
+  $\nAsBuiltMmin$--$\nAsBuiltMmax$ of UD. A buildable design at exactly held frequency would
   include a thickness/defect field tied to $\theta(\bm x)$ in the optimization. The defect model here is a
   continuum estimate; ply-level gap/overlap geometry \cite{fayazbakhsh2013,pagani2025}, tow width and
   coverage strategy, and process effects (wrinkling, resin-rich zones) are not resolved.
@@ -69,7 +73,8 @@ postbuckling stiffness \cite{gurdal,wu2013}.
 \item \textbf{Amplitude range.} The design quantity is the small-amplitude cubic coefficient. The cubic
   SSM reproduces the full-order EPMC detuning to within $\nEPMCAgree\%$ over the amplitudes EPMC reached
   ($a/h\le\nEPMCmaxUD$ for UD, $\le\nEPMCmaxOpt$ for the steered design), and the jump-onset amplitudes
-  reported lie inside these ranges. Higher amplitudes need the quintic SSM or EPMC
+  reported at $\zeta=2\%$ lie inside these ranges (those at $\zeta=4\%$ in Sec.~\ref{sec:robust} do not).
+  Higher amplitudes need the quintic SSM or EPMC
   (Appendix~\ref{app:calib}).
 \item \textbf{Single mode, no internal resonance.} On the full multi-mode plate the steered design's
   lowest frequencies are in ratios $\nModeRatios$ (\texttt{mode\_\allowbreak ratios.py}). The nearest
@@ -81,8 +86,8 @@ postbuckling stiffness \cite{gurdal,wu2013}.
   Proposition~\ref{prop:ssmcond} bounds the error by $4\omega_1^2/\omega_{\mathrm{in}}^2=\nRhoIn$, and
   the full SSM, which retains in-plane inertia, agrees to $\nSSMvsEval\%$.
 \item \textbf{Optimality.} The optimizer is local (multi-start SLSQP); two of six starts stall
-  (Table~\ref{tab:ms}). The pointwise ceiling of Sec.~\ref{sec:limits} bounds what any single-ply field
-  can do on this plate.
+  (Table~\ref{tab:ms}). The pointwise ceiling of Sec.~\ref{sec:limits} is itself a local optimum, so it
+  estimates, but does not bound, what a single-ply field can do on this plate.
 \item \textbf{Scope of the robustness study.} Five plates, one material, one thickness ($a/h=100$, thin
   von K\'arm\'an), and the fundamental mode only. Thick plates, shells, other modes and damping that is
   itself designed are not studied.
