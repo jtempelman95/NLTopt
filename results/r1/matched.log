@@ -1,0 +1,7 @@
+[A] design model: J/J_UD=0.3659 f/f_UD=1.000000
+[A] refined m,n<=12, n_in=8: design as is J/J_UD=0.3642 f/f_UD=0.99338
+[A] refined, re-held exactly: J/J_UD=0.3579 f/f_UD=1.000000 (321s)
+[B] c=+0.09948  f/f_UD=1.000119  beta ratio=0.3521
+[B] c=+0.09864  f/f_UD=0.999999  beta ratio=0.3522
+[B] FE 48x36: as designed f/f_UD=0.98611 ratio=0.3642; matched f/f_UD=0.999999 ratio=0.3522; d(ratio)/d(f ratio)=-0.858
+wrote results/r1_matched.npz

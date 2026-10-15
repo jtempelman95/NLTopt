@@ -1,0 +1,12 @@
+[1] J             : best-step relative error over 10 directions: max 4.6e-09 (median of best 7.6e-12)
+[1] omega1        : best-step relative error over 10 directions: max 2.1e-09 (median of best 1.7e-11)
+[1] gamma         : best-step relative error over 10 directions: max 9.2e-09 (median of best 4.9e-10)
+[1] tow curvature : best-step relative error over 10 directions: max 3.9e-11 (median of best 1.5e-11)
+[2] tow curvature: max on optimizer quadrature 50.000 1/m, on independent 1 mm grid 50.199 1/m; limit 50.000 1/m -> R_min achieved 19.92 mm
+[3] start uniform 0 : J/J_UD=0.6508  freq residual +3.5e-13  min c_e -2.0e-14  status 0 (Optimization terminated succes)  iterations 22
+[3] start uniform 20: J/J_UD=0.3659  freq residual +2.5e-11  min c_e +7.9e-12  status 0 (Optimization terminated succes)  iterations 54
+[3] start uniform 45: J/J_UD=0.3813  freq residual +8.5e-14  min c_e -3.6e-15  status 0 (Optimization terminated succes)  iterations 54
+[3] start uniform 70: J/J_UD=0.5711  freq residual +3.4e-13  min c_e +6.7e-14  status 0 (Optimization terminated succes)  iterations 44
+[3] start random 1  : J/J_UD=0.3675  freq residual +2.8e-11  min c_e +1.4e-12  status 0 (Optimization terminated succes)  iterations 72
+[3] start random 2  : J/J_UD=0.3675  freq residual +2.3e-11  min c_e +3.5e-12  status 0 (Optimization terminated succes)  iterations 79
+wrote results/r1_verification.npz

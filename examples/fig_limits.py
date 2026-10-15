@@ -40,10 +40,10 @@ ax[0].set_ylim(0, 1.08)
 ps.panel(ax[0], "a"); ps.grid(ax[0]); ps.despine(ax[0])
 
 R, J = M["front_R"] * 1000, M["front_J"]
-ax[1].plot(R, J, "o-", color=ps.GREEN, ms=4, lw=1.4, label=r"steered optimum")
+ax[1].plot(R, J, "o-", color=ps.GREEN, ms=4, lw=1.4, label=r"best steered design found")
 ax[1].axhline(float(C["res_50_inf"]), color=ps.GREEN, lw=0.9, ls="--", label="no tow limit")
 if "ceiling_J" in C.files:
-    ax[1].axhline(float(C["ceiling_J"]), color=ps.RED, lw=1.0, ls=":", label="pointwise ceiling")
+    ax[1].axhline(float(C["ceiling_J"]), color=ps.RED, lw=1.0, ls=":", label="pointwise ceiling (bound)")
 ax[1].set_xscale("log")
 from matplotlib.ticker import FixedLocator, NullLocator, FixedFormatter
 rt = [10, 20, 50, 100, 200, 400]

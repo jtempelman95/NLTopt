@@ -162,12 +162,24 @@ condition $\partial_\theta e_G=\Lambda\partial_\theta e_K$ at every point. By
 \eqref{eq:eK}--\eqref{eq:eG} this is \eqref{eq:uniformkkt}.
 \end{proof}
 
+\begin{remark}[Scope of Proposition~\ref{prop:pointwise}]\label{rem:scope}
+The proposition is a first-order statement about the frozen-field model. Its second part says
+that if \eqref{eq:uniformkkt} fails, the uniform angle is not stationary among fields, so a
+feasible descent direction exists and some steered field near it has a lower $J$ at the
+same frequency. It does \emph{not} say that $\theta^\star$ of \eqref{eq:thetastar} is the
+optimum of the full problem \eqref{eq:heldproblem}, in which the mode and the relaxed stretch
+adapt to the design and the field must be smooth and curvature-feasible. Nor does it bound how
+large the improvement is. Those questions are answered numerically in Sec.~\ref{sec:results}.
+\end{remark}
+
 Condition \eqref{eq:uniformkkt} asks the anisotropic parts of two different strain
 fields to be proportional with one constant at a single angle. That fails whenever the
 conflict $\chi(\bm x)$ or the ratio $\Delta_G/\Delta_K$ varies over the plate. Since the
 principal curvature and the principal relaxed stretch of a bending mode turn differently
 over the plate, and their energy ratio varies, it fails generically. Proposition~\ref{prop:pointwise} is the
-precise form of the hypothesis. It also yields a test (P4): $\theta^\star$ computed from
+precise form of the hypothesis. It also predicts that the lever shrinks when the conflict
+is small: if the two fields share their principal directions everywhere ($\chi\equiv0$) and
+their ratio is nearly uniform, a single angle comes close to satisfying \eqref{eq:uniformkkt}. It also yields a test (P4): $\theta^\star$ computed from
 the \emph{unidirectional} fields alone, with no optimizer, should already capture much
 of the gain, and the optimized field should resemble it.
 

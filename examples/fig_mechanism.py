@@ -38,17 +38,17 @@ def directors(ax, ang, amp, step=8, color=ps.INK, scale=7.0, width=0.006):
               width=width)
 
 
-W, H = ps.FULL, 3.12
+W, H = ps.FULL, 3.40
 fig = plt.figure(figsize=(W, H))
-mw, mh = 1.30, 0.975                                   # every map: same size (200 x 150 mm, equal aspect)
-X0, Y0 = (0.40, 2.47, 4.54), (0.40, 1.88)
+mw, mh = 1.40, 1.05                                    # every map: same size (200 x 150 mm, equal aspect)
+X0, Y0 = (0.40, 2.02, 4.42), (0.36, 2.02)
 
 
 def box(col, row, w=mw, h=mh):
     return [X0[col] / W, Y0[row] / H, w / W, h / H]
 
 
-def field(col, row, f, cmap, label, vmin=None, vmax=None, ylab=False):
+def field(col, row, f, cmap, vmin=None, vmax=None, ylab=False):
     ax = fig.add_axes(box(col, row))
     im = ax.pcolormesh(X, Y, G(f), cmap=cmap, shading="auto", vmin=vmin, vmax=vmax, rasterized=True)
     ax.set_aspect("equal"); ax.set_xlim(0, 200); ax.set_ylim(0, 150)
@@ -56,53 +56,73 @@ def field(col, row, f, cmap, label, vmin=None, vmax=None, ylab=False):
     ax.set_xlabel(r"$x$ (mm)", fontsize=7.5, labelpad=1)
     if ylab:
         ax.set_ylabel(r"$y$ (mm)", fontsize=7.5, labelpad=1)
-    cax = fig.add_axes([(X0[col] + mw + 0.05) / W, Y0[row] / H, 0.07 / W, mh / H])
+    else:
+        ax.set_yticklabels([])
+    return ax, im
+
+
+def cbar(im, x, row, label, ticks=None):
+    cax = fig.add_axes([x / W, Y0[row] / H, 0.07 / W, mh / H])
     cb = fig.colorbar(im, cax=cax); cb.ax.tick_params(labelsize=7, length=2)
     cb.set_label(label, fontsize=7.5, labelpad=2)
-    return ax, cb
+    if ticks is not None:
+        cb.set_ticks(ticks)
+    return cb
+
+
+def inset(ax, text):
+    ax.text(4, 4, text, fontsize=6.5, ha="left", va="bottom", linespacing=1.15,
+            bbox=dict(fc="white", ec=ps.GREY, lw=0.4, pad=1.2, alpha=0.92), zorder=10)
+
+
+def title(ax, letter, text):
+    ax.set_title(rf"(\textbf{{{letter}}}) " + text, loc="left", pad=3, fontsize=7.5)
 
 
 eK, eG = M["ud_eK"], M["ud_eG"]
-a, _ = field(0, 1, eK / eK.max(), "Greys", r"$e_K/\max e_K$", ylab=True)
-directors(a, M["ud_phiK"], M["ud_aK2"], color=ps.GREEN, scale=9.0)
-ps.panel(a, "a")
-a, _ = field(1, 1, eG / eG.max(), "Greys", r"$e_G/\max e_G$")
+# held frequency: Lambda < 0, so the frequency constraint favors fibers ACROSS the principal
+# curvature (phi_K + 90); the stretch favors fibers ACROSS the principal stretch (phi_G + 90).
+a, im = field(0, 1, eK / eK.max(), "Greys", vmin=0, vmax=1, ylab=True)
+directors(a, M["ud_phiK"] + np.pi / 2, M["ud_aK2"], color=ps.STEEL, scale=9.0, width=0.009)
+title(a, "a", r"bending density $e_K$")
+inset(a, r"$\textstyle\int e_K\,\mathrm{d}\Omega=\omega_1^2$")
+a, im = field(1, 1, eG / eG.max(), "Greys", vmin=0, vmax=1)
 directors(a, M["ud_phiG"] + np.pi / 2, M["ud_aG2"], color=ps.RED, scale=9.0, width=0.009)
-ps.panel(a, "b")
-# held frequency: Lambda < 0, so the frequency favors fibers ACROSS the curvature; the conflict is
-# between that direction (phi_K + 90) and the stretch-favored one (phi_G + 90), i.e. |phi_K - phi_G|
+title(a, "b", r"relaxed-stretch density $e_G$")
+inset(a, r"$\textstyle\int e_G\,\mathrm{d}\Omega=\gamma$")
+cbar(im, X0[1] + mw + 0.06, 1, r"density / its max", ticks=[0, 0.5, 1])
 conflict = np.rad2deg(np.abs(np.angle(np.exp(2j * (M["ud_phiK"] - M["ud_phiG"])))) / 2)
 wgt = (eK / eK.sum() + eG / eG.sum())
-a, cb = field(2, 1, conflict, "magma_r", r"conflict angle (deg)", vmin=0, vmax=90)
-cb.set_ticks([0, 30, 60, 90]); ps.panel(a, "c")
+a, im = field(2, 1, conflict, "magma_r", vmin=0, vmax=90, ylab=True)
+title(a, "c", r"conflict $\chi$ between ticks (a), (b)")
+cbar(im, X0[2] + mw + 0.06, 1, r"$\chi$ (deg)", ticks=[0, 30, 60, 90])
 
-a, cb = field(0, 0, np.rad2deg(np.angle(np.exp(2j * M["theta_star"])) / 2), "twilight_shifted",
-              r"$\theta^\star$ (deg)", vmin=-90, vmax=90, ylab=True)
-cb.set_ticks([-90, -45, 0, 45, 90])
+a, im = field(0, 0, np.rad2deg(np.angle(np.exp(2j * M["theta_star"])) / 2), "twilight_shifted",
+              vmin=-90, vmax=90, ylab=True)
 directors(a, M["theta_star"], np.ones(P.Nq), step=8, scale=8.0)
-ps.panel(a, "d")
+title(a, "d", r"pointwise design $\theta^\star$")
 th = M["theta_opt"]
-a, cb = field(1, 0, np.rad2deg(np.angle(np.exp(2j * th)) / 2), "twilight_shifted",
-              r"$\theta_{\mathrm{opt}}$ (deg)", vmin=-90, vmax=90)
-cb.set_ticks([-90, -45, 0, 45, 90])
+a, im = field(1, 0, np.rad2deg(np.angle(np.exp(2j * th)) / 2), "twilight_shifted", vmin=-90, vmax=90)
 a.streamplot(X[0], Y[:, 0], np.cos(G(th)), np.sin(G(th)), density=0.9,
              color=ps.INK, linewidth=0.6, arrowsize=0)
 a.set_xlim(0, 200); a.set_ylim(0, 150)
-ps.panel(a, "e")
+title(a, "e", r"optimized $\theta_{\mathrm{opt}}$, tow paths")
+cbar(im, X0[1] + mw + 0.06, 0, r"fiber angle $\theta$ (deg)", ticks=[-90, -45, 0, 45, 90])
 
-bx = fig.add_axes([(X0[2] + 0.42) / W, Y0[0] / H, (W - X0[2] - 0.47) / W, mh / H])
+bx = fig.add_axes([(X0[2] + 0.30) / W, Y0[0] / H, (W - X0[2] - 0.38) / W, mh / H])
 keys = [("knl", r"$k_{nl}$"), ("relax", r"$k_{r}$"),
         ("gamma", r"$\gamma$"), ("om2", r"$\omega_1^2$"), ("J", r"$J$")]
 ud = [float(M[f"ud_{k}"]) for k, _ in keys]
 op = [float(M[f"opt_{k}"]) for k, _ in keys]
 x = np.arange(len(keys))
-bx.bar(x, np.array(op) / np.array(ud), color=ps.GREEN, width=0.6)
+bx.bar(x, np.array(op) / np.array(ud), color=[ps.GREEN] * 3 + [ps.GREY, ps.GREEN], width=0.6)
 bx.axhline(1.0, color=ps.GREY, lw=0.8, ls="--")
 for i in range(len(keys)):
-    bx.text(i, op[i] / ud[i] + (0.08 if abs(op[i] / ud[i] - 1) < 0.05 else 0.04), f"{op[i]/ud[i]:.2f}", ha="center", fontsize=7)
+    bx.text(i, op[i] / ud[i] + 0.04, f"{op[i]/ud[i]:.2f}", ha="center", fontsize=7)
 bx.set_xticks(x); bx.set_xticklabels([l for _, l in keys], fontsize=7.5)
 bx.tick_params(axis="y", labelsize=7)
 bx.set_ylabel("optimized / UD", fontsize=7.5); bx.set_ylim(0, 1.3)
-ps.panel(bx, "f"); ps.grid(bx, axis="y"); ps.despine(bx)
+bx.set_title(r"(\textbf{f}) terms of $\gamma=k_{nl}-k_r$", loc="left", pad=3, fontsize=7.5)
+ps.grid(bx, axis="y"); ps.despine(bx)
 ps.save(fig, (_ROOT + "/figs/fig_mechanism"))
 print("energy-weighted mean conflict (deg):", float(np.sum(wgt * conflict) / wgt.sum()))

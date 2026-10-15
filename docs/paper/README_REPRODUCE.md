@@ -21,6 +21,15 @@ Order (each step writes into `results/`; see Table "Result → script map" in th
    `examples/confirm_fine_sweep.py`, `examples/fe_check_design.py`, `examples/mode_ratios.py`,
    `examples/conv_table.py`
 3. figures: `examples/fig_*.py`, `examples/plate_fe_fig.py`, calibration scripts listed in the appendix
-4. `examples/paper_numbers.py` → `docs/paper/numbers.tex` and generated tables; then `pdflatex nltopt_paper`.
+4. Revision R1 studies (`results/r1_*.npz`): `examples/r1_matched_frequency.py` (refined basis, then
+   FE with the frequency re-matched; the FE part imports `nltopt/plate.py` and so needs PyHB),
+   `examples/r1_generality.py` (other plates; one config per argument), then `examples/r1_conflict.py`,
+   `examples/r1_damping.py` (needs PyHB), `examples/r1_asbuilt.py`, `examples/r1_verification.py`
+   (`r1_generality`, `r1_conflict`, `r1_asbuilt`, `r1_verification` run without PyHB)
+   (also writes `docs/paper/ms_table.tex` via `paper_numbers.py`); figure `examples/fig_robust.py`.
+5. `examples/paper_numbers.py` → `docs/paper/numbers.tex` and generated tables; then `pdflatex nltopt_paper`
+   (three passes).
+
+The submitted version is archived in `docs/paper/archive/R0/` (git tag `R0`); this revision is tag `R1`.
 
 Unit tests: `pytest tests/` (all test files except `test_laminate.py` need PyHB). Scripts in `examples/` not listed above belong to earlier, archived studies.

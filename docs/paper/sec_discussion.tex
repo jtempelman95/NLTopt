@@ -1,90 +1,91 @@
 \section{Discussion}\label{sec:discussion}
 
-\subsection{Answer to the question}
-\begin{itemize}[itemsep=1pt]
-\item \textbf{Can steering do it?} Yes. At the frequency (held exactly in the design
-  model, to within $\nHeldTol\%$ on refined bases and an independent finite-element model) and mass of the unidirectional plate, a manufacturable steered tow reduces the frequency-normalized
-  hardening by $\nFTenRed\%$. No uniform layup can reach that frequency at a lower
-  hardening, and steering undercuts the best stacking sequences at every higher
-  frequency we test.
-\item \textbf{Why?} The frequency and the hardening read the same rotated stiffness
-  through two strain fields whose principal directions turn differently over the plate,
-  and an optimal design must satisfy the trade-off between them pointwise
-  (Proposition~\ref{prop:pointwise}).
-\item \textbf{What bounds it?} The material anisotropy ($U_2,U_3$), and the tow radius
-  relative to the length scale of the fields.
-\item \textbf{How does it compare?} Steering is the stronger channel here. It is also
-  the one that does not require changing the bill of materials.
+\subsection{What is proved, what is computed, and what is not established}
+\begin{itemize}[itemsep=2pt]
+\item \textbf{Proved} (for the stated model classes). Orientation enters each energy density only
+  through $U_2,U_3$ and the local principal directions (Proposition~\ref{prop:fourier}). Isotropic
+  material has no lever (Corollary~\ref{cor:iso}). A single-ply beam's $J$ is invariant under any
+  uniform angle (Corollary~\ref{cor:beaminv}). The lowest-frequency uniform symmetric laminate is a
+  single-angle one (Corollary~\ref{cor:udfloor}). A uniform angle that violates
+  \eqref{eq:uniformkkt} is not stationary among fields in the frozen-field model
+  (Proposition~\ref{prop:pointwise}), and the jump-free amplitude scales as $J^{-1/2}$ at the cubic
+  order (Proposition~\ref{prop:cusp}).
+\item \textbf{Computed}, with the stated discretizations and optimizer. The size of every gain:
+  $J/J_{\UD}=\nFTen$ at held frequency (between $\nFEmatchedJ$ and $\nFTen$ with the frequency re-matched in
+  refined and independent models), the margin over the surveyed uniform classes above
+  $\omega_{1,\UD}$, the dose--response in anisotropy and tow radius, the generality across plates and
+  its ordering by the conflict $\chi$, and the as-built sensitivity. These are best-found values of a
+  local optimizer (Table~\ref{tab:ms}). The steered values are therefore upper bounds on the attainable
+  hardening, and the uniform values above $\omega_{1,\UD}$ are upper bounds on the best uniform laminate.
+\item \textbf{Not established.} That the reported fields are global optima. That no uniform laminate
+  outside the surveyed classes (more plies, a lamination-parameter search) does better above
+  $\omega_{1,\UD}$; the steered values are at most $\nSteerVsUniformMax\%$ of the present uniform
+  optimum. Performance of a physical panel.
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[!tbp]
 \centering\footnotesize
 \caption{Status of the predictions.}\label{tab:verdict}
-\begin{tabular}{@{}p{0.39\linewidth}p{0.39\linewidth}p{0.13\linewidth}@{}}
+\begin{tabular}{@{}p{0.36\linewidth}p{0.44\linewidth}p{0.13\linewidth}@{}}
 \toprule
 prediction & evidence & verdict\\ \midrule
 P1 isotropic material has no lever & Cor.~\ref{cor:iso}; gradient $\equiv0$ to $10^{-10}$; Fig.~\ref{fig:limits}a & holds (exact)\\
 P2 uniform angle cannot change a single-ply beam; steering can, at the inflection points & SSM ratio $\nBUnif$; Tab.~\ref{tab:beam}; Fig.~\ref{fig:beam} & holds\\
-P3 steered plate reaches $(\omega_1,J)$ no uniform layup reaches & Fig.~\ref{fig:levers}; $\nSnum$ stacks & holds\\
+P3 steered plate reaches $(\omega_1,J)$ no uniform layup reaches & Fig.~\ref{fig:levers}: exact at $\omega_{1,\UD}$ (Cor.~\ref{cor:udfloor}); above it against all surveyed classes; persists with the frequency re-matched & holds\\
 P4 optimized field follows preferred directions; $\theta^\star$ captures most of the gain & Fig.~\ref{fig:mechanism}; $\theta^\star$: $\nStarJ$ at $\nStarF\,\omega_{1,\UD}$; optimum departs by $\nStarDevHigh^\circ$ RMS where energies are large & holds partly\\
-P5 lever grows with anisotropy, saturates at the field length scale & Fig.~\ref{fig:limits} & holds\\
-consequence: $a_c$ widens as $J^{-1/2}$ & $\nCacRatio$ vs.\ $\nCacTheory$; time-domain sweeps & holds\\
+P5 lever grows with anisotropy and conflict, saturates at the field length scale & Fig.~\ref{fig:limits}; Fig.~\ref{fig:robust}a,b (five plates, ordered by $\chi$) & holds\\
+consequence: $a_c$ widens as $J^{-1/2}$ & $\nCacRatio$ vs.\ $\nCacTheory$; time-domain sweeps; independent of $\zeta$ and damping law (Fig.~\ref{fig:robust}c) & holds\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{What is new}
-\begin{itemize}[itemsep=1pt]
-\item \textbf{Design variable.} Reduced-order optimization of nonlinear dynamics
-  \cite{pozzi2024lsm,pozzi2025,pozzi2025smo,liang2025,xiao2026} has used shape, size, density or other system parameters. We use a
-  manufacturable fiber-orientation field.
-\item \textbf{Objective.} Variable-stiffness composites \cite{gurdal,ijsselmuiden} have been
-  steered for linear objectives and for postbuckling \cite{wu2013,raju2018}, and for the
-  linear frequency with the nonlinear response examined afterwards
-  \cite{farsadi2021,farsadi2025}. We steer them for the hardening itself, at fixed linear
-  frequency.
-\item \textbf{Mechanism, not only an optimum.} The paper's main contribution is the
-  mechanism: a local Fourier theory that predicts when steering must help, where the
-  fibers should go, and what limits the gain, tested prediction by prediction.
-\item \textbf{Analysis versus design.} Nonlinear vibrations of variable-stiffness plates
-  have been computed for prescribed fiber paths
-  \cite{ribeiro2012,ribeiroakhavan2012,akhavan2015,akhavan2017,houmat2013,yan2021}. Here
-  the path is designed at a held frequency, and the reason it works is identified.
-\item \textbf{One-dimensional result.} On a clamped beam the operative lever is not the
-  bending--extension coupling but the harmonic-versus-curvature-weighted mean of
-  Proposition~\ref{prop:beam}, which requires no coupling at all.
-\end{itemize}
+\subsection{Relation to prior work}
+The tools are not new: SSM reduction and adjoint SSM sensitivities
+\cite{haller2016,jain2022,li2024,pozzi2025,liang2025}, lamination parameters \cite{tsai1968}, and
+curvature-constrained orientation fields \cite{wong2026}. What is new is their target and the
+explanation. Fiber paths have been optimized for the linear frequency, and the nonlinear response of
+the optimum was then examined \cite{farsadi2021,farsadi2025}. The nonlinear free, forced and thermal
+vibrations of prescribed curvilinear-fiber plates have been computed
+\cite{ribeiro2012,akhavan2015,akhavan2017,houmat2013,yan2021,zhao2026}. Here the hardening is the
+objective, the linear frequency an equality constraint, and the result a mechanism with falsifiable
+predictions. On the clamped beam, the operative lever is not the bending--extension coupling but the
+harmonic-versus-curvature-weighted mean of Proposition~\ref{prop:beam}, which needs no coupling at
+all. The relaxed-stretch mechanism parallels the load-redistribution explanation of steered
+postbuckling stiffness \cite{gurdal,wu2013}.
 
 \subsection{Limitations and scope}
 \begin{itemize}[itemsep=2pt]
-\item \textbf{Geometry and support.} Results are for a simply supported, immovable-edge
-  rectangular plate. The mechanism is general, but the numbers depend on where the
-  curvature and the stretch live, which other supports change.
-\item \textbf{Constant thickness.} We assume constant thickness and mass. Real AFP
-  steering produces tow gaps or overlaps whose thickness and stiffness changes are not
-  modeled. Including them, through a thickness field tied to $\theta(\bm x)$, is the main
-  step toward a buildable design.
-\item \textbf{Amplitude range.} The design quantity is the small-amplitude cubic
-  coefficient. The cubic SSM reproduces the full-order EPMC detuning to within $\nEPMCAgree\%$
-  over the amplitudes EPMC reached ($a/h\le\nEPMCmaxUD$ for UD, $\le\nEPMCmaxOpt$ for the steered design),
-  and the jump-onset amplitudes reported lie inside these ranges. Higher
-  amplitudes need the quintic SSM or EPMC (Appendix~\ref{app:calib}).
-\item \textbf{Single mode, no internal resonance.} On the full multi-mode plate the steered design's lowest
-  frequencies are in ratios $\nModeRatios$ (\texttt{mode\_\allowbreak ratios.py}). The nearest
-  commensurability ($3{:}1$ with the third mode) is detuned by $\nDetThreeOne\%$, and that mode
-  is antisymmetric about the center. The six-mode modal time-integration model contains these modes
+\item \textbf{Buildability.} The designs are curvature-feasible idealized tow fields. The curvature limit
+  holds pointwise (radius $\ge\nRminFine$\,mm on an independent grid), but the field spreads tows by more
+  than a decade (Sec.~\ref{sec:asbuilt}). Laying it requires course-level tow cut/add, and the as-built
+  model shifts frequency and mass by several percent. A buildable design at exactly held frequency would
+  include a thickness/defect field tied to $\theta(\bm x)$ in the optimization. The defect model here is a
+  continuum estimate; ply-level gap/overlap geometry \cite{fayazbakhsh2013,pagani2025}, tow width and
+  coverage strategy, and process effects (wrinkling, resin-rich zones) are not resolved.
+\item \textbf{Laminate.} The plate designs are one steered layer, with $\bm B=\bm 0$ but unbalanced
+  ($A_{16}\neq0$). A multi-ply laminate with balanced, independently steered layers is not studied.
+  The beam design with no tow limit turns to about $\nBeamMaxAngle^\circ$ in narrow zones of the
+  $20$\,mm-wide strip.
+\item \textbf{Amplitude range.} The design quantity is the small-amplitude cubic coefficient. The cubic
+  SSM reproduces the full-order EPMC detuning to within $\nEPMCAgree\%$ over the amplitudes EPMC reached
+  ($a/h\le\nEPMCmaxUD$ for UD, $\le\nEPMCmaxOpt$ for the steered design), and the jump-onset amplitudes
+  reported lie inside these ranges. Higher amplitudes need the quintic SSM or EPMC
+  (Appendix~\ref{app:calib}).
+\item \textbf{Single mode, no internal resonance.} On the full multi-mode plate the steered design's
+  lowest frequencies are in ratios $\nModeRatios$ (\texttt{mode\_\allowbreak ratios.py}). The nearest
+  commensurability ($3{:}1$ with the third mode) is detuned by $\nDetThreeOne\%$, and that mode is
+  antisymmetric about the center. The six-mode modal time-integration model contains these modes
   and would show an internal-resonance exchange; its sweeps follow the single-mode forced
   response instead (Fig.~\ref{fig:confirm}b,c).
-\item \textbf{Optimality.} The optimizer is local (multi-start SLSQP). The pointwise
-  ceiling of Sec.~\ref{sec:limits} bounds what any single-ply field can do. Stacks have eight
-  plies (four independent angles), optimized continuously at each held frequency; more
-  plies or a lamination-parameter search could lower the uniform optimum further; the
-  steered values are at most $\nSteerVsUniformMax\%$ of the present one. The UD floor at
-  $\omega_{1,\UD}$ holds for every uniform laminate (Corollary~\ref{cor:udfloor}).
-\item \textbf{Damping.} Damping is fixed ($2\%$ of critical, mass-proportional) and not designed.
-\item \textbf{Idealized laminate.} The plate designs are a single $2$\,mm steered ply,
-  i.e.\ an unbalanced laminate, and tow gaps and overlaps are ignored. The beam design
-  with no tow limit turns to about $\nBeamMaxAngle^\circ$ in narrow zones of the $20$\,mm-wide strip.
+\item \textbf{Quasi-static in-plane field.} The relaxed cubic slaves the in-plane field statically.
+  Proposition~\ref{prop:ssmcond} bounds the error by $4\omega_1^2/\omega_{\mathrm{in}}^2=\nRhoIn$, and
+  the full SSM, which retains in-plane inertia, agrees to $\nSSMvsEval\%$.
+\item \textbf{Optimality.} The optimizer is local (multi-start SLSQP); two of six starts stall
+  (Table~\ref{tab:ms}). The pointwise ceiling of Sec.~\ref{sec:limits} bounds what any single-ply field
+  can do on this plate.
+\item \textbf{Scope of the robustness study.} Five plates, one material, one thickness ($a/h=100$, thin
+  von K\'arm\'an), and the fundamental mode only. Thick plates, shells, other modes and damping that is
+  itself designed are not studied.
 \end{itemize}
 
 \subsection{Outlook}
@@ -92,46 +93,37 @@ The same reduction and adjoint carry over directly to three extensions:
 \begin{itemize}[itemsep=1pt]
 \item \emph{prescribing} the backbone (a target frequency--amplitude law) instead of
   minimizing the hardening;
-\item adding a density field, so that topology and tow path are designed together;
+\item designing tow path and thickness/defect field together, so that a buildable laminate holds the
+  frequency exactly;
 \item steering stability boundaries, such as supersonic panel flutter, whose
   nonsymmetric aeroelastic operator enters the same first-order pencil; the flutter and
   post-flutter response of plates with prescribed curvilinear fibers has been analyzed
   \cite{akhavan2018,akhavan2020,farsadi2019}, but not designed.
 \end{itemize}
 The mechanism of Sec.~\ref{sec:theory} predicts where each extension should help: wherever
-two functionals of the same stiffness are weighted by different strain fields.
+two functionals of the same stiffness are weighted by different strain fields, in proportion to
+the conflict between those fields.
 
 \section{Conclusions}\label{sec:conclusions}
-\begin{enumerate}[itemsep=2pt]
-\item The frequency and the geometric hardening of a laminated panel integrate the same
-  rotated stiffness against the curvature and the relaxed stretch of the fundamental.
-  Each density depends on the local fiber angle only through $U_2$, $U_3$ and the local
-  principal directions (Proposition~\ref{prop:fourier}).
-\item A uniform single angle cannot change the frequency-normalized hardening of a
-  single-ply beam. Symmetric steering cuts it by up to $\nBInfHeldRed\%$ with the
-  frequency within $\nBeamFreqBand\%$ of the UD value, by placing compliant fibers at the inflection points. In our comparison
-  bending--extension coupling was a minor lever ($\nBBred\%$ on its own drift objective,
-  against $\nBNineNinetyRed\%$ for symmetric steering at the same $900^\circ$/m tow limit and
-  frequency floor); a richer coupled parametrization might do better.
-\item On a simply supported plate, a curvature-feasible steered field reduces the
-  frequency-normalized hardening by $\nFTenRed\%$ at the unidirectional frequency
-  (held exactly in the design model, to within $\nHeldTol\%$ on refined bases and an independent finite-element model) and mass. This point is unreachable by any uniform layup, and the steered
-  designs undercut the best stacking sequences at every frequency tested.
-\item A pointwise design from the UD fields alone captures most of the gain; the
-  optimized field shares its large-scale pattern but not its detail. Steering lowers the restrained stretch energy $k_{nl}$ to $\nDknl$ of its UD
-  value; the relaxation falls less ($\nDrelax$), so its share of the stretch energy rises
-  ($\nRelaxUD\%\to\nRelaxOpt\%$) and $\gamma$ falls further than $k_{nl}$.
-\item The lever vanishes for isotropic material, grows monotonically with anisotropy, and
-  saturates once the minimum tow radius is below about $\SI{20}{mm}$.
-\item The full-order model confirms the reduction (SSM, EPMC, time integration), and the
-  jump-free amplitude widens by $\nCacRatio\times$, in agreement with
-  $a_c\propto J^{-1/2}$.
-\end{enumerate}
+The frequency and the geometric hardening of a laminated panel integrate the same rotated stiffness
+against two strain fields of the fundamental, the curvature and the relaxed stretch. Each density
+reads the fiber angle only through the anisotropic invariants and the local principal directions.
+Where the two fields disagree, a spatial fiber field can serve both and a uniform layup cannot. On a
+clamped beam this means compliant fibers at the inflection points. On a simply supported plate, at the
+unidirectional frequency and mass, it reduces the hardening by about two thirds in every model we
+checked. No uniform laminate is available at that frequency, and above it steering undercuts every
+uniform class surveyed. The lever vanishes for isotropic material, grows with anisotropy and with the
+conflict between the fields, and saturates once tows can turn on the fields' length scale. Because the
+jump-free amplitude scales as $J^{-1/2}$, the gain appears directly as a $\nCacRatio\times$ wider
+hysteresis-free range, independent of the damping level. Turning the idealized tow fields into buildable
+laminates requires tow cut/add, which our defect model suggests moves the design along, not off, the
+steered front.
 
 \paragraph{Data and code availability.} The code, result files and the scripts that generate
 every number, table and figure (Appendix~\ref{app:repro}) are in the repository
-\url{https://github.com/jtempelman95/NLTopt} (branch \texttt{paper-revision}; see \texttt{docs/paper/README\_REPRODUCE.md}). The SSM, EPMC and time-integration scripts build on the author's
-harmonic-balance package PyHB, which is not public and is available on request; the design
-evaluator and the regeneration of every number from the committed result files do not need it.
+\url{https://github.com/jtempelman95/NLTopt} (tag \texttt{R1}; see \texttt{docs/paper/README\_REPRODUCE.md}).
+The SSM, EPMC and time-integration scripts build on the author's harmonic-balance package PyHB,
+which is not public and is available on request. The design evaluator and the regeneration of every
+number from the committed result files do not need it.
 
 \paragraph{Competing interests.} The author declares no competing interests.

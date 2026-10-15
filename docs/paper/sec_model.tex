@@ -93,7 +93,13 @@ w=\sum_{k=1}^{N_w}q_k\,\phi_k,\quad \phi_k=\sin\tfrac{m_k\pi x}{a}\sin\tfrac{n_k
 \qquad
 u,v=\sum_{j=1}^{N_s}s^{u,v}_j\,\psi_j,\quad \psi_j=\sin\tfrac{i_j\pi x}{a}\sin\tfrac{l_j\pi y}{b}.
 \end{equation}
-We use $N_w=64$ ($m,n\le8$) and $N_s=36$ per component. The bases are converged
+We use $N_w=64$ ($m,n\le8$) and $N_s=36$ per component. For the robustness study of
+Sec.~\ref{sec:robust} the same evaluator is built on two other bases: clamped edges
+($w=\partial_nw=0$) with $\phi_k=\sin\tfrac{\pi x}{a}\sin\tfrac{m_k\pi x}{a}\,
+\sin\tfrac{\pi y}{b}\sin\tfrac{n_k\pi y}{b}$, which reproduces the clamped isotropic square
+plate's frequency parameter $35.99$ to $0.1\%$; and in-plane traction-free (``movable'') edges,
+with a Chebyshev polynomial basis of degree $\le10$ for $u,v$, converged to four digits in
+$\gamma$. The bases are converged
 for the steered designs: Table~\ref{tab:conv} shows that the steered relaxation needs at least
 five to six in-plane modes per direction; the three-mode basis that suffices for a uniform
 laminate under-resolves it badly ($J/J_{\UD}=\nConvThree$ instead of $\nConvBase$).

@@ -197,7 +197,7 @@ Table~\ref{tab:fe} compares the two discretizations for a homogeneous and a stro
 field ($\theta=20^\circ+45^\circ\sin\tfrac{\pi x}{a}\sin\tfrac{\pi y}{b}$, sweeping
 $20^\circ$--$65^\circ$).
 
-\begin{table}[t]
+\begin{table}[!tbp]
 \centering\footnotesize
 \IfFileExists{fe_table.tex}{\input{fe_table.tex}}{\textit{table pending}}
 \caption{Assumed-modes vs.\ FE backbone (parenthesized: detuning error vs.\ FE). ``$N$
@@ -214,10 +214,10 @@ $\nFEtabDetErrTwentyFour\%$ at $24$.}
 \label{tab:fe}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/plate_fe_validation.pdf}
-\caption{Finite-element validation of the assumed-modes nonlinear backbone.
+\caption{\textbf{The assumed-modes backbone agrees with an independent finite-element model.}
 \textbf{(a)}~Amplitude vs.\ backbone frequency (same orientation as
 Figs.~\ref{fig:beam} and \ref{fig:confirm}); black: FE. For the homogeneous UD plate the
 8-mode assumed-modes backbone (gray dashed) coincides with FE, validating the FE nonlinear
@@ -267,10 +267,11 @@ $\Om/\omega_1-1$ to within $\nEPMCAgree\%$. The jump thresholds compared in
 Sec.~\ref{sec:jumpres} ($a_c/h=\nCUDac$ and $\nCOptac$) lie inside these ranges; we make no
 claim beyond them, where higher-order terms bend the true backbone.
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/coupled_osc_sensitivity.pdf}
-\caption{Calibration against \cite{pozzi2025}, Fig.~2: backbone-sensitivity
+\caption{\textbf{The backbone sensitivities reproduce a published benchmark.} Calibration against
+\cite{pozzi2025}, Fig.~2: backbone-sensitivity
 validation of two coupled oscillators. Each panel perturbs one parameter
 ($m$, $k$: $1\%$; $k_2$, $k_3$: $3\%$). Black: nominal backbone; blue: perturbed backbone,
 recomputed; red crosses: first-order sensitivity prediction from the nominal backbone. The
@@ -279,10 +280,11 @@ which the seventh-order SSM captures.}
 \label{fig:fig2}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/beam_backbone_opt.pdf}
-\caption{Calibration against \cite{pozzi2025}, Fig.~3: a von~K\'arm\'an beam
+\caption{\textbf{The SSM design loop reproduces a published backbone-shaping result.} Calibration
+against \cite{pozzi2025}, Fig.~3: a von~K\'arm\'an beam
 shaped to a prescribed softening backbone. This problem shapes the beam with up to two harmonics (the optimum uses only the first)
 to pass through two prescribed backbone points; it is a different problem from that of
 Fig.~\ref{fig:svse}, which tunes one amplitude to one target. \textbf{(a)}~Optimized
@@ -325,7 +327,7 @@ error at $\mathrm{RMS}=0.2h_0$. The SSM backbone costs about two orders of magni
 evaluation (Fig.~\ref{fig:svse}). This is the intended division of labor: the SSM adjoint does
 the search cheaply, and full-order EPMC confirms the optimum.
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
 \centering
 \begin{minipage}[c]{0.54\linewidth}\centering
 \includegraphics{figs/ssm_vs_epmc_opt.pdf}
@@ -334,7 +336,8 @@ the search cheaply, and full-order EPMC confirms the optimum.
 (\textbf{b})\\[4pt]
 \IfFileExists{svse_table.tex}{\input{svse_table.tex}}{\textit{table pending}}
 \end{minipage}
-\caption{Optimizing the same design with both frameworks (benchmark of
+\caption{\textbf{SSM- and EPMC-driven optimization reach nearly the same optimum, at very different
+cost.} Optimizing the same design with both frameworks (benchmark of
 \cite{pozzi2025}). Here one curvature amplitude $A_1$ is tuned to one softening
 target (a different problem from Fig.~\ref{fig:fig3}). \textbf{(a)}~The straight beam's
 backbone hardens (leans right); the
@@ -358,7 +361,7 @@ benchmarks of \cite{pozzi2025}) are printed by the scripts listed for them below
 maps each result to the script that produces it. Unit tests are in \texttt{tests/}
 (\texttt{pytest}).
 
-\begin{table}[h]
+\begin{table}[!tbp]
 \centering\footnotesize
 \caption{Result $\to$ script map.}\label{tab:repro}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.42\linewidth}>{\raggedright\arraybackslash}p{0.54\linewidth}@{}}
@@ -378,6 +381,11 @@ frequency multiplier, linear spectra (Secs.~\ref{sec:mechanism}, \ref{sec:discus
 all quoted numbers and generated tables & \texttt{paper\_numbers.py}\\
 FE validation (App.~\ref{app:fe}) & \texttt{plate\_fe\_backbone.py}, \texttt{plate\_fe\_fig.py}\\
 calibration (App.~\ref{app:calib}) & \texttt{coupled\_osc\_sensitivity.py}, \texttt{beam\_backbone\_opt.py}, \texttt{ssm\_vs\_epmc\_opt.py}\\
+matched-frequency comparison (Sec.~\ref{sec:confirm}, Fig.~\ref{fig:levers}b) & \texttt{r1\_matched\_frequency.py}\\
+other plates, conflict (Sec.~\ref{sec:robust}, Fig.~\ref{fig:robust}a,b) & \texttt{r1\_generality.py}, \texttt{r1\_conflict.py}\\
+damping level and law (Fig.~\ref{fig:robust}c) & \texttt{r1\_damping.py}\\
+as-built tow defects (Sec.~\ref{sec:asbuilt}, Fig.~\ref{fig:robust}d,e) & \texttt{r1\_asbuilt.py}, \texttt{fig\_robust.py}\\
+gradient, independent-grid and multi-start checks (Table~\ref{tab:ms}) & \texttt{r1\_verification.py}\\
 \bottomrule
 \end{tabular}
 \end{table}

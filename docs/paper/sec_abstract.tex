@@ -1,54 +1,49 @@
 \begin{abstract}
-\noindent\textbf{Question.} Thin composite panels harden as they vibrate: their resonance
-drifts upward with amplitude and, under forcing, folds and jumps. We ask whether the
-\emph{spatial distribution} of fiber orientation, the freedom that automated fiber
-placement provides, can reduce this hardening without changing the panel's linear
-frequency or mass. If it can, we ask what mechanism provides the lever, what bounds it,
-and how it compares with a uniform ply angle and with the stacking sequence.
+\noindent\textbf{Question.} Thin composite panels harden as they vibrate: the resonance
+drifts upward with amplitude and, under forcing, folds and jumps. Can the \emph{spatial
+distribution} of fiber orientation reduce this hardening while the panel's linear
+frequency and mass stay fixed? If so, what mechanism provides the lever, what bounds it,
+and how does it compare with a uniform ply angle and with the stacking sequence?
 
 \noindent\textbf{Hypothesis.} The linear frequency and the hardening integrate the same
-rotated stiffness against two different strain fields of the fundamental: its bending
-curvature and the in-plane-relaxed membrane stretch it induces. The two differ from point
-to point in magnitude and principal direction. A fiber field can then take, point by point, the
-direction that serves both under the frequency constraint (across the stretch, and
-toward or away from the curvature as the constraint requires), while a uniform layup can
-only compromise.
+rotated stiffness against two different strain fields of the fundamental mode: its bending
+curvature and the in-plane-relaxed membrane stretch. Because the two fields differ from point
+to point in magnitude and principal direction, a fiber field can serve the trade-off between
+them pointwise, whereas a uniform layup can only compromise on average.
 
-\noindent\textbf{Analysis.} We make this exact. A local Fourier representation shows that
-each energy density depends on the fiber angle only through the anisotropic invariants
-$U_2,U_3$ and the local principal directions. This predicts no lever for isotropic
-material, exact invariance of a single-ply beam under any uniform angle, and a pointwise
-optimality condition whose violation guarantees that steering beats every uniform angle.
-We test the predictions with a spectral-submanifold reduction of laminated von K\'arm\'an
-beams and plates. The hardening coefficient is exact in the in-plane relaxation and
-evaluated on a mode-adaptive fundamental with an analytic adjoint. The frequency is
-imposed as an exact equality and the tow-curvature limit pointwise.
+\noindent\textbf{Analysis.} A local Fourier representation shows that each energy density
+depends on the fiber angle only through the anisotropic invariants $U_2,U_3$ and the local
+principal directions. It predicts no lever for isotropic material, invariance of a single-ply
+beam under any uniform angle, and a pointwise first-order optimality condition that a uniform
+angle generically violates. We test these predictions on laminated von K\'arm\'an beams and
+plates. The design quantity is the frequency-normalized hardening $J$ of a spectral
+submanifold (SSM) reduction, evaluated on a mode-adaptive fundamental with exact in-plane
+relaxation and an analytic adjoint. In the design model the frequency is an equality
+constraint and the tow-curvature limit is imposed pointwise.
 
-\noindent\textbf{Results.}
-On a clamped beam, symmetric steering with no bending--extension coupling cuts the
-detuning by up to $\nBInfHeldRed\%$ with the frequency kept within $\nBeamFreqBand\%$ of the unidirectional value ($\omega_1\geq0.98\,\omega_{1,\UD}$ in the
-design model; $\nBInfHeldf$ on the full model), by placing compliant fibers at the
-inflection points. An optimized bending--extension coupling, the intuitive alternative, gives only $\nBBred\%$ (on its own drift objective). On a simply
-supported plate, a curvature-feasible tow field reduces the frequency-normalized
-hardening to $\nFTen$ of the unidirectional value at the unidirectional frequency
-(held exactly in the design model, to within $\nHeldTol\%$ on refined bases and an independent finite-element model). No uniform layup can do this: the unidirectional plate is the
-lowest-frequency member of all $\nSnum$ symmetric stacking sequences, and the steered
-designs also undercut the best stacks at every higher frequency tested. A pointwise design computed from the
-unidirectional fields alone already captures most of the gain, and steering raises the relaxed share
-of the stretch energy from $\nRelaxUD\%$ to $\nRelaxOpt\%$. The lever grows monotonically
-with lamina anisotropy and saturates once the minimum tow radius is below about $\SI{20}{mm}$, a fraction
-of the scale of the strain fields. The full multi-mode model confirms the reduction by its SSM and by
-EPMC continuation. Direct time integration shows the consequence: the jump-free
-amplitude widens by $\nCacRatio\times$, as predicted by $a_c\propto J^{-1/2}$, and at a
-drive where the unidirectional panel jumps with hysteresis, the steered panel is
-single-valued.
+\noindent\textbf{Results.} On a clamped beam, symmetric steering cuts the hardening by up to
+$\nBInfHeldRed\%$ by placing compliant fibers at the inflection points; an optimized
+bending--extension coupling gives only $\nBBred\%$. On a simply supported plate, a
+curvature-feasible idealized tow field ($R_{\min}=\SI{20}{mm}$) reduces $J$ to $\nFTen$ of
+the unidirectional value at the unidirectional frequency. The result survives refinement:
+re-imposing the equality on a finer basis gives $\nRefHeldJ$, and matching the frequency in an
+independent finite-element model gives $\nFEmatchedJ$. At that frequency no uniform laminate
+of any stacking sequence exists other than the unidirectional one (a proved floor), and above
+it the steered designs undercut every uniform laminate we surveyed. A pointwise design from
+the unidirectional fields alone captures most of the gain. The lever vanishes for isotropic
+material, grows with anisotropy, saturates once the tow radius is below the strain-field
+length scale, and persists for clamped edges ($\nGenClJ$ against $\nGenClUnif$ for the best
+uniform laminate at the same frequency), a square plate ($\nGenSqJ$) and in-plane movable edges
+($\nGenMvJ$). It weakens on a 2:1 plate ($\nGenTwoJ$), whose near-cylindrical mode leaves the
+two fields little conflict. In the full multi-mode model the jump-free amplitude widens by
+$\nCacRatio\times$, as $a_c\propto J^{-1/2}$ predicts, for every damping level and law tested.
 
-\noindent\textbf{Conclusion.} Spatial fiber steering is a genuine, mechanistically
-understood lever on nonlinear stiffness at fixed linear frequency and mass. It is set
-by material anisotropy and by the tow radius relative to the strain-field length scale,
-and for this plate it is far stronger than the through-thickness freedom of stacking.
+\noindent\textbf{Conclusion.} At fixed linear frequency and mass, spatial fiber steering is a
+mechanistically understood lever on nonlinear stiffness. Material anisotropy and the ratio of
+tow radius to strain-field length scale set its size, and for these plates it is far stronger
+than the through-thickness freedom of stacking. Building it requires tow cut/add; an as-built
+defect model keeps $J/J_{\UD}$ between $\nAsBuiltJmin$ and $\nAsBuiltJmax$.
 \end{abstract}
 
 \noindent\textbf{Keywords:} variable-stiffness composites; fiber steering; geometric nonlinearity;
 spectral submanifolds; backbone curve; adjoint optimization; automated fiber placement.
-

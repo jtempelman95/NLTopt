@@ -1,0 +1,2 @@
+[ss_43] UD f1=256.3 Hz  J=4.5623e+05  min uniform f = 1.0000 f_UD at 0.0 deg; best uniform at f_UD: single 1.000 stack 1.000  (26s)
+[ss_43] steered @ f_UD: J/J_UD=0.3659  f/f_UD=1.000000  R_used=20.0 mm  relax share UD 0.331 -> 0.514  (118s)

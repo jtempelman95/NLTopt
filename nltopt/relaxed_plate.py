@@ -113,6 +113,20 @@ def Q_family(s, Q=None):
     return Qiso + s * (Q - Qiso)
 
 
+def _beam_fn(bc, m, L, x):
+    """1-D transverse trial function X_m and its first two derivatives."""
+    k = m * np.pi / L
+    if bc == "ss":
+        s, c = np.sin(k * x), np.cos(k * x)
+        return s, k * c, -k * k * s
+    if bc == "clamped":                       # sin(pi x/L) sin(m pi x/L): X = X' = 0 at 0, L
+        k1 = np.pi / L
+        s1, c1, sm, cm = np.sin(k1 * x), np.cos(k1 * x), np.sin(k * x), np.cos(k * x)
+        return (s1 * sm, k1 * c1 * sm + k * s1 * cm,
+                -(k1 * k1 + k * k) * s1 * sm + 2 * k1 * k * c1 * cm)
+    raise ValueError(bc)
+
+
 # --------------------------------------------------------------------------- #
 #  the plate                                                                  #
 # --------------------------------------------------------------------------- #
@@ -126,9 +140,17 @@ class RelaxedPlate:
     n_in : in-plane basis = sin(i pi x/a) sin(j pi y/b), i, j <= n_in, for u and v.
     nx, ny : midpoint quadrature grid (exact for the trigonometric integrands
         while the summed wavenumber stays below 2 nx).
+    bc : transverse support, "ss" (simply supported, phi = sin sin; the paper's
+        plate) or "clamped" (phi = sin(pi x/a) sin(m pi x/a) * (same in y), which
+        satisfies w = dw/dn = 0 on every edge term by term).
+    inplane : "immovable" (u = v = 0 on the edges; sine basis; the paper's plate) or
+        "movable" (in-plane traction-free edges; Chebyshev polynomial basis of degree
+        <= n_in without the constant -- the opposite extreme of edge restraint; the
+        rigid in-plane rotation is in the basis, so K_in is solved in least squares).
     """
 
-    def __init__(self, a=0.20, b=0.15, h=0.002, mmax=8, n_in=6, nx=96, ny=72, rho=RHO):
+    def __init__(self, a=0.20, b=0.15, h=0.002, mmax=8, n_in=6, nx=96, ny=72, rho=RHO,
+                 bc="ss", inplane="immovable"):
         self.a, self.b, self.h, self.rho = float(a), float(b), float(h), float(rho)
         xs = (np.arange(nx) + 0.5) * a / nx
         ys = (np.arange(ny) + 0.5) * b / ny
@@ -139,30 +161,44 @@ class RelaxedPlate:
         self.Nq = self.qx.size
         self.w = np.full(self.Nq, a * b / self.Nq)
 
+        self.bc, self.inplane = bc, inplane
         self.modes = [(m, n) for m in range(1, mmax + 1) for n in range(1, mmax + 1)]
         nw = self.nw = len(self.modes)
         self.PHI = np.empty((nw, self.Nq)); self.PHx = np.empty((nw, self.Nq))
         self.PHy = np.empty((nw, self.Nq)); self.KAP = np.empty((nw, 3, self.Nq))
         self.PHc = np.empty(nw)
         for k, (m, n) in enumerate(self.modes):
-            kx, ky = m * np.pi / a, n * np.pi / b
-            sx, sy = np.sin(kx * self.qx), np.sin(ky * self.qy)
-            cx, cy = np.cos(kx * self.qx), np.cos(ky * self.qy)
-            self.PHI[k] = sx * sy; self.PHx[k] = kx * cx * sy; self.PHy[k] = ky * sx * cy
+            X, X1, X2 = _beam_fn(bc, m, a, self.qx)
+            Y, Y1, Y2 = _beam_fn(bc, n, b, self.qy)
+            self.PHI[k] = X * Y; self.PHx[k] = X1 * Y; self.PHy[k] = X * Y1
             # kappa = [-w_xx, -w_yy, -2 w_xy]
-            self.KAP[k, 0] = kx ** 2 * sx * sy
-            self.KAP[k, 1] = ky ** 2 * sx * sy
-            self.KAP[k, 2] = -2 * kx * ky * cx * cy
-            self.PHc[k] = np.sin(m * np.pi / 2) * np.sin(n * np.pi / 2)
+            self.KAP[k, 0] = -X2 * Y
+            self.KAP[k, 1] = -X * Y2
+            self.KAP[k, 2] = -2 * X1 * Y1
+            self.PHc[k] = _beam_fn(bc, m, a, np.array([a / 2]))[0][0] * _beam_fn(bc, n, b, np.array([b / 2]))[0][0]
         self.M = self.rho * self.h * np.einsum("q,iq,jq->ij", self.w, self.PHI, self.PHI)
 
-        inm = [(i, j) for i in range(1, n_in + 1) for j in range(1, n_in + 1)]
+        if inplane == "immovable":
+            inm = [(i, j) for i in range(1, n_in + 1) for j in range(1, n_in + 1)]
+        elif inplane == "movable":                  # Chebyshev T_i(xi) T_j(eta), degree <= n_in
+            inm = [(i, j) for i in range(0, n_in + 1) for j in range(0, n_in + 1) if (i, j) != (0, 0)]
+            from numpy.polynomial import chebyshev as _ch
+            xi, eta = 2 * self.qx / a - 1, 2 * self.qy / b - 1
+            def _T(i, t, d):
+                c = np.zeros(i + 1); c[i] = 1.0
+                return _ch.chebval(t, _ch.chebder(c, d) if d else c)
+        else:
+            raise ValueError(inplane)
         cols = []
         for comp in ("u", "v"):
             for (i, j) in inm:
                 km, kn = i * np.pi / a, j * np.pi / b
-                px = km * np.cos(km * self.qx) * np.sin(kn * self.qy)
-                py = kn * np.sin(km * self.qx) * np.cos(kn * self.qy)
+                if inplane == "immovable":          # sin sin: zero on every edge
+                    px = km * np.cos(km * self.qx) * np.sin(kn * self.qy)
+                    py = kn * np.sin(km * self.qx) * np.cos(kn * self.qy)
+                else:                               # polynomial: free edges
+                    px = (2 / a) * _T(i, xi, 1) * _T(j, eta, 0)
+                    py = (2 / b) * _T(i, xi, 0) * _T(j, eta, 1)
                 z = np.zeros(self.Nq)
                 cols.append(np.vstack([px, z, py]) if comp == "u" else np.vstack([z, py, px]))
         self.BL = np.stack(cols, axis=1)                    # (3, n_in_dof, Nq)
@@ -171,6 +207,18 @@ class RelaxedPlate:
         # K_b = sum_ab D_ab IK[a,b],  K_in = sum_ab A_ab IIN[a,b]
         self.IK = np.einsum("q,iaq,jbq->abij", self.w, self.KAP, self.KAP)
         self.IIN = np.einsum("q,aiq,bjq->abij", self.w, self.BL, self.BL)
+
+    def _solve_in(self, Kin, g):
+        if self.inplane == "immovable":
+            return np.linalg.solve(Kin, g)
+        return np.linalg.lstsq(Kin, g, rcond=1e-12)[0]     # rigid rotation: null space, g _|_ it
+
+    def set_mass(self, rhoh=None):
+        """Mass per unit area at every quadrature point (array of Nq, or None for the
+        uniform rho*h).  Used only by the as-built (gap/overlap) evaluation; every
+        design in the paper has the uniform mass."""
+        rhoh = self.rho * self.h if rhoh is None else np.broadcast_to(rhoh, (self.Nq,))
+        self.M = np.einsum("q,iq,jq->ij", self.w * rhoh, self.PHI, self.PHI)
 
     # ------------------------------------------------------------------ #
     def evaluate(self, Dq, Aq, full=True):
@@ -197,7 +245,7 @@ class RelaxedPlate:
         ABL = np.einsum("qab,bjq->ajq", Aq, self.BL)
         Kin = np.einsum("q,aiq,ajq->ij", w, self.BL, ABL)
         g = 0.5 * np.einsum("q,aiq,aq->i", w, self.BL, Am)
-        ustar = np.linalg.solve(Kin, g)
+        ustar = self._solve_in(Kin, g)
         eps_u = np.einsum("aiq,i->aq", self.BL, ustar)
         relax = 2.0 * g @ ustar
         gamma = knl - relax
@@ -228,7 +276,7 @@ class RelaxedPlate:
         knl = 0.5 * np.sum(self.w * np.sum(m * Am, axis=0))
         Kin = np.einsum("ab,abij->ij", A, self.IIN)
         g = 0.5 * np.einsum("aiq,aq->i", self.BL, self.w * Am)
-        ustar = np.linalg.solve(Kin, g)
+        ustar = self._solve_in(Kin, g)
         relax = 2.0 * g @ ustar
         gamma = knl - relax
         return dict(omega1=np.sqrt(om2), om2=om2, mid=mid, gamma=gamma, knl=knl,

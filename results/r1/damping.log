@@ -1,0 +1,6 @@
+zeta=0.5% mass : a_c/h UD 0.1055  steered 0.1756  ratio 1.665  drive ratio 1.644
+zeta=1.0% mass : a_c/h UD 0.1486  steered 0.2473  ratio 1.664  drive ratio 1.644
+zeta=2.0% mass : a_c/h UD 0.2084  steered 0.3467  ratio 1.664  drive ratio 1.644
+zeta=4.0% mass : a_c/h UD 0.2896  steered 0.4817  ratio 1.663  drive ratio 1.644
+zeta=2.0% stiff: a_c/h UD 0.2110  steered 0.3568  ratio 1.691  drive ratio 1.714
+wrote results/r1_damping.npz

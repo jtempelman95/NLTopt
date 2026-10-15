@@ -88,3 +88,14 @@ wendland1995           OK    title~0.91 year:1995(y) vol:4(True) p:389(True) doi
 All flagged entries with a Crossref record match authors, title, venue, volume and pages; flags arise from online-vs-print year (paper uses print year) or LaTeX accents lowering title similarity:
 
 No Crossref record (books/report/thesis; standard bibliographic data): nayfeh1979 (Wiley 1979), tsai1968 (Composite Materials Workshop, Technomic 1968), kraft1988 (DFVLR-FB 88-28), auld (Krieger 1990, 2nd ed.), xiao2026 (PhD thesis, Univ. Bristol; title and author verified on the local PDF docs/literature/xiao_2026_phd_thesis.pdf).
+
+
+## Revision R1: references added (verified 2026-10-15 against publisher / repository records)
+| key | record checked | status |
+|---|---|---|
+| zhao2026 | ScienceDirect PII S0020740326003826; Int. J. Mech. Sci. 318 (2026) 111527; authors Zhao, Yan, Yu, Liu | OK |
+| pagani2025 | PMC11921628 / PubMed 40109515; Aerotec. Missili Spaz. 104(2) (2025) 135-151, doi 10.1007/s42496-024-00212-w | OK |
+| sheikhi2024 | ScienceDirect S0263822323011820; Compos. Struct. 330 (2024) 117836, doi 10.1016/j.compstruct.2023.117836 | OK |
+| fayazbakhsh2013 | McGill eScholarship record; Compos. Struct. 97 (2013) 245-251, doi 10.1016/j.compstruct.2012.10.031 | OK |
+| kim2012 | Univ. Bristol research portal; Compos. Part A 43(8) (2012) 1347-1356, doi 10.1016/j.compositesa.2012.02.024 | OK |
+| farsadi2025 | ScienceDirect S0888327025006739; MSSP 237 (2025) 112972; seven authors incl. Fichera (unchanged entry, re-verified) | OK |

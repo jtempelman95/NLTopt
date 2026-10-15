@@ -270,6 +270,94 @@ put("nUtwoUthree", _U2 / _U3, "{:.1f}")
 if _Bm2 is not None:
     put("nBeamMaxAngle", float(np.rad2deg(np.max(np.abs(_Bm2["k99999_f98_c"])))), "{:.0f}")
 
+# ---------------------------------------------------------------- Revision R1
+_M1 = load("r1_matched.npz")
+if _M1 is not None:
+    put("nRefEvalJ", float(_M1["ref_eval_J"]), "{:.3f}")
+    put("nRefEvalF", float(_M1["ref_eval_f"]), "{:.3f}")
+    put("nRefHeldJ", float(_M1["ref_held_J"]), "{:.3f}")
+    put("nFEasisF", float(_M1["fe_asis_f"]), "{:.3f}")
+    put("nFEasisJ", float(_M1["fe_asis_J"]), "{:.3f}")
+    put("nFEmatchedJ", float(_M1["fe_matched_J"]), "{:.3f}")
+    put("nFEslope", -float(_M1["fe_slope"]), "{:.2f}")
+_GEN = {n: load(f"r1_generality_{n}.npz") for n in ("ss_43", "ss_11", "ss_21", "cl_43", "mv_43")}
+if all(v is not None for v in _GEN.values()):
+    _r = lambda n: float(_GEN[n]["J_steer"] / _GEN[n]["J_ud"])
+    put("nGenBaseJ", _r("ss_43"), "{:.3f}")
+    put("nGenSqJ", _r("ss_11"), "{:.2f}")
+    put("nGenTwoJ", _r("ss_21"), "{:.2f}")
+    put("nGenClJ", _r("cl_43"), "{:.2f}")
+    put("nGenMvJ", _r("mv_43"), "{:.2f}")
+    _cl = _GEN["cl_43"]
+    put("nGenClUnif", min(float(_cl["J_stack"]), float(_cl["J_single"])) / float(_cl["J_ud"]), "{:.2f}")
+    put("nGenClMinF", float(_cl["U_f"].min() / _cl["w_ud"]), "{:.3f}")
+    put("nGenClMinAng", abs(float(np.rad2deg(_cl["U_theta"][np.argmin(_cl["U_f"])]))), "{:.0f}")
+    put("nGenClf", float(_cl["w_ud"]) / 2 / np.pi, "{:.0f}")
+    _mv = _GEN["mv_43"]
+    put("nGenMvRatio", float(_GEN["ss_43"]["J_ud"] / _mv["J_ud"]), "{:.0f}")
+    put("nGenMvRelaxUD", 100 * float(_mv["relax_ud"]), "{:.0f}")
+    put("nGenMvRelaxOpt", 100 * float(_mv["relax_steer"]), "{:.0f}")
+    put("nGenTwoR", 1000 * float(_GEN["ss_21"]["Rmin_used"]), "{:.0f}")
+_CF = load("r1_conflict.npz")
+if _CF is not None:
+    _n = list(_CF["names"]); _c = _CF["rows"][:, 0]
+    for key, mac in (("ss_43", "nChiBase"), ("ss_11", "nChiSq"), ("ss_21", "nChiTwo"), ("cl_43", "nChiCl"), ("mv_43", "nChiMv")):
+        put(mac, float(_c[_n.index(key)]), "{:.0f}")
+_DP = load("r1_damping.npz")
+if _DP is not None:
+    _d = _DP["rows"]; _m = _d[:, 1] == 0
+    put("nDampRatioMin", float(_d[_m, 4].min()), "{:.3f}")
+    put("nDampRatioMax", float(_d[_m, 4].max()), "{:.3f}")
+    put("nDampStiffRatio", float(_d[~_m, 4][0]), "{:.2f}")
+    put("nDampAcLo", float(_d[_m, 2][0]), "{:.3f}")
+    put("nDampAcHi", float(_d[_m, 2][-1]), "{:.3f}")
+    put("nDampScale", float(np.polyfit(np.log(_d[_m, 0]), np.log(_d[_m, 2]), 1)[0]), "{:.2f}")
+_AB = load("r1_asbuilt.npz")
+if _AB is not None:
+    _k = list(_AB["res_keys"]); _R = _AB["res"]
+    _t = _AB["tau"]
+    put("nTauMin", float(_t.min()), "{:.2f}")
+    put("nTauMax", float(_t.max()), "{:.0f}")
+    put("nTauGapArea", 100 * float(np.mean(_t < 0.95)), "{:.0f}")
+    for N in (4, 8, 16):
+        g, o = _R[_k.index(f"GAP{N}")], _R[_k.index(f"OVL{N}")]
+        w = {4: "Four", 8: "Eight", 16: "Sixteen"}[N]
+        put(f"nGap{w}J", float(g[0]), "{:.3f}"); put(f"nGap{w}F", float(g[1]), "{:.3f}"); put(f"nGap{w}M", 100 * (float(g[2]) - 1), "{:+.1f}")
+        put(f"nOvl{w}J", float(o[0]), "{:.3f}"); put(f"nOvl{w}F", float(o[1]), "{:.3f}"); put(f"nOvl{w}M", 100 * (float(o[2]) - 1), "{:+.1f}")
+    _Js = [float(_R[_k.index(f"{t}{N}")][0]) for t in ("GAP", "OVL") for N in (4, 8, 16)]
+    put("nAsBuiltJmin", min(_Js), "{:.2f}"); put("nAsBuiltJmax", max(_Js), "{:.2f}")
+    put("nAsBuiltMaxDev", max(abs(j - float(_R[_k.index("ideal")][0])) for j in _Js), "{:.2f}")
+    _MC = _AB["MC"]
+    put("nAngJmean", float(_MC[:, 0].mean()), "{:.3f}"); put("nAngJstd", float(_MC[:, 0].std()), "{:.3f}")
+    put("nAngFstd", 100 * float(_MC[:, 1].std()), "{:.1f}")
+    _cts = _R[_k.index("CTS")]
+    put("nCtsF", float(_cts[1]), "{:.2f}"); put("nCtsM", float(_cts[2]), "{:.2f}")
+_VF = load("r1_verification.npz")
+if _VF is not None:
+    _g = _VF["grad_rows"]; _nd = int(_VF["ndirs"])
+    _worst = max(min(_g[(_g[:, 1] == j) & (_g[:, 0] == i), 3]) for j in range(4) for i in range(_nd))
+    _e = int(np.ceil(np.log10(_worst)))
+    put("nGradErr", f"10^{{{_e}}}", "{}")
+    put("nGradDirs", _nd, "{:d}")
+    put("nRminFine", 1000 / float(_VF["kmax_fine"]), "{:.1f}")
+    put("nKappaOver", 100 * (float(_VF["kmax_fine"]) / float(_VF["zall"]) - 1), "{:.1f}")
+    _ms = _VF["ms"]; _b = _ms[:, 0].min()
+    put("nMSgood", int(np.sum(_ms[:, 0] <= 1.05 * _b)), "{:d}")
+    put("nMSworst", float(_ms[:, 0].max()), "{:.2f}")
+    put("nMSspread", 100 * (float(np.sort(_ms[:, 0])[int(np.sum(_ms[:, 0] <= 1.05 * _b)) - 1]) / _b - 1), "{:.0f}")
+    def _sci(x):
+        if x == 0:
+            return "0"
+        e = int(np.floor(np.log10(abs(x)))); m = x / 10 ** e
+        return f"{m:.0f}\\times10^{{{e}}}"
+    _tabrows = []
+    for lab, r in zip(_VF["ms_labels"], _ms):
+        _tabrows.append(f"{lab} & ${r[0]:.4f}$ & ${_sci(r[1])}$ & ${_sci(r[2])}$ & {int(r[4])}\\\\")
+    with open("docs/paper/ms_table.tex", "w") as fh:
+        fh.write("\\begin{tabular}{@{}lcccc@{}}\n\\toprule\nstart & $J/J_{\\UD}$ & $\\omega_1/\\omega_\\star-1$ & $\\min_e c_e$ & iterations\\\\\n\\midrule\n")
+        fh.write("\n".join(_tabrows) + "\n")
+        fh.write("\\bottomrule\n\\end{tabular}\n")
+
 import glob, re
 used = set()
 for f in glob.glob("docs/paper/sec_*.tex"):

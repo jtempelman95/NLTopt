@@ -1,0 +1,272 @@
+\section{Model, reduction, and the quantities we design}\label{sec:model}
+
+\subsection{Laminate constitutive model}\label{sec:clt}
+A unidirectional CFRP lamina ($E_1=\SI{131}{GPa}$, $E_2=\SI{9}{GPa}$,
+$G_{12}=\SI{5}{GPa}$, $\nu_{12}=0.27$, $\rho=\SI{1600}{kg/m^3}$) has the on-axis
+plane-stress stiffness $\bm Q$, with $Q_{11}=E_1/(1-\nu_{12}\nu_{21})$,
+$Q_{22}=E_2/(1-\nu_{12}\nu_{21})$, $Q_{12}=\nu_{12}Q_{22}$, $Q_{66}=G_{12}$ and
+$\nu_{21}=\nu_{12}E_2/E_1$. In engineering Voigt notation (strain
+$\bm s=[s_{xx},s_{yy},2s_{xy}]^{\!\top}$), rotating the fibers through $\theta$ gives
+\begin{equation}
+\bar{\bm Q}(\theta)=\bm T(\theta)\,\bm Q\,\bm T(\theta)^{\!\top},\qquad
+\bm T(\theta)=\begin{bmatrix}c^2&s^2&-2sc\\ s^2&c^2&2sc\\ sc&-sc&c^2-s^2\end{bmatrix},
+\quad (c,s)=(\cos\theta,\sin\theta).
+\label{eq:rot}
+\end{equation}
+Its entries are trigonometric polynomials of degree four in $\theta$ (Tsai--Pagano \cite{tsai1968}):
+\begin{equation}
+\bar{\bm Q}(\theta)=\bm\Gamma_0+\cos2\theta\,\bm\Gamma_1+\sin2\theta\,\bm\Gamma_2
++\cos4\theta\,\bm\Gamma_3+\sin4\theta\,\bm\Gamma_4,
+\label{eq:qbar}
+\end{equation}
+\begin{gather*}
+\bm\Gamma_0=\begin{bmatrix}U_1&U_4&0\\U_4&U_1&0\\0&0&U_5\end{bmatrix},\quad
+\bm\Gamma_1=\begin{bmatrix}U_2&0&0\\0&-U_2&0\\0&0&0\end{bmatrix},\quad
+\bm\Gamma_2=\tfrac{U_2}{2}\begin{bmatrix}0&0&1\\0&0&1\\1&1&0\end{bmatrix},\\
+\bm\Gamma_3=U_3\begin{bmatrix}1&-1&0\\-1&1&0\\0&0&-1\end{bmatrix},\quad
+\bm\Gamma_4=U_3\begin{bmatrix}0&0&1\\0&0&-1\\1&-1&0\end{bmatrix},
+\end{gather*}
+with the material invariants
+$U_1=\tfrac18(3Q_{11}+3Q_{22}+2Q_{12}+4Q_{66})$, $U_2=\tfrac12(Q_{11}-Q_{22})$,
+$U_3=\tfrac18(Q_{11}+Q_{22}-2Q_{12}-4Q_{66})$, $U_4=\tfrac18(Q_{11}+Q_{22}+6Q_{12}-4Q_{66})$,
+$U_5=\tfrac18(Q_{11}+Q_{22}-2Q_{12}+4Q_{66})$. $\bm\Gamma_0$ is isotropic. All the
+dependence on orientation is carried by $U_2$ and $U_3$, which vanish for an isotropic
+material. For the CFRP above, $U_2/U_1=1.10$ and $U_3/U_1=0.26$.
+
+A symmetric laminate ($\bm B=\bm 0$) of thickness $h$ has the membrane and bending
+stiffnesses
+\begin{equation}
+\bm A=h\Big[\bm\Gamma_0+\textstyle\sum_{i=1}^4\xi^A_i\bm\Gamma_i\Big],\qquad
+\bm D=\tfrac{h^3}{12}\Big[\bm\Gamma_0+\textstyle\sum_{i=1}^4\xi^D_i\bm\Gamma_i\Big],
+\label{eq:lampar}
+\end{equation}
+with the lamination parameters \cite{tsai1968,abdalla2007}
+\begin{equation}
+\bm\xi^A=\int_{-1/2}^{1/2}\bm v(\theta(\bar z))\,\dd\bar z,\qquad
+\bm\xi^D=12\int_{-1/2}^{1/2}\bar z^2\,\bm v(\theta(\bar z))\,\dd\bar z,\qquad
+\bm v(\theta)=(\cos2\theta,\sin2\theta,\cos4\theta,\sin4\theta),
+\label{eq:xi}
+\end{equation}
+where $\theta(\bar z)$ is the ply angle at normalized height $\bar z=z/h$. Two facts
+organize everything that follows.
+\begin{itemize}[itemsep=1pt]
+\item A \emph{single-ply-like} laminate (one angle through the thickness) has
+$\bm\xi^A=\bm\xi^D=\bm v(\theta)$, so $\bm D=\tfrac{h^2}{12}\bm A$ pointwise.
+\item A \emph{stacking sequence} makes $\bm\xi^D\ne\bm\xi^A$. Because $\bm\xi^D$ weights
+the outer plies by $12\bar z^2$, the stacking sequence separates bending from membrane
+stiffness \emph{through the thickness}.
+\end{itemize}
+A \emph{steered} laminate makes $\bm\xi^{A,D}$ functions of the in-plane position
+$\bm x$.
+
+\subsection{The laminated von K\'arm\'an plate}\label{sec:plate}
+A rectangular plate $\Omega=[0,a]\times[0,b]$ ($a=\SI{0.20}{m}$, $b=\SI{0.15}{m}$,
+$h=\SI{2}{mm}$) carries the transverse deflection $w$ and in-plane displacements
+$\bm u=(u,v)$. The von K\'arm\'an membrane strain and curvature are
+\begin{equation}
+\bm\varepsilon=\bm\varepsilon_L(\bm u)+\bm\varepsilon_{NL}(w),\quad
+\bm\varepsilon_L=\begin{bmatrix}u_{,x}\\v_{,y}\\u_{,y}+v_{,x}\end{bmatrix},\quad
+\bm\varepsilon_{NL}=\tfrac12\begin{bmatrix}w_{,x}^2\\w_{,y}^2\\2w_{,x}w_{,y}\end{bmatrix},\qquad
+\bm\kappa=-\begin{bmatrix}w_{,xx}\\w_{,yy}\\2w_{,xy}\end{bmatrix},
+\label{eq:kin}
+\end{equation}
+and, with $\bm A(\bm x),\bm D(\bm x)$ from \eqref{eq:lampar}, the strain energy is
+\begin{equation}
+U=\tfrac12\!\int_\Omega\!\bm\kappa^{\!\top}\bm D\,\bm\kappa\,\dd\Omega
++\tfrac12\!\int_\Omega\!(\bm\varepsilon_L+\bm\varepsilon_{NL})^{\!\top}\bm A\,
+(\bm\varepsilon_L+\bm\varepsilon_{NL})\,\dd\Omega .
+\label{eq:energy}
+\end{equation}
+With the kinetic energy $T=\tfrac12\int\rho h(\dot w^2+|\dot{\bm u}|^2)$, Hamilton's
+principle gives the laminated F\"oppl--von K\'arm\'an equations \cite{amabili2008},
+\begin{equation}
+N_{\alpha\beta,\beta}=\rho h\,\ddot u_\alpha,\qquad
+M_{\alpha\beta,\alpha\beta}+\big(N_{\alpha\beta}w_{,\beta}\big)_{,\alpha}+p=\rho h\,\ddot w,
+\qquad \bm N=\bm A(\bm\varepsilon_L+\bm\varepsilon_{NL}),\ \bm M=\bm D\bm\kappa .
+\label{eq:fvk}
+\end{equation}
+The edges are simply supported and immovable ($w=0$, $\bm u=\bm 0$ on $\partial\Omega$).
+We discretize by Galerkin's method on sine bases, which satisfy these conditions term by
+term:
+\begin{equation}
+w=\sum_{k=1}^{N_w}q_k\,\phi_k,\quad \phi_k=\sin\tfrac{m_k\pi x}{a}\sin\tfrac{n_k\pi y}{b};
+\qquad
+u,v=\sum_{j=1}^{N_s}s^{u,v}_j\,\psi_j,\quad \psi_j=\sin\tfrac{i_j\pi x}{a}\sin\tfrac{l_j\pi y}{b}.
+\end{equation}
+We use $N_w=64$ ($m,n\le8$) and $N_s=36$ per component. The bases are converged
+for the steered designs: Table~\ref{tab:conv} shows that the steered relaxation needs at least
+five to six in-plane modes per direction; the three-mode basis that suffices for a uniform
+laminate under-resolves it badly ($J/J_{\UD}=\nConvThree$ instead of $\nConvBase$).
+With $\bm x=[\bm q;\bm s]$ the system is
+\begin{equation}
+\bm M\ddot{\bm x}+\bm C\dot{\bm x}+\bm K\bm x+\bm B_2(\bm x,\bm x)+\bm T_3(\bm x,\bm x,\bm x)=\bm f(t),
+\label{eq:eom}
+\end{equation}
+with
+$M_{kl}=\rho h\int\phi_k\phi_l$ (likewise for $\psi$),
+$\bm K=\mathrm{blkdiag}(\bm K_b,\bm K_{\mathrm{in}})$,
+$(\bm K_b)_{kl}=\int\bm\kappa_k^{\!\top}\bm D\bm\kappa_l$ and
+$(\bm K_{\mathrm{in}})_{jl}=\int\bm\varepsilon_{L,j}^{\!\top}\bm A\bm\varepsilon_{L,l}$.
+$\bm B_2$ is the gradient of $\int\bm\varepsilon_L^{\!\top}\bm A\bm\varepsilon_{NL}$ (the
+$\bm u\leftrightarrow w^2$ coupling) and $\bm T_3$ is the gradient of
+$\tfrac12\int\bm\varepsilon_{NL}^{\!\top}\bm A\bm\varepsilon_{NL}$ (the membrane cubic).
+Because $\bm B=\bm 0$, the \emph{linear} problem decouples into a bending block and an
+in-plane block. The mass is design-independent: every design in this paper has the
+same plate, the same material and the same thickness.
+
+The \emph{beam} is the one-dimensional specialization: a clamped--clamped strip
+($L=\SI{0.30}{m}$, width $\SI{20}{mm}$, $h=\SI{2}{mm}$) with axial $u$ and transverse
+$w$, $\varepsilon=u'+\tfrac12w'^2$ and $\kappa=-w''$. For a single-ply laminate,
+$A=bhE(x)$ and $D=\tfrac{bh^3}{12}E(x)$ with $E(x)=\bar Q_{11}(\theta(x))$. It is
+discretized by Hermite-cubic/linear elements, and the axial ends are immovable.
+
+\subsection{Spectral submanifold and backbone}\label{sec:ssm}
+In first-order form $\bm z=[\bm x;\dot{\bm x}]$,
+$\bm{\mathcal B}\dot{\bm z}=\bm{\mathcal A}\bm z+\bm F(\bm z)$ with
+$\bm{\mathcal B}=\begin{bsmallmatrix}\bm C&\bm M\\\bm M&\bm0\end{bsmallmatrix}$,
+$\bm{\mathcal A}=\begin{bsmallmatrix}-\bm K&\bm0\\\bm0&\bm M\end{bsmallmatrix}$ and
+$\bm F=[-\bm B_2-\bm T_3;\bm0]$. Let $\lambda_1,\bar\lambda_1$ be the eigenvalues of the
+fundamental, with right eigenvector $\bm v_1$ and left eigenvector $\bm u_1$
+($\bm u_1^*\bm{\mathcal A}=\lambda_1\bm u_1^*\bm{\mathcal B}$,
+$\bm u_1^*\bm{\mathcal B}\bm v_1=1$). The SSM $\mathcal W$ is the unique smoothest
+invariant manifold tangent to their eigenspace \cite{haller2016}. It exists if
+$\lambda_1$ is the slowest pair and no outer eigenvalue equals
+$m_1\lambda_1+m_2\bar\lambda_1$ up to the truncation order. Parametrizing
+$\bm z=\bm W(\bm p)$ and $\dot{\bm p}=\bm R(\bm p)$ gives the invariance equation
+$\bm{\mathcal B}\,\mathrm D\bm W\,\bm R=\bm{\mathcal A}\bm W+\bm F(\bm W)$. Expanding both
+maps in monomials $\bm p^{\bm m}$, it separates order by order into the homological
+equations
+\begin{equation}
+(\Lambda_{\bm m}\bm{\mathcal B}-\bm{\mathcal A})\bm w_{\bm m}
++\bm{\mathcal B}(\bm v_1R^1_{\bm m}+\bar{\bm v}_1R^2_{\bm m})=\bm G_{\bm m},
+\qquad \Lambda_{\bm m}=m_1\lambda_1+m_2\bar\lambda_1,
+\label{eq:homological}
+\end{equation}
+where $\bm G_{\bm m}$ collects lower-order terms (Appendix~\ref{app:coeffs}). At the
+near-resonant indices $\bm m=(k{+}1,k)$ the operator is (near-)singular. Projecting onto
+$\bm u_1$ gives the reduced (normal-form) coefficients
+$\gamma_{2k+1}=\bm u_1^*\bm G_{(k+1,k)}$. On the orbit
+$p_1=\tfrac\rho2e^{i\vartheta}$, $p_2=\bar p_1$, the backbone and the modal decay rate are
+\begin{equation}
+\Om(\rho)=\Imag\Big(\lambda_1+\sum_{k\ge1}\gamma_{2k+1}\big(\tfrac{\rho}{2}\big)^{2k}\Big),\qquad
+\alpha(\rho)=\Real(\cdots).
+\label{eq:backbone}
+\end{equation}
+The implementation is verified against the analytic Duffing backbone through fifth
+order ($3/8$ and $-21/256$), against full-order EPMC continuation, and against two
+published results \cite{pozzi2025} (Appendix~\ref{app:calib}). The master
+eigenvector is computed by Rayleigh-quotient inverse iteration on the complex-symmetric
+pencil, with $\bm u_1=\bar{\bm v}_1$. A dense QZ solve of the stiff first-order pencil was
+found to lose up to ten digits (eigenvector condition number $\sim10^{14}$ for laminated
+beams) and is no longer used for symmetric systems (regression test in
+\texttt{tests/test\_relaxed\_plate.py}).
+
+\subsection{The relaxed hardening coefficient}\label{sec:relaxed}
+Let the fundamental be the lowest Ritz pair of the bending block,
+$\bm K_b\bm v=\omega_1^2\bm M_w\bm v$ with $\bm v^{\!\top}\bm M_w\bm v=1$. Its shape
+$w_1=\sum_kv_k\phi_k$ \emph{adapts} to the stiffness field. This is the exact linear
+master mode of \eqref{eq:eom}, because the blocks decouple when $\bm B=\bm0$. Write its
+curvature as $\bm\kappa_1$ and its stretch as
+\begin{equation}
+\bm m=\big[w_{1,x}^2,\;w_{1,y}^2,\;2w_{1,x}w_{1,y}\big]^{\!\top}=2\bm\varepsilon_{NL}(w_1).
+\end{equation}
+
+\begin{proposition}[Relaxed cubic, variational form]\label{prop:relaxed}
+Let the in-plane field be slaved quasi-statically to $q^2$, the square of the
+fundamental's modal amplitude. Then the cubic coefficient of the single-mode reduced
+dynamics $\ddot q+\omega_1^2q+\gamma q^3=0$ is
+\begin{equation}
+\gamma=\min_{\bm s}\;\tfrac12\int_\Omega(\bm m-2\bm\varepsilon_L(\bm s))^{\!\top}\bm A\,
+(\bm m-2\bm\varepsilon_L(\bm s))\,\dd\Omega
+=k_{nl}-2\,\bm g^{\!\top}\bm K_{\mathrm{in}}^{-1}\bm g
+=\tfrac12\int_\Omega\bm\varepsilon_r^{\!\top}\bm A\,\bm\varepsilon_r\,\dd\Omega,
+\label{eq:gamma}
+\end{equation}
+with $k_{nl}=\tfrac12\int\bm m^{\!\top}\bm A\bm m$,
+$\bm g=\tfrac12\int\bm\varepsilon_L(\cdot)^{\!\top}\bm A\bm m$,
+$\bm s^\star=\bm K_{\mathrm{in}}^{-1}\bm g$ and the relaxed stretch
+$\bm\varepsilon_r=\bm m-2\bm\varepsilon_L(\bm s^\star)$.
+\end{proposition}
+\begin{proof}
+With $w=qw_1$ and $\bm u=-q^2\bm s$, the membrane strain is
+$\bm\varepsilon=\tfrac{q^2}{2}(\bm m-2\bm\varepsilon_L(\bm s))$. The membrane energy is
+therefore $\tfrac{q^4}{8}\int(\bm m-2\bm\varepsilon_L(\bm s))^{\!\top}\bm A(\cdot)
+=\tfrac{q^4}{4}F(\bm s)$, where $F(\bm s)=k_{nl}-4\bm s^{\!\top}\bm g+2\bm s^{\!\top}
+\bm K_{\mathrm{in}}\bm s$. Static equilibrium of the in-plane field minimizes $F$, at
+$\bm s^\star=\bm K_{\mathrm{in}}^{-1}\bm g$, with $F(\bm s^\star)=k_{nl}-2\bm g^{\!\top}
+\bm K_{\mathrm{in}}^{-1}\bm g$. The reduced potential $\tfrac{\gamma}{4}q^4$ then gives
+\eqref{eq:gamma}. The last form is $F(\bm s^\star)$ written out.
+\end{proof}
+
+Proposition~\ref{prop:relaxed} has three uses. (i) $k_{nl}$ is the restrained
+(immovable in-plane field) upper bound, and $2\bm g^{\!\top}\bm K_{\mathrm{in}}^{-1}\bm g$
+is the \emph{relaxation}. Its share of $k_{nl}$ is $\nRelaxUD\%$ for the unidirectional
+plate. (ii) Because $\gamma$ is a \emph{minimum} over $\bm s$, its design derivative
+needs no in-plane adjoint (envelope theorem; Sec.~\ref{sec:sens}). (iii) It writes the
+hardening as the integral of an energy density (Sec.~\ref{sec:theory}).
+
+\begin{proposition}[Agreement with the SSM]\label{prop:ssmcond}
+For an undamped system \eqref{eq:eom} with $\bm B=\bm 0$, the cubic SSM coefficient of the
+fundamental satisfies
+$\Imag\gamma_3=\tfrac{3}{2\omega_1}\gamma\,[1+O(4\omega_1^2/\omega_{\mathrm{in}}^2)]$,
+where $\omega_{\mathrm{in}}$ is the lowest in-plane frequency.
+\end{proposition}
+\noindent The proof is in Appendix~\ref{app:ssmcond}. In short: the $(1,1)$ in-plane
+homological solve is exactly static ($\Lambda_{(1,1)}=0$), and the $(2,0)$ solve is
+static up to the resolvent factor
+$(\bm K_{\mathrm{in}}-4\omega_1^2\bm M_{\mathrm{in}})^{-1}$. For our plate
+$4\omega_1^2/\omega_{\mathrm{in}}^2=\nRhoIn$ ($f_{\mathrm{in}}\approx\nFin$\,kHz on the full multi-mode plate), and \eqref{eq:gamma} reproduces the full
+multi-mode SSM coefficient to within $\nSSMvsEval\%$ (Sec.~\ref{sec:confirm}).
+
+\subsection{The backbone in physical amplitude, and the design quantity $J$}
+For $\ddot q+\omega_1^2q+\gamma q^3=0$ the cubic SSM gives
+$\Om=\omega_1+\tfrac38(\gamma/\omega_1)q^2$. The mid-plate deflection of the mode is
+$a=w_cq$, with $w_c=w_1(a/2,b/2)$, so
+\begin{equation}
+\frac{\Om}{\omega_1}=1+\frac38J\,a^2=1+\beta\Big(\frac{a}{h}\Big)^2,\qquad
+J=\frac{\gamma}{\omega_1^2w_c^2},\qquad \beta=\tfrac38Jh^2 .
+\label{eq:J}
+\end{equation}
+$J$ (units m$^{-2}$) is the \emph{frequency-normalized detuning}. It is invariant to the
+mode normalization, and it is what we design. The unidirectional plate has
+$f_1=\nUDf$\,Hz, $\beta=\nEvBetaUD$ and a $\nUDdet\%$ shift at $a/h=0.4$.
+The cubic truncation reproduces the full-order EPMC detuning to within $\nEPMCAgree\%$ over the
+amplitudes EPMC reached, $a/h\le\nEPMCmaxUD$ (UD) and $\le\nEPMCmaxOpt$ (steered) (Appendix~\ref{app:calib}).
+
+\subsection{Forced response and the jump-free amplitude}\label{sec:jumpth}
+With harmonic forcing $\bm f\cos\Om t$ and damping $\bm C=2\zeta\omega_1\bm M$, seeking
+$p_1=\tfrac\rho2e^{i\Om t}$ on the SSM gives the leading-order forced-response curve
+\begin{equation}
+\big[(\Om-\Om(\rho))^2+\alpha(\rho)^2\big]\rho^2=|f_1|^2,\qquad f_1=\bm u_1^*[\bm f;\bm0].
+\label{eq:frc}
+\end{equation}
+
+\begin{proposition}[Jump-free amplitude]\label{prop:cusp}
+For the cubic backbone \eqref{eq:J} with $\alpha=\zeta\omega_1$, the forced response
+\eqref{eq:frc} is single-valued in $\Om$ for every drive whose peak (resonant) amplitude is
+below
+\begin{equation}
+\frac{a_c}{h}=\Big(\frac{8\zeta}{3\sqrt3\,\beta}\Big)^{1/2}\;\propto\;J^{-1/2},
+\label{eq:ac}
+\end{equation}
+and multivalued (a fold pair with jump and hysteresis) above it. At the critical drive the
+vertical tangent sits at the lower amplitude $(\sqrt3/2)\,a_c$ on the response curve.
+\end{proposition}
+\begin{proof}
+Write $x=a^2$, $c=\omega_1\beta/h^2$, $\mu=\zeta\omega_1$, and let $F$ be the drive
+expressed in physical amplitude. Then \eqref{eq:frc} reads
+$[(\sigma-cx)^2+\mu^2]x=F^2$, with $\sigma=\Om-\omega_1$. Put $\sigma=cx+s$. The curve is
+$x=F^2/(s^2+\mu^2)$, $\sigma=cF^2/(s^2+\mu^2)+s$, and it folds where $\dd\sigma/\dd s=0$,
+i.e.\ where $2cF^2s=(s^2+\mu^2)^2$. A fold pair first appears when this equation has a
+double root, i.e.\ when $2cF^2=4s(s^2+\mu^2)$ also holds. Combining the two conditions
+gives $s^2+\mu^2=4s^2$, so $s=\mu/\sqrt3$, and the critical drive is
+$F_c^2=(s^2+\mu^2)^2/(2cs)=8\mu^3/(3\sqrt3\,c)$. The vertical tangent lies at
+$x=F_c^2/(s^2+\mu^2)=2\mu/(\sqrt3c)$, while the peak of the response (at $s=0$) is
+$x_c=F_c^2/\mu^2=8\mu/(3\sqrt3\,c)$, which is \eqref{eq:ac}. Below $F_c$ the curve has no
+fold; above it, it has two.
+\end{proof}
+\noindent Proposition~\ref{prop:cusp} is the consequence we test. Holding $\omega_1$,
+$\zeta$ and $h$ and reducing $J$ by a factor $r$ widens the jump-free amplitude by
+$r^{-1/2}$. In Sec.~\ref{sec:confirm} we compute $a_c$ \emph{numerically}, as the drive
+at which the full-order damped SSM response first becomes multivalued, and compare it
+with \eqref{eq:ac}.
