@@ -98,7 +98,7 @@ exactly $\omega_1=\omega_{1,\UD}$ the continuous stack optimum is UD itself (all
 $\to0$); the best grid stack within $\pm1\%$ of that frequency, at a slightly different
 $\omega_1$, has $J/J_{\UD}=\nSheld$, a negligible difference. For a plate
 mandated to the UD frequency, the uniform design space is therefore a single point. This is the one
-comparison that is exact for \emph{every} uniform laminate. Above $\omega_{1,\UD}$ the uniform
+comparison that is exact for \emph{every} uniform symmetric laminate. Above $\omega_{1,\UD}$ the uniform
 competitors are the classes we surveyed: all single angles, all $\nSnum$ grid stacks and the
 continuously optimized eight-ply stacks. Those comparisons are numerical, not proved bounds.
 
@@ -108,7 +108,7 @@ it the optimum is $\nResAInf$, Sec.~\ref{sec:limits}). The steered designs lie w
 every frequency we test: $\nFEleven$, $\nFTwelve$ and $\nFThirteen$ at $1.1$,
 $1.2$ and $1.3\,\omega_{1,\UD}$, against $\nCSEleven$, $\nCSTwelve$ and $\nCSThirteen$
 for the best continuous stacks. Steering can also \emph{lower} the frequency below the uniform floor
-($\nFNine$ at $0.9\,\omega_{1,\UD}$), which, by Corollary~\ref{cor:udfloor}, no uniform laminate can do. Steering the best
+($\nFNine$ at $0.9\,\omega_{1,\UD}$), which, by Corollary~\ref{cor:udfloor}, no uniform symmetric laminate can do. Steering the best
 stack at $\omega_{1,\UD}$ gives $\nSFTen$, no better than the steered single ply. For
 this plate and objective, the in-plane channel of Sec.~\ref{sec:channels} dominates the
 through-thickness channel. Prediction P3 holds with a wide margin: exactly at $\omega_{1,\UD}$,
@@ -121,7 +121,7 @@ and against every surveyed uniform class above it.
 symmetric laminate can reach, and above it steering undercuts every uniform class surveyed; the
 held-frequency result holds with the frequency re-matched in every model.} \textbf{(a)}~Linear
 frequency vs.\ frequency-normalized hardening. Provenance is marked in the legend.
-\emph{Proved}: the shaded band $\omega_1<\omega_{1,\UD}$, where no uniform laminate exists
+\emph{Proved}: the shaded band $\omega_1<\omega_{1,\UD}$, where no uniform symmetric laminate exists
 (Corollary~\ref{cor:udfloor}). \emph{Exhaustive}: the uniform single angle (black curve) and all
 $\nSnum$ symmetric stacks on a $15^\circ$ grid (gray dots, clipped at $J/J_{\UD}=1.2$; dashed: their
 lower envelope). \emph{Local optima}: the best continuous eight-ply stack at each held frequency
@@ -462,7 +462,7 @@ of the starts (\texttt{r1\_\allowbreak verification.py}).
 \centering
 \includegraphics[width=\linewidth]{figs/fig_robust.pdf}
 \caption{\textbf{The lever persists across plates, supports, damping laws and as-built defects, and its size
-is ordered by the conflict between the two strain fields.} \textbf{(a)}~Held-frequency $J/J_{\UD}$ of
+appears to be ordered by the conflict between the two strain fields.} \textbf{(a)}~Held-frequency $J/J_{\UD}$ of
 the steered optimum (green) and of the best uniform laminate at the same frequency (gray) for simply
 supported (SS) plates of aspect ratio 4:3 (the paper's plate, $\ast$), 1:1 and 2:1, a clamped plate
 (CL) and a simply supported plate with in-plane movable edges (SM). Each plate is normalized by its
@@ -470,8 +470,8 @@ own UD design; only the clamped plate has a uniform competitor other than UD at 
 \textbf{(b)}~Steered optimum vs.\ the energy-weighted conflict $\chi$ of the UD fields; line: the three
 SS plates. \textbf{(c)}~Jump-free amplitude $a_c/h$ from the full damped SSM vs.\ damping ratio
 (mass-proportional, lines; stiffness-proportional at $\zeta=2\%$, crosses, drawn slightly to the right for
-visibility). Both designs scale as $\zeta^{1/2}$, and
-their ratio does not change. \textbf{(d)}~Relative density $\tau$ of uncut constant-width tows laid
+visibility). Both designs scale as $\zeta^{1/2}$; their ratio is
+$\nDampRatioMin$--$\nDampRatioMax$ (mass-proportional) and $\nDampStiffRatio$ (stiffness-proportional). \textbf{(d)}~Relative density $\tau$ of uncut constant-width tows laid
 along the tow paths of the held-frequency design (black lines). Purple: spreading (gaps if uncut);
 orange: convergence (overlaps); color scale clipped at $1/16$ and $16$ ($\tau$ spans
 $\nTauMin$--$\nTauMax$). \textbf{(e)}~As-built laminates with tow cut/add, $N=4$, $8$, $16$ tows per course

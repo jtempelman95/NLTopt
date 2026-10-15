@@ -36,7 +36,8 @@ ste = [float(G[n]["J_steer"] / G[n]["J_ud"]) for n in names]
 ax.bar(x - 0.19, uni, 0.36, color=ps.GREY, label=r"best uniform at $\omega_{1,\mathrm{UD}}$")
 ax.bar(x + 0.19, ste, 0.36, color=ps.GREEN, label="steered, $R_{\\min}=20$ mm")
 for i in range(len(names)):
-    ax.text(x[i] + 0.19, ste[i] + 0.02, f"{ste[i]:.2f}", ha="center", fontsize=6.6)
+    ax.text(x[i] + 0.19, ste[i] + 0.02, f"{ste[i]:.2f}", ha="center", fontsize=6.4,
+            bbox=dict(fc="white", ec="none", pad=0.3, alpha=0.9))
     if uni[i] < 0.999:
         ax.text(x[i] - 0.19, uni[i] + 0.02, f"{uni[i]:.2f}", ha="center", fontsize=6.6)
 
@@ -77,7 +78,7 @@ cx.set_xticks([0.5, 1, 2, 4]); cx.set_xticklabels(["0.5", "1", "2", "4"])
 cx.set_yticks([0.1, 0.2, 0.3, 0.5]); cx.set_yticklabels(["0.1", "0.2", "0.3", "0.5"])
 cx.minorticks_off()
 r = D[m, 4]
-cx.text(0.52, 0.44, rf"ratio ${r.min():.2f}$" + "\n" + r"at every $\zeta$", fontsize=6.8, color=ps.GREEN, ha="left", va="top")
+cx.text(0.52, 0.44, rf"ratio ${r.min():.2f}$ (every $\zeta$)" + "\n" + rf"${float(D[s, 4][0]):.2f}$ for $\boldsymbol C\propto\boldsymbol K$", fontsize=6.6, color=ps.GREEN, ha="left", va="top")
 cx.legend(frameon=False, fontsize=6.6, loc="lower right", handlelength=1.4, borderaxespad=0.1)
 cx.set_title(r"(\textbf{c}) damping level and law", loc="left", fontsize=8, pad=3)
 ps.grid(cx); ps.despine(cx)
@@ -126,7 +127,8 @@ for N, ms in ((4, 6.5), (8, 5.5), (16, 4.5)):
                 textcoords="offset points", fontsize=6.3, color=ps.STEEL, ha={8: "left", 16: "right"}.get(N, "center"), va="bottom" if N == 8 else "top")
 _g = [R[keys.index(f"GAP{N}")] for N in (4, 8, 16)]
 ex.annotate(r"gaps, $N=4,8,16$:" + "\n" + r"mass " + ", ".join(rf"${100*(g_[2]-1):+.0f}$" for g_ in _g) + r"\%",
-            (_g[0][1], _g[0][0]), xytext=(-2, 14), textcoords="offset points", fontsize=6.3, color=ps.RED, ha="center", va="bottom")
+            (_g[0][1], _g[0][0] - 0.006), xytext=(0.946, 0.262), textcoords="data", fontsize=6.3, color=ps.RED,
+            ha="left", va="bottom", arrowprops=dict(arrowstyle="-", color=ps.RED, lw=0.6))
 ex.set_xlim(0.94, 1.15); ex.set_ylim(0.22, 0.46)
 ex.set_xlabel(r"$\omega_1/\omega_{1,\mathrm{UD}}$"); ex.set_ylabel(r"$J/J_{\mathrm{UD}}$")
 ex.legend(frameon=False, fontsize=6.4, loc="upper right", handlelength=1.3, borderaxespad=0.1, ncol=1)

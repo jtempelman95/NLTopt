@@ -33,13 +33,13 @@ def envelope(f, J, edges):
     return c, e
 
 
-fig = plt.figure(figsize=(ps.FULL, 3.75))
+fig = plt.figure(figsize=(ps.FULL, 4.0))
 gs = fig.add_gridspec(1, 2, width_ratios=[1.30, 0.80], wspace=0.62)
 ax = fig.add_subplot(gs[0]); bx = fig.add_subplot(gs[1])
 
 # proved region: below omega_UD no uniform laminate exists (Corollary 1)
 ax.axvspan(0.85, 1.0, color="#eef0f3", zorder=0, lw=0)
-ax.text(0.925, 1.13, "no uniform\nlaminate\n(proved)", ha="center", va="top", fontsize=6.8, color=ps.GREY)
+ax.text(0.925, 1.15, "no uniform\nsymmetric\nlaminate\n(proved)", ha="center", va="top", fontsize=6.6, color=ps.GREY)
 ax.scatter(fS, JS, s=1.2, color="#c9ced4", lw=0, rasterized=True, zorder=1,
            label=rf"uniform stacks, $15^\circ$ grid (all {len(fS):,})".replace(",", "{,}"))
 c, e = envelope(fS, JS, np.linspace(0.95, 1.60, 40))
@@ -88,6 +88,7 @@ if os.path.exists("results/r1_full_matched.npz"):
     FM = np.load("results/r1_full_matched.npz")
     items.insert(5, ("full plate (SSM), as designed", float(FM["ssm_ratio_asis"]), float(FM["f_asis"]), "#9cc9b3", None))
     items.insert(6, ("full plate (SSM), re-matched", float(FM["ssm_ratio_matched"]), float(FM["f_matched"]), ps.GREEN, "xx"))
+    items.insert(7, ("full plate (EPMC), re-matched", float(FM["epmc_ratio_matched"]), float(FM["f_matched"]), ps.GREEN, "--"))
 yy = np.arange(len(items))[::-1]
 for y, (lab, v, f, col, hat) in zip(yy, items):
     bx.barh(y, v, color=col, height=0.62, edgecolor=ps.GREY if col == "white" else "white", hatch=hat, lw=0.6)
